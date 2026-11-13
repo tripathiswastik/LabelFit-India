@@ -41,28 +41,29 @@
           </div>
           <div class="photo-tip"><span>✦</span><p><b>For a clearer read</b><br>Use good light, keep the text in focus, and photograph one panel at a time.</p></div>
           <div id="api-state" class="api-state"><span class="status-dot"></span><span id="api-state-text">Checking local Gemini setup…</span></div>
+          <label class="photo-confirm"><input id="photo-confirm" type="checkbox"><span>I understand the photo is sent to Gemini. I checked it shows only the package, with no people or personal details.</span></label>
           <button id="analyze" class="primary-button" disabled><span>Read this label</span><span>→</span></button>
-          <p class="privacy-copy">Your photo is sent to Gemini for analysis only after you select “Read this label.” It is not saved by this prototype.</p>
+          <p class="privacy-copy">Unpaid Gemini API content may be used to improve Google services and may be reviewed by people. Do not send personal or confidential information. The app does not save the photo; store:false is not a zero-retention promise.</p>
         </div>
         <div class="results-panel" id="results" aria-live="polite">
-          <div class="results-empty" id="results-empty"><div class="result-illustration"><span>Aa</span><span>⌕</span></div><p class="eyebrow">YOUR LABEL NOTES</p><h3>Review the details beside their photo evidence.</h3><p>Missing or uncertain wording is marked so you can check the package.</p><div class="fields-preview"><span>Age marking</span><span>Ingredients</span><span>Allergen statement</span><span>Nutrition panel</span></div></div>
+          <div class="results-empty" id="results-empty"><div class="result-illustration"><span>Aa</span><span>⌕</span></div><p class="eyebrow">YOUR LABEL NOTES</p><h3>Review the readout beside the package photo.</h3><p>Missing or uncertain wording is marked so you can check the package.</p><div class="fields-preview"><span>Age marking</span><span>Ingredients</span><span>Allergen statement</span><span>Nutrition panel</span></div></div>
           <div id="results-content" hidden></div>
           <div id="loading" class="loading" hidden><div class="loader"></div><h3>Reading the label…</h3><p>Checking the visible text in your photo.</p></div>
         </div>
       </div>
-      <div class="bottom-note"><span>ⓘ</span><p><b>Scope and accuracy:</b> LabelFit reports visible package information and links each detail to its source snippet. It does not issue food-safety verdicts, diagnose, interpret allergy risk, or tell caregivers what to feed. Small, curved, or blurry print can be misread, so compare the readout with the package.</p></div>
+      <div class="bottom-note"><span>ⓘ</span><p><b>Scope and accuracy:</b> LabelFit reports candidate transcriptions with model-provided snippets. It does not issue food-safety verdicts, diagnose, interpret allergy risk, or tell caregivers what to feed. Small, curved, or blurry print can be misread, so compare every readout with the package.</p></div>
     </section>
 
     <section class="focus-section" aria-labelledby="focus-title">
       <div class="focus-copy">
         <p class="eyebrow">WHY THIS FOCUS</p>
         <h2 id="focus-title">One label-reading workflow, built around baby food.</h2>
-        <p>Open Food Facts offers broad product records and label-derived information; general OCR tools read package text. LabelFit focuses on packaged complementary foods for babies 6+ months, keeping each extracted detail tied to a photo snippet and surfacing uncertain reads.</p>
+        <p>Open Food Facts offers broad product records and label-derived information; general OCR tools read package text. LabelFit focuses on packaged complementary foods for babies 6+ months, keeping each extracted detail tied to a photo snippet and surfacing uncertain reads. The current prototype transcribes label details; product lookups and plain-language explanations are later steps.</p>
       </div>
       <div class="roadmap-copy">
         <p class="eyebrow">BUILD ROADMAP</p>
         <p><b>First:</b> benchmark label extraction on 50 locally available products and measure field accuracy and review time.</p>
-        <p><b>Next:</b> after accuracy targets pass, evaluate saved-label exports for caregivers and label digitization for retail or food-brand partners.</p>
+        <p><b>Later:</b> after accuracy, usability, and privacy reviews, test whether retailers or food brands value label-digitization tools. No revenue or partner traction is established.</p>
       </div>
     </section>
   </main>
