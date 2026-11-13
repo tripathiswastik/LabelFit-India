@@ -1,11 +1,19 @@
 """
-Unit tests for the Benchmark Evaluation Engine (scripts/evaluate_benchmark.py).
+Unit tests for the Benchmark Evaluation Engine (labelfit.benchmark).
 """
 
+import sys
+from pathlib import Path
 import os
 import tempfile
 import csv
-from scripts.evaluate_benchmark import (
+
+# Ensure src is on sys.path for direct pytest execution
+_SRC_ROOT = str(Path(__file__).resolve().parent.parent / "src")
+if _SRC_ROOT not in sys.path:
+    sys.path.insert(0, _SRC_ROOT)
+
+from labelfit.benchmark import (
     normalize_text,
     levenshtein_distance,
     compute_cer,
