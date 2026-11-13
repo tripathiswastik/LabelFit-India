@@ -1,0 +1,8 @@
+{
+  "name": "labelfit-india",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A prototype for explaining visible label information on packaged complementary foods.",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}
