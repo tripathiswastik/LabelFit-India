@@ -62,3 +62,55 @@ test('rate limiter allows a fixed burst and resets outside the window', () => {
   now += 1001;
   assert.equal(allow('client'), true);
 });
+
+// Step 3: Transcription Error Defense Tests
+
+test('Step 3: unsupported clear read with zero token overlap is downgraded to uncertain', () => {
+  const result = normalizeField({
+    value: 'Baby Fruit Puree with Mango',
+    evidence: 'Manufactured by Organic Foods Ltd',
+    readStatus: 'clear'
+  }, 'productName');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: conflicting numerals in age marking are downgraded to uncertain', () => {
+  const result = normalizeField({
+    value: 'From 1 Month',
+    evidence: 'Stage 1: From 6 to 24 Months',
+    readStatus: 'clear'
+  }, 'ageMarking');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: truncated ingredients list ending with comma or ellipsis is downgraded to uncertain', () => {
+  const commaTruncated = normalizeField({
+    value: 'Organic Rice Flour (55%), Sprouted Moong Dal Flour (25%),',
+    evidence: 'Ingredients: Organic Rice Flour (55%), Sprouted Moong Dal Flour (25%),',
+    readStatus: 'clear'
+  }, 'ingredients');
+  assert.equal(commaTruncated.readStatus, 'uncertain');
+
+  const dotTruncated = normalizeField({
+    value: 'Organic Rice Flour, Milk Solids...',
+    evidence: 'Ingredients: Organic Rice Flour, Milk Solids...',
+    readStatus: 'clear'
+  }, 'ingredients');
+  assert.equal(dotTruncated.readStatus, 'uncertain');
+});
+
+test('Step 3: allergen declaration inferred from ingredients without declaration marker is downgraded', () => {
+  const inferred = normalizeField({
+    value: 'Contains Milk',
+    evidence: 'Ingredients: Skimmed milk solids (15%), Rice flour',
+    readStatus: 'clear'
+  }, 'allergenDeclaration');
+  assert.equal(inferred.readStatus, 'uncertain');
+
+  const explicit = normalizeField({
+    value: 'Contains Milk',
+    evidence: 'Allergen Declaration: Contains Milk.',
+    readStatus: 'clear'
+  }, 'allergenDeclaration');
+  assert.equal(explicit.readStatus, 'clear');
+});

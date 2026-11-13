@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 from typing import Dict, Optional
 
 import requests
@@ -15,6 +16,39 @@ API_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
 MAX_TEXT_CHARS = 30_000
 MAX_FIELD_CHARS = 8_000
 VALID_STATUSES = {"clear", "uncertain", "not_visible"}
+
+
+ALLERGEN_DECLARATION_PATTERN = re.compile(
+    r'\b(contains?|allergen|allergens?|may\s+contain|traces?|free\s+from|facility|equipment)\b',
+    re.IGNORECASE
+)
+TRUNCATION_SUFFIX_PATTERN = re.compile(r'(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$', re.IGNORECASE)
+STOP_WORDS = {'the', 'and', 'for', 'with', 'from', 'this', 'that', 'per', 'net', 'pkg'}
+
+
+def extract_significant_tokens(text: str) -> set:
+    if not text:
+        return set()
+    tokens = re.findall(r'\b\w+\b', text.lower())
+    return {t for t in tokens if len(t) >= 2 and t not in STOP_WORDS}
+
+
+def has_token_support(value: str, evidence: str) -> bool:
+    if not value or not evidence:
+        return False
+    val_tokens = extract_significant_tokens(value)
+    ev_tokens = extract_significant_tokens(evidence)
+    if not val_tokens or not ev_tokens:
+        return True
+    return bool(val_tokens & ev_tokens)
+
+
+def has_conflicting_numbers(value: str, evidence: str) -> bool:
+    val_digits = set(re.findall(r'\b\d+\b', value))
+    ev_digits = set(re.findall(r'\b\d+\b', evidence))
+    if not val_digits or not ev_digits:
+        return False
+    return not bool(val_digits & ev_digits)
 
 
 class GeminiLabelExtractor:
@@ -134,6 +168,20 @@ class GeminiLabelExtractor:
                 status = "not_visible"
             elif not value or not evidence or status != "clear":
                 status = "uncertain"
+            else:
+                # Step 3 Guard 1: Unsupported clear read
+                if not has_token_support(value, evidence):
+                    status = "uncertain"
+                # Step 3 Guard 2: Numeral conflict in key fields
+                elif name in ("ageMarking", "preparationAndStorage") and has_conflicting_numbers(value, evidence):
+                    status = "uncertain"
+                # Step 3 Guard 3: Ingredient or prep truncation
+                elif name in ("ingredients", "preparationAndStorage") and TRUNCATION_SUFFIX_PATTERN.search(value):
+                    status = "uncertain"
+                # Step 3 Guard 4: Allergen inferred from ingredients without explicit declaration marker
+                elif name == "allergenDeclaration" and not ALLERGEN_DECLARATION_PATTERN.search(evidence):
+                    status = "uncertain"
+
             result[name] = ExtractedField(name, value, evidence, status)
         return result
 

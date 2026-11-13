@@ -37,3 +37,60 @@ def test_schema_ignores_extra_model_fields_and_downgrades_missing_evidence():
 def test_gemini_is_not_enabled_implicitly_from_environment(monkeypatch):
     monkeypatch.setenv("GEMINI_API_KEY", "test-key")
     assert GeminiLabelExtractor().api_key == ""
+
+
+def test_step3_unsupported_clear_read_downgraded_to_uncertain():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "productName": {
+            "value": "LittleNourish Fruit Puree",
+            "evidence": "Manufactured in Pune Maharashtra",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["productName"].read_status == "uncertain"
+
+
+def test_step3_conflicting_numerals_in_age_marking_downgraded():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "ageMarking": {
+            "value": "From 1 Month",
+            "evidence": "Stage 1: From 6 to 24 Months",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["ageMarking"].read_status == "uncertain"
+
+
+def test_step3_truncated_ingredients_downgraded_to_uncertain():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "ingredients": {
+            "value": "Organic rice flour, sprouted dal flour, milk solids,",
+            "evidence": "Ingredients: Organic rice flour, sprouted dal flour, milk solids,",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["ingredients"].read_status == "uncertain"
+
+
+def test_step3_allergen_inferred_from_ingredients_downgraded():
+    extractor = GeminiLabelExtractor()
+    inferred = extractor._normalize({
+        "allergenDeclaration": {
+            "value": "Contains Milk",
+            "evidence": "Ingredients: Skimmed milk solids (15%), Rice flour",
+            "readStatus": "clear",
+        }
+    })
+    assert inferred["allergenDeclaration"].read_status == "uncertain"
+
+    explicit = extractor._normalize({
+        "allergenDeclaration": {
+            "value": "Contains Milk",
+            "evidence": "Allergen Declaration: Contains Milk.",
+            "readStatus": "clear",
+        }
+    })
+    assert explicit["allergenDeclaration"].read_status == "clear"

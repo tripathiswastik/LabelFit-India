@@ -151,24 +151,75 @@ function parseImagePayload(payload) {
   return { bytes, mimeType: image.mimeType };
 }
 
+const ALLERGEN_DECLARATION_PATTERN = /\b(contains?|allergen|allergens?|may\s+contain|traces?|free\s+from|facility|equipment)\b/i;
+const TRUNCATION_SUFFIX_PATTERN = /(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$/i;
+
 function cleanText(value, maxLength = MAX_FIELD_CHARS) {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
 }
 
-function normalizeField(raw) {
+function extractSignificantTokens(text) {
+  if (!text) return new Set();
+  const tokens = text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+  const stopWords = new Set(['the', 'and', 'for', 'with', 'from', 'this', 'that', 'per', 'net', 'pkg']);
+  return new Set(tokens.filter(t => t.length >= 2 && !stopWords.has(t)));
+}
+
+function hasTokenSupport(value, evidence) {
+  if (!value || !evidence) return false;
+  const valTokens = extractSignificantTokens(value);
+  const evTokens = extractSignificantTokens(evidence);
+  if (valTokens.size === 0 || evTokens.size === 0) return true;
+  for (const token of valTokens) {
+    if (evTokens.has(token)) return true;
+  }
+  return false;
+}
+
+function hasConflictingNumbers(value, evidence) {
+  const valDigits = (value.match(/\b\d+\b/g) || []);
+  const evDigits = new Set(evidence.match(/\b\d+\b/g) || []);
+  if (valDigits.length === 0 || evDigits.size === 0) return false;
+  return !valDigits.some(d => evDigits.has(d));
+}
+
+function normalizeField(raw, fieldName = '') {
   const value = cleanText(raw?.value);
   const evidence = cleanText(raw?.evidence, 600);
   const statedStatus = ['clear', 'uncertain', 'not_visible'].includes(raw?.readStatus) ? raw.readStatus : 'uncertain';
 
   if (!value && !evidence) return { value: '', evidence: '', readStatus: 'not_visible' };
   if (!value || !evidence || statedStatus !== 'clear') return { value, evidence, readStatus: 'uncertain' };
+
+  // Step 3 Guard 1: Unsupported "clear" reads (zero token overlap between value and evidence)
+  if (!hasTokenSupport(value, evidence)) {
+    return { value, evidence, readStatus: 'uncertain' };
+  }
+
+  // Step 3 Guard 2: Numeral conflict in key fields (e.g. ageMarking or preparation)
+  if ((fieldName === 'ageMarking' || fieldName === 'preparationAndStorage') && hasConflictingNumbers(value, evidence)) {
+    return { value, evidence, readStatus: 'uncertain' };
+  }
+
+  // Step 3 Guard 3: Ingredient or prep truncation (e.g. cut off at panel boundary)
+  if ((fieldName === 'ingredients' || fieldName === 'preparationAndStorage') && TRUNCATION_SUFFIX_PATTERN.test(value)) {
+    return { value, evidence, readStatus: 'uncertain' };
+  }
+
+  // Step 3 Guard 4: Allergen declaration inferred from ingredients without explicit declaration marker
+  if (fieldName === 'allergenDeclaration') {
+    if (!ALLERGEN_DECLARATION_PATTERN.test(evidence)) {
+      return { value, evidence, readStatus: 'uncertain' };
+    }
+  }
+
   return { value, evidence, readStatus: 'clear' };
 }
 
 function normalizeExtraction(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new HttpError(502, 'Gemini returned an unexpected result. Try another clear label photo.');
   const result = {};
-  for (const name of FIELD_NAMES) result[name] = normalizeField(raw[name]);
+  for (const name of FIELD_NAMES) result[name] = normalizeField(raw[name], name);
   return result;
 }
 
@@ -328,6 +379,10 @@ if (require.main === module) start();
 
 module.exports = {
   MAX_IMAGE_BYTES,
+  ALLERGEN_DECLARATION_PATTERN,
+  TRUNCATION_SUFFIX_PATTERN,
+  hasTokenSupport,
+  hasConflictingNumbers,
   createRateLimiter,
   createServer,
   extractOutputText,
