@@ -104,3 +104,4 @@ def test_validator_missing_allergen_panel_with_allergenic_ingredient():
     gap_flags = [f for f in flags if f.flag_type == "gap"]
     assert len(gap_flags) >= 1
     assert "wheat" in gap_flags[0].message or "milk" in gap_flags[0].message
+

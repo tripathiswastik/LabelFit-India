@@ -42,3 +42,4 @@ def test_inspection_report_contains_non_prescriptive_disclaimer():
     assert "feeding instructions" in report.disclaimer
     assert not hasattr(report, "safety_score")
     assert not hasattr(report, "health_verdict")
+

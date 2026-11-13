@@ -201,3 +201,4 @@ class GeminiLabelExtractor:
         )
 
         return age_info, ingredients, allergens, preparation
+

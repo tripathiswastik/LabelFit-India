@@ -33,3 +33,4 @@ def test_extractor_offline_puree_gap_detection():
     assert ingredients.extracted_value is not None
     # Puree has no preparation steps
     assert len(prep.steps) == 0
+

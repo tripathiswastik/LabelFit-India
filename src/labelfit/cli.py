@@ -4,7 +4,14 @@ Inspects baby food package label text and prints structured evidence and gap aud
 """
 
 import sys
+from pathlib import Path
 import argparse
+
+# Ensure package directory is on sys.path for direct CLI execution
+_SRC_ROOT = str(Path(__file__).resolve().parent.parent)
+if _SRC_ROOT not in sys.path:
+    sys.path.insert(0, _SRC_ROOT)
+
 from labelfit.extractor import GeminiLabelExtractor
 from labelfit.validator import DeterministicValidator
 from labelfit.samples import SAMPLE_CEREAL_6M, SAMPLE_PUREE_GAP_CASE, SAMPLE_INFANT_FORMULA_OUT_OF_SCOPE
@@ -115,3 +122,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

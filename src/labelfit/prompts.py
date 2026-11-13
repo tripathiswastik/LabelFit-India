@@ -65,3 +65,4 @@ Analyze the provided package image and return a JSON object with this exact stru
   "visible_panel_notes": "..."
 }
 """
+

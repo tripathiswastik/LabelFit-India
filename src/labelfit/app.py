@@ -3,8 +3,18 @@ Streamlit Web UI Prototype for LabelFit India.
 Interactive demonstration of baby food label inspection, source-grounding, and uncertainty auditing.
 """
 
+import sys
+from pathlib import Path
+from typing import Optional
+
+# Ensure package directory is on sys.path for direct streamlit execution
+_SRC_ROOT = str(Path(__file__).resolve().parent.parent)
+if _SRC_ROOT not in sys.path:
+    sys.path.insert(0, _SRC_ROOT)
+
 import streamlit as st
 import json
+from labelfit.models import LabelInspectionReport
 from labelfit.extractor import GeminiLabelExtractor
 from labelfit.validator import DeterministicValidator
 from labelfit.samples import SAMPLE_CEREAL_6M, SAMPLE_PUREE_GAP_CASE, SAMPLE_INFANT_FORMULA_OUT_OF_SCOPE
@@ -41,6 +51,7 @@ else:
     sample_id = "custom_label_input.txt"
     raw_input_text = st.sidebar.text_area("Paste visible package label text:", height=250)
 
+report: Optional[LabelInspectionReport] = None
 col1, col2 = st.columns([1, 1])
 
 with col1:
@@ -115,7 +126,7 @@ with col2:
 
 st.markdown("---")
 st.markdown("### 📋 Verification & Uncertainty Audit Log")
-if 'report' in locals():
+if report is not None:
     for f in report.flags:
         if f.flag_type == "verified":
             st.success(f"**[VERIFIED] {f.field_name.upper()}**: {f.message}")
@@ -127,4 +138,6 @@ if 'report' in locals():
             st.info(f"**[{f.flag_type.upper()}] {f.field_name.upper()}**: {f.message}")
 
 st.markdown("---")
-st.caption(f"**Notice:** {report.disclaimer if 'report' in locals() else 'Label information tool only; not medical, safety, or feeding advice.'}")
+disclaimer_msg = report.disclaimer if report is not None else "Label information tool only; not medical, safety, or feeding advice."
+st.caption(f"**Notice:** {disclaimer_msg}")
+
