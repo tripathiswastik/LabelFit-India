@@ -15,6 +15,20 @@ npm start
 
 Open <http://127.0.0.1:4173>. The API key remains in the local server process. Do not put it in browser code, commit it, or share it. Without a key the page loads, but analysis is unavailable. Set `GEMINI_MODEL` to a supported Gemini model ID to change the default `gemini-3.8-flash`.
 
+## Experimental Python text scratchpad
+
+This optional tool accepts pasted label text only; it does not read package photos and is not part of the main web flow. It defaults to local heading-based extraction. The Streamlit screen sends text to Gemini only after the user selects that option and confirms the data notice. Unpaid Gemini API content may be used to improve Google services and may be reviewed by people; `store: false` is not a zero-retention promise. Do not paste child, personal, confidential, or sensitive information. Its fictional samples are not real products or labels.
+
+Requires Python 3.10 or newer:
+
+```powershell
+python -m pip install -r requirements.txt
+python src/labelfit/cli.py --sample cereal
+python -m streamlit run src/labelfit/app.py
+```
+
+The Python `source_match` indicator only checks whether candidate text appears in the text supplied to the tool. It does not validate a package, photo, or model accuracy. It makes no age, allergy, safety, health, or preparation recommendation.
+
 ## Image and provider handling
 
 - The browser creates a temporary preview and sends the selected image to this server only after the user selects **Read this label** and checks the package-only confirmation.
@@ -32,12 +46,17 @@ Open <http://127.0.0.1:4173>. The API key remains in the local server process. D
 - No barcode lookup, Open Food Facts integration, local OCR comparison, translation, product explanation, safety scoring, or persistent storage is implemented.
 - Cloud Run serves the page with analysis disabled. Do not enable public analysis: there is no account system, durable abuse prevention, or spend cap. A real pilot needs authenticated access, server-side quotas/billing alerts, a privacy review, and a documented deletion/retention approach first.
 
+## Buildathon materials
+
+The repository PDF is the current seven-slide pitch deck (under 5 MB). It describes the local prototype, the exploratory 50-SKU validation milestone, and the unvalidated B2B label-digitization hypothesis. [Spoken pitch and judge Q&A notes](docs/PITCH_NOTES.md) are in the docs folder.
+
 ## Development checks
 
 ```powershell
 npm test
 node --check server.js
 node --check app.js
+python -m pytest tests/
 ```
 
 See [the research and launch-gap review](docs/RESEARCH_AND_GAPS.md) and [the validation protocol](docs/VALIDATION_PLAN.md) before testing with caregivers or making public accuracy claims.

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "labelfit-india"
+version = "0.1.0"
+description = "Experimental text-only transcription of packaged food label fields"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Swastik Tripathi" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = ["requests>=2.32,<3"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10",
+    "streamlit>=1.45,<2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+

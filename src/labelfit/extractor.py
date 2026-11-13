@@ -1,0 +1,160 @@
+"""Experimental text-only extractor. The Node app remains the photo prototype."""
+
+import json
+import os
+from typing import Dict, Optional
+
+import requests
+
+from labelfit.models import FIELD_NAMES, ExtractedField, LabelInspectionReport
+from labelfit.prompts import GEMINI_EXTRACTION_SYSTEM_PROMPT, response_schema
+
+
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+API_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
+MAX_TEXT_CHARS = 30_000
+MAX_FIELD_CHARS = 8_000
+VALID_STATUSES = {"clear", "uncertain", "not_visible"}
+
+
+class GeminiLabelExtractor:
+    """Extract literal candidate fields from text, offline by default."""
+
+    def __init__(self, api_key: Optional[str] = None, model: str = MODEL):
+        # Never infer consent to send data from an environment variable.
+        self.api_key = api_key or ""
+        self.model = model
+
+    def extract_from_text(self, raw_label_text: str) -> Dict[str, ExtractedField]:
+        if not isinstance(raw_label_text, str) or not raw_label_text.strip():
+            raise ValueError("Enter package-label text first.")
+        if len(raw_label_text) > MAX_TEXT_CHARS:
+            raise ValueError("Text is too long for this prototype (maximum 30,000 characters).")
+
+        if self.api_key:
+            return self._gemini_extract(raw_label_text)
+        return self._offline_extract(raw_label_text)
+
+    def _gemini_extract(self, raw_text: str) -> Dict[str, ExtractedField]:
+        request = {
+            "model": self.model,
+            "store": False,
+            "system_instruction": GEMINI_EXTRACTION_SYSTEM_PROMPT,
+            "input": [
+                {"type": "text", "text": GEMINI_JSON_SCHEMA_INSTRUCTION},
+                {"type": "text", "text": "Untrusted package-label text follows:\n" + raw_text},
+            ],
+            "response_format": {
+                "type": "text",
+                "mime_type": "application/json",
+                "schema": response_schema(),
+            },
+            "generation_config": {"max_output_tokens": 1800},
+        }
+        try:
+            response = requests.post(
+                API_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": self.api_key,
+                    "Api-Revision": "2026-05-20",
+                },
+                json=request,
+                timeout=(5, 30),
+            )
+            response.raise_for_status()
+            interaction = response.json()
+            output_text = ""
+            if interaction.get("status") == "completed":
+                for step in reversed(interaction.get("steps", [])):
+                    if step.get("type") != "model_output":
+                        continue
+                    for part in step.get("content", []):
+                        if part.get("type") == "text" and isinstance(part.get("text"), str):
+                            output_text = part["text"]
+                            break
+                    if output_text:
+                        break
+            if not output_text or len(output_text) > 24_000:
+                raise ValueError
+            return self._normalize(json.loads(output_text))
+        except Exception as exc:
+            # Avoid echoing request URLs, provider payloads, or user text in the UI.
+            raise RuntimeError("Gemini could not return a usable transcription. Check the server and try again.") from exc
+
+    def _offline_extract(self, raw_text: str) -> Dict[str, ExtractedField]:
+        """Extract exact line candidates by headings; never infer label meaning."""
+        lines = [line.strip() for line in raw_text.splitlines() if line.strip()]
+        candidates = {name: "" for name in FIELD_NAMES}
+        product_lines = [line for line in lines if not line.lower().startswith("fictional sample")]
+        if product_lines:
+            candidates["productName"] = product_lines[0]
+
+        keyword_groups = {
+            "ageMarking": ("month", "months", "mths", "stage "),
+            "ingredients": ("ingredient",),
+            "allergenDeclaration": ("allergen", "contains:", "may contain"),
+            "nutritionPanel": ("nutrition", "nutritional information"),
+            "preparationAndStorage": ("preparation", "directions", "storage", "how to prepare"),
+        }
+        for line in lines:
+            lowered = line.lower()
+            for field_name, keywords in keyword_groups.items():
+                if field_name == "allergenDeclaration" and lowered.rstrip().endswith(":"):
+                    continue
+                if not candidates[field_name] and any(word in lowered for word in keywords):
+                    candidates[field_name] = line
+
+        result = {}
+        for name, value in candidates.items():
+            result[name] = ExtractedField(
+                field_name=name,
+                value=value[:MAX_FIELD_CHARS],
+                evidence=value[:300],
+                read_status="uncertain" if value else "not_visible",
+            )
+        return result
+
+    def _normalize(self, raw: object) -> Dict[str, ExtractedField]:
+        if not isinstance(raw, dict):
+            raise RuntimeError("Gemini returned an unexpected transcription format.")
+        result = {}
+        for name in FIELD_NAMES:
+            item = raw.get(name)
+            if not isinstance(item, dict):
+                item = {}
+            value = item.get("value") if isinstance(item.get("value"), str) else ""
+            evidence = item.get("evidence") if isinstance(item.get("evidence"), str) else ""
+            status = item.get("readStatus")
+            if status not in VALID_STATUSES:
+                status = "uncertain"
+            value = value.strip()[:MAX_FIELD_CHARS]
+            evidence = evidence.strip()[:300]
+            if not value and not evidence:
+                status = "not_visible"
+            elif not value or not evidence or status != "clear":
+                status = "uncertain"
+            result[name] = ExtractedField(name, value, evidence, status)
+        return result
+
+    def parse_to_report(self, raw_extracted: Dict[str, ExtractedField], raw_text: str) -> LabelInspectionReport:
+        fields = {}
+        normalized_raw = " ".join(raw_text.split()).casefold()
+        for name in FIELD_NAMES:
+            item = raw_extracted.get(name, ExtractedField(name))
+            normalized_value = " ".join(item.value.split()).casefold()
+            normalized_evidence = " ".join(item.evidence.split()).casefold()
+            match = bool(
+                normalized_value
+                and normalized_evidence
+                and normalized_value in normalized_raw
+                and normalized_evidence in normalized_raw
+            )
+            fields[name] = ExtractedField(
+                field_name=name,
+                value=item.value,
+                evidence=item.evidence,
+                read_status=item.read_status if match else ("uncertain" if item.value or item.evidence else "not_visible"),
+                source_match=match,
+            )
+        return LabelInspectionReport(fields=fields)

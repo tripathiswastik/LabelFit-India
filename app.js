@@ -128,11 +128,13 @@ function renderResult(result, model) {
 function chooseFile(file) {
   if (!file) return;
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > MAX_IMAGE_BYTES) {
+    resetPhoto();
     showError('Choose a JPG, PNG or WebP label photo smaller than 7 MB.');
     return;
   }
 
   if (previewUrl) URL.revokeObjectURL(previewUrl);
+  photoConfirmation.checked = false;
   selectedFile = file;
   previewUrl = URL.createObjectURL(file);
   preview.src = previewUrl;
@@ -152,6 +154,7 @@ function resetPhoto() {
   preview.removeAttribute('src');
   previewWrap.hidden = true;
   uploadEmpty.hidden = false;
+  photoConfirmation.checked = false;
   resultsContent.hidden = true;
   resultsEmpty.hidden = false;
   updateAnalyzeButton();
@@ -189,6 +192,7 @@ dropzone.addEventListener('drop', event => {
 
 analyzeButton.addEventListener('click', async () => {
   if (!selectedFile || !analysisReady || !photoConfirmation.checked) return;
+  const analyzingFile = selectedFile;
   analysisInProgress = true;
   updateAnalyzeButton();
   resultsEmpty.hidden = true;
@@ -202,19 +206,22 @@ analyzeButton.addEventListener('click', async () => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(',')[1]);
       reader.onerror = () => reject(new Error('Could not read that file. Choose the photo again.'));
-      reader.readAsDataURL(selectedFile);
+      reader.readAsDataURL(analyzingFile);
     });
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: { data: imageData, mimeType: selectedFile.type } }),
+      body: JSON.stringify({ image: { data: imageData, mimeType: analyzingFile.type } }),
       signal: controller.signal,
     });
     const payload = await response.json();
+    if (selectedFile !== analyzingFile) return;
     if (!response.ok) throw new Error(payload.error || 'Could not read this photo.');
     renderResult(payload.result, payload.model);
   } catch (error) {
-    showError(error.name === 'AbortError' ? 'This scan timed out. Try a smaller, clearer photo.' : (error.message || 'Could not process this photo.'));
+    if (selectedFile === analyzingFile) {
+      showError(error.name === 'AbortError' ? 'This scan timed out. Try a smaller, clearer photo.' : (error.message || 'Could not process this photo.'));
+    }
   } finally {
     clearTimeout(timeout);
     loading.hidden = true;
