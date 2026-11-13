@@ -39,3 +39,4 @@ Synthetic fixtures are located in `test/fixtures/` and generated via `scripts/ge
 1. **Safety & Spend Boundary**: Cloud Run deployment safety is preserved: without authentication and rate-limiting infrastructure in place, the spend lock correctly blocks model calls in production containers.
 2. **Client Consent Hygiene**: Resetting the confirmation checkbox on image replacement prevents accidental multi-scan consent carryover when switching packaging photos.
 3. **Evidence Grounding**: Normalization logic strictly downgrades candidate fields lacking matching evidence snippets to `uncertain` or `not_visible`.
+
