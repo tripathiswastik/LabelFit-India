@@ -5,10 +5,14 @@ import os
 import re
 from typing import Dict, Optional
 
-import requests
+import requests  # type: ignore
 
 from labelfit.models import FIELD_NAMES, ExtractedField, LabelInspectionReport
-from labelfit.prompts import GEMINI_EXTRACTION_SYSTEM_PROMPT, response_schema
+from labelfit.prompts import (
+    GEMINI_EXTRACTION_SYSTEM_PROMPT,
+    GEMINI_JSON_SCHEMA_INSTRUCTION,
+    response_schema,
+)
 
 
 MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
