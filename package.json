@@ -5,7 +5,9 @@
   "description": "A prototype for explaining visible label information on packaged complementary foods.",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test"
+    "test": "node --test",
+    "prove:scan": "node scripts/prove_local_workflow_scan.js",
+    "benchmark:off": "python scripts/fetch_openfoodfacts_benchmark.py"
   },
   "engines": { "node": ">=20" }
 }
