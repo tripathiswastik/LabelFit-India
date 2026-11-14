@@ -51,7 +51,7 @@
 | Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
 |---|---|---|---|---|---|
 | **productName** | `clear` | `clear` | Tomato Ketchup | `Tomato Ketchup` | ✅ Clear Match |
-| **ageMarking** | `clear` | `clear` | 8 year old child | `8 year old child` | ✅ Clear Match |
+| **ageMarking** | `clear` | `uncertain` | 8 year old child | `8 year old child` | ⚠️ Downgraded by Normalizer (RDA Footnote) |
 | **ingredients** | `clear` | `clear` | Water, Tomato paste (24.5%), Sugar, Iodized salt, Thickeners... | `Water, Tomato paste (24.5%), Sugar, Iodi...` | ✅ Clear Match |
 | **allergenDeclaration** | `clear` | `clear` | Allergen Note: May contain Wheat, Milk, Mustard and Soy. | `Allergen Note: May contain Wheat, Milk, ...` | ✅ Clear Match |
 | **nutritionPanel** | `clear` | `uncertain` | NUTRITIONAL INFORMATION If a serve is 1 Tbsp (9 g) NUTRITION... | `NUTRITIONAL INFORMATION If a serve is 1 ...` | ⚠️ Downgraded by Normalizer |
