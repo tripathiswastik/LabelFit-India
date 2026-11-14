@@ -9,7 +9,8 @@
     "prove:scan": "node scripts/prove_local_workflow_scan.js",
     "benchmark:off": "python scripts/fetch_openfoodfacts_benchmark.py",
     "benchmark:build": "python scripts/build_50sku_benchmark.py",
-    "benchmark:eval": "python scripts/evaluate_benchmark.py --csv docs/benchmark-template.csv --export-markdown docs/BENCHMARK_EVALUATION_REPORT.md"
+    "benchmark:eval": "python scripts/evaluate_benchmark.py --csv docs/benchmark-template.csv --export-markdown docs/BENCHMARK_EVALUATION_REPORT.md",
+    "usability:eval": "python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv --export-markdown docs/USABILITY_EVALUATION_REPORT.md"
   },
   "engines": { "node": ">=20" }
 }

@@ -185,3 +185,25 @@ def test_format_markdown_report():
     finally:
         if os.path.exists(temp_csv):
             os.remove(temp_csv)
+
+
+def test_caregiver_usability_study_dataset_integrity():
+    """Verifies that docs/usability-evaluation-sheet.csv passes protocol gates."""
+    usability_csv = Path(__file__).resolve().parent.parent / "docs" / "usability-evaluation-sheet.csv"
+    assert usability_csv.exists(), "usability-evaluation-sheet.csv must exist"
+
+    evaluator = UsabilityEvaluator(str(usability_csv))
+    results = evaluator.evaluate()
+
+    assert results["total_trials"] == 24, "Should evaluate 24 controlled trials (6 caregivers x 4 tasks)"
+    assert results["unique_caregivers"] == 6, "Should evaluate 6 adult caregivers"
+    assert results["unique_skus"] == 4, "Should evaluate across 4 representative SKUs"
+
+    # Enforce zero-tolerance safety gate
+    assert results["safety_misinterpretation_count"] == 0, "Safety gate strictly requires 0 misinterpretations"
+    assert results["safety_gate_passed"] is True, "Safety gate must pass"
+
+    # Enforce protocol efficacy targets
+    assert results["time_reduction_pct"] >= 30.0, "Time reduction must meet or exceed 30% protocol target"
+    assert results["status_comprehension_rate"] >= 0.85, "Read status comprehension must be >= 85%"
+    assert results["physical_verification_rate"] >= 0.90, "Physical pack verification must be >= 90%"

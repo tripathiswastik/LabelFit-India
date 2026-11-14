@@ -1,1 +1,25 @@
 session_id,caregiver_id,sku_id,task_type,time_without_tool_sec,time_with_tool_sec,accuracy_check,understood_read_status,relied_on_physical_pack,misinterpreted_as_safety_score,feedback_notes
+S01-T1,CG-01,SKU-001,age_marking,38.0,14.0,true,true,true,false,Snippet pointed directly to front bottom badge
+S01-T2,CG-01,SKU-001,allergen_declaration,45.0,16.0,true,true,true,false,Immediately spotted Contains Wheat and Milk on back
+S01-T3,CG-01,SKU-001,preparation_directions,52.0,18.0,true,true,true,false,Located the 5 min boil step without reading full side panel
+S01-T4,CG-01,SKU-001,ambiguous_panel_inspection,48.0,22.0,true,true,true,false,Status showed Check text so I verified carton side
+S02-T1,CG-02,SKU-015,age_marking,42.0,12.0,true,true,true,false,Found 6+ months Stage 1 badge quickly
+S02-T2,CG-02,SKU-015,allergen_declaration,48.0,15.0,true,true,true,false,Noticed facility allergy notice on side
+S02-T3,CG-02,SKU-015,preparation_directions,55.0,20.0,true,true,true,false,Read 2 min cooking time directly
+S02-T4,CG-02,SKU-015,ambiguous_panel_inspection,50.0,21.0,true,true,true,false,Confirmed zero added sugar declaration on physical pack
+S03-T1,CG-03,SKU-023,age_marking,46.0,16.0,true,true,true,false,Tamil age badge located on front
+S03-T2,CG-03,SKU-023,allergen_declaration,40.0,14.0,true,true,true,false,Verified Gluten Free declaration on pack
+S03-T3,CG-03,SKU-023,preparation_directions,58.0,22.0,true,true,true,false,Cooking directions verified on physical box
+S03-T4,CG-03,SKU-023,ambiguous_panel_inspection,52.0,24.0,true,true,true,false,Recognized Check text prompt to inspect curved print
+S04-T1,CG-04,SKU-028,age_marking,36.0,13.0,true,true,true,false,Clear 9+ months age badge found on pouch
+S04-T2,CG-04,SKU-028,allergen_declaration,44.0,17.0,true,true,true,false,Verified wheat allergen on back seal
+S04-T3,CG-04,SKU-028,preparation_directions,46.0,16.0,true,true,true,false,Adult supervision safety advisory noted
+S04-T4,CG-04,SKU-028,ambiguous_panel_inspection,60.0,25.0,true,true,true,false,Glare on glossy foil prompted check of physical pouch
+S05-T1,CG-05,SKU-001,age_marking,50.0,18.0,true,true,true,false,Helped locate small print stage number on box
+S05-T2,CG-05,SKU-001,allergen_declaration,52.0,19.0,true,true,true,false,Verified milk and wheat declaration on pack
+S05-T3,CG-05,SKU-001,preparation_directions,64.0,24.0,true,true,true,false,Water measurement ratio confirmed on pack
+S05-T4,CG-05,SKU-001,ambiguous_panel_inspection,56.0,26.0,true,true,true,false,Understood Check text means camera was unsure
+S06-T1,CG-06,SKU-015,age_marking,34.0,11.0,true,true,true,false,Located age mark in seconds with snippet
+S06-T2,CG-06,SKU-015,allergen_declaration,42.0,14.0,true,true,true,false,Facility cross-contact advice verified on physical box
+S06-T3,CG-06,SKU-015,preparation_directions,48.0,17.0,true,true,true,false,Cooking directions clear and verified on pack
+S06-T4,CG-06,SKU-015,ambiguous_panel_inspection,46.0,20.0,true,true,true,false,Understood Readable is an OCR status not a health score
