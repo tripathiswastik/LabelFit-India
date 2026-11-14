@@ -2,7 +2,7 @@
 
 ## Current project status
 
-LabelFit India is an idea-stage project by the two-member LABEL CHECK team, with a local photo-upload prototype and a Gemini API request path. The team is Swastik Tripathi and Somya Tripathi. The repository has automated checks for request handling, response normalization, synthetic image intake, and the disabled Cloud Run analysis path. These are software checks; they do not establish that Gemini reads package text accurately or that caregivers benefit from the interface.
+LabelFit India is an idea-stage project by the two-member LABEL CHECK team, with a local photo-upload prototype and a Gemini API request path. The team is Swastik Tripathi and Saumya Tripathi. The repository has automated checks for request handling, response normalization, synthetic image intake, and the disabled Cloud Run analysis path. These are software checks; they do not establish that Gemini reads package text accurately or that caregivers benefit from the interface.
 
 No live Gemini scan output, completed physical-package accuracy benchmark, documented caregiver study, verified customer interviews, revenue, or traction is available in the repository. Treat the usability CSV and B2B evidence rows as unverified until the founder can provide source records. Do not present their numbers, quotes, or interest signals as results.
 
@@ -27,7 +27,7 @@ LabelFit India is an early photo-based transcription prototype for packaged comp
 
 ## Slide-by-slide speaker notes
 
-1. **Title:** LABEL CHECK is a two-member team building LabelFit India, a photo-first label transcription prototype. The team members are Swastik Tripathi and Somya Tripathi.
+1. **Title:** LABEL CHECK is a two-member team building LabelFit India, a photo-first label transcription prototype. The team members are Swastik Tripathi and Saumya Tripathi.
 2. **Problem:** Caregivers can struggle to quickly locate exact wording across dense package panels. The scale and importance of the problem in India still need caregiver validation.
 3. **Solution:** Photograph one panel, extract candidate fields, review the snippet and status, then compare against the physical package. The product displays package text; it does not interpret health or allergy risk or direct feeding decisions.
 4. **Architecture:** Package photo, Gemini API, Node server checks, review page. A snippet match does not prove the text is correct.

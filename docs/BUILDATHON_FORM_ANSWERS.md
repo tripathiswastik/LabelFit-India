@@ -64,10 +64,10 @@ Choose **FoodTech** or **Food & Beverage** if listed. If the form uses technolog
 
 **Founders/founding members, roles, and LinkedIn URLs**
 - **Swastik Tripathi** - Founder / Project Lead; leads product and prototype development. LinkedIn: https://www.linkedin.com/in/swastik-tripathi-52333511a/ . GitHub: https://github.com/tripathiswastik/ .
-- **Somya Tripathi** - Team Member and IT Operations Engineer at Pitney Bowes, with 4+ years of experience. LinkedIn URL not provided; add it if the form requires it.
+- **Saumya Tripathi** - Team Member and IT Operations Engineer at Pitney Bowes, with 4+ years of experience. LinkedIn URL not provided; add it if the form requires it.
 
 **Brief founder/team bio, background, experience, and complementary skills**
-Swastik Tripathi is an Oracle Specialist and AI Systems Engineer with 3+ years of enterprise experience in supply-chain planning, Oracle ERP systems, PL/SQL and ETL automation, and applied AI projects. He leads LabelFit India's product and prototype development. Somya Tripathi is an IT Operations Engineer at Pitney Bowes with 4+ years of experience supporting business-critical applications in 24/7 environments. Her work includes AWS, Unix, Wintel, MySQL and MS SQL, production support, vulnerability remediation, deployments, AWS migration, and Sumo Logic monitoring. Somya brings hands-on operations and troubleshooting experience, complementing Swastik's product and prototype work. LABEL CHECK is at an early prototype stage, with no measured product accuracy, customer traction, or revenue yet.
+Swastik Tripathi is an Oracle Specialist and AI Systems Engineer with 3+ years of enterprise experience in supply-chain planning, Oracle ERP systems, PL/SQL and ETL automation, and applied AI projects. He leads LabelFit India's product and prototype development. Saumya Tripathi is an IT Operations Engineer at Pitney Bowes with 4+ years of experience supporting business-critical applications in 24/7 environments. Her work includes AWS, Unix, Wintel, MySQL and MS SQL, production support, vulnerability remediation, deployments, AWS migration, and Sumo Logic monitoring. Saumya brings hands-on operations and troubleshooting experience, complementing Swastik's product and prototype work. LABEL CHECK is at an early prototype stage, with no measured product accuracy, customer traction, or revenue yet.
 
 **How long have you been working as a team?**
 Select **< 12 months** if that matches when LABEL CHECK formed. Confirm the start date before submitting.
