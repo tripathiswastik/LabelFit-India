@@ -326,7 +326,13 @@ function createRateLimiter({ limit = 10, intervalMs = 60_000, now = Date.now } =
   };
 }
 
-function createServer({ apiKey = process.env.GEMINI_API_KEY, model = MODEL, fetchImpl = globalThis.fetch, now = Date.now } = {}) {
+function createServer({
+  apiKey = process.env.GEMINI_API_KEY,
+  model = MODEL,
+  fetchImpl = globalThis.fetch,
+  now = Date.now,
+  analysisEnabled = ANALYSIS_ENABLED,
+} = {}) {
   const allowRequest = createRateLimiter({ limit: 10, intervalMs: 60_000, now });
   let activeAnalyses = 0;
 
@@ -339,13 +345,13 @@ function createServer({ apiKey = process.env.GEMINI_API_KEY, model = MODEL, fetc
     }
 
     if (req.method === 'GET' && url.pathname === '/api/status') {
-      const configured = Boolean(apiKey) && ANALYSIS_ENABLED;
+      const configured = Boolean(apiKey) && analysisEnabled;
       return send(res, 200, { configured, model: configured ? model : null });
     }
 
     if (req.method === 'POST' && url.pathname === '/api/analyze') {
       if (!isAllowedOrigin(req)) return send(res, 403, { error: 'This request did not come from the LabelFit page.' });
-      if (!ANALYSIS_ENABLED) return send(res, 503, { error: 'Analysis is disabled on this Cloud Run prototype.' });
+      if (!analysisEnabled) return send(res, 503, { error: 'Analysis is disabled on this Cloud Run prototype.' });
       if (!apiKey) return send(res, 503, { error: 'Gemini is not configured. Set GEMINI_API_KEY on the server.' });
 
       const clientAddress = req.socket.remoteAddress || 'local';
@@ -470,4 +476,7 @@ module.exports = {
   normalizeExtraction,
   normalizeField,
   parseImagePayload,
+  send,
+  IS_CLOUD_RUN,
+  ANALYSIS_ENABLED,
 };

@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
   createRateLimiter,
+  createServer,
   extractOutputText,
   getStaticAsset,
   isAllowedOrigin,
@@ -167,4 +168,61 @@ test('Step 3: Devanagari numerals are normalized and evaluated in nutrition chec
     readStatus: 'clear'
   }, 'nutritionPanel');
   assert.equal(result.readStatus, 'uncertain');
+});
+
+// Step 5: Production Security & Cloud Run Spend Locks Tests
+
+test('Step 5: Cloud Run status endpoint reports unconfigured when analysis is disabled', async () => {
+  const server = createServer({ apiKey: 'mock-key', analysisEnabled: false });
+  await new Promise(resolve => server.listen(0, resolve));
+  const port = server.address().port;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:${port}/api/status`);
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.configured, false);
+    assert.equal(data.model, null);
+  } finally {
+    server.close();
+  }
+});
+
+test('Step 5: Cloud Run analysis guard hard-disables analysis and returns 503', async () => {
+  const server = createServer({ apiKey: 'mock-key', analysisEnabled: false });
+  await new Promise(resolve => server.listen(0, resolve));
+  const port = server.address().port;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:${port}/api/analyze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ image: { data: 'dummy', mimeType: 'image/png' } })
+    });
+    assert.equal(res.status, 503);
+    const data = await res.json();
+    assert.match(data.error, /disabled on this Cloud Run/i);
+  } finally {
+    server.close();
+  }
+});
+
+test('Step 5: Strict security headers are attached on all responses', async () => {
+  const server = createServer({ apiKey: '', analysisEnabled: false });
+  await new Promise(resolve => server.listen(0, resolve));
+  const port = server.address().port;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:${port}/api/status`);
+    assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
+    assert.equal(res.headers.get('x-frame-options'), 'DENY');
+    assert.equal(res.headers.get('referrer-policy'), 'no-referrer');
+    assert.equal(res.headers.get('cache-control'), 'no-store');
+    assert.ok(res.headers.get('content-security-policy').includes("default-src 'self'"));
+    assert.ok(res.headers.get('permissions-policy').includes('camera=()'));
+  } finally {
+    server.close();
+  }
 });
