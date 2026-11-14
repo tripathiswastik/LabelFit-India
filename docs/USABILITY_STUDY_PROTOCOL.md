@@ -75,4 +75,4 @@ Each session consists of two alternating blocks: **Baseline (Physical Pack Alone
 
 ## 6. Data Collection
 
-All participant trials are recorded in [docs/usability-evaluation-sheet.csv](file:///D:/ag-ai/LabelFit%20India/docs/usability-evaluation-sheet.csv) and analyzed automatically using `python scripts/evaluate_usability.py`.
+If the study is conducted, record anonymized, consented trials in [docs/usability-evaluation-sheet.csv](usability-evaluation-sheet.csv) and analyze the rows using `python scripts/evaluate_usability.py`. The current CSV is an empty template; the protocol itself is not evidence that sessions took place.

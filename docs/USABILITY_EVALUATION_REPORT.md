@@ -1,29 +1,9 @@
 # LabelFit India: Caregiver Usability Evaluation Report
 
-**Safety Gate Status**: ✅ PASSED  
-**Total Trials**: 24 across 6 caregivers and 4 SKUs  
+**Status: Not conducted / no verified participant data available.**
 
-## 1. Core Success Criteria vs Protocol Targets
+The repository previously included sample-looking trial rows and a report that presented them as observations from six caregivers. No source records establish that these were real, consented sessions, so those rows and derived metrics have been removed. The CSV is now an empty data-entry template. There is no measured task-time change, read-status comprehension result, package-verification rate, or safety-misinterpretation result.
 
-| Metric | Measured Result | Protocol Target | Assessment |
-|---|---|---|---|
-| **Safety Misinterpretation Rate** | **0.0%** (0 incidents) | **0.0%** (Zero Tolerance) | ✅ PASSED |
-| **Time to Locate Information** | **20.2s** vs 46.5s (56.4% faster) | >= 30% reduction | ✅ Met |
-| **Read Status Comprehension** | **95.8%** | >= 85% | ✅ Met |
-| **Physical Pack Verification** | **100.0%** | >= 90% | ✅ Met |
-| **Wording Accuracy Check** | **100.0%** | Baseline Verification | Tracked |
+The usability protocol is a proposed study plan only. Before collecting data, document adult-participant consent, protocol version, dates, facilitator, task conditions, and anonymized source notes. Do not include children or ask for feeding, medical, or safety judgments. Report descriptive results with sample size and limitations; any instance of safety-status confusion must be treated as a stop signal, not averaged away.
 
-## 2. Per-Task Breakdown
-
-| Task Type | Trials | Time Without (s) | Time With (s) | Time Delta (%) | Status Comp. | Physical Check | Safety Misint. |
-|---|---|---|---|---|---|---|---|
-| `age_marking` | 6 | 35.3s | 13.0s | -63.1% | 100% | 100% | 0 |
-| `allergen_declaration` | 6 | 49.4s | 21.7s | -56.1% | 100% | 100% | 0 |
-| `preparation_directions` | 6 | 58.6s | 26.6s | -54.7% | 100% | 100% | 0 |
-| `low_contrast_inspection` | 6 | 42.5s | 19.7s | -53.5% | 83% | 100% | 0 |
-
-## 3. Findings & Behavioral Observations
-
-- **Zero Safety Confusion**: Caregivers understood badges (`Readable`, `Check text`, `Not visible`) indicate OCR read clarity, not baby food safety or nutritional suitability.
-- **Snippet Utility**: Displaying the exact packaging snippet reduced search time across dense multi-lingual panels, serving as an index to the physical container.
-- **Check Text Prompting**: When marked `Check text`, caregivers immediately inspected the actual packaging to confirm ambiguous or blurry wording.
+Run `python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv` only after verified rows have been entered. An empty file must report “not evaluated,” not a passing safety gate.

@@ -152,8 +152,9 @@ def test_empty_dataset_handling():
         evaluator = UsabilityEvaluator(temp_csv)
         results = evaluator.evaluate()
         assert results["total_trials"] == 0
-        assert results["safety_gate_passed"] is True
+        assert results["safety_gate_passed"] is None
         assert results["time_reduction_pct"] == 0.0
+        assert "NOT EVALUATED" in evaluator.format_markdown_report(results)
     finally:
         if os.path.exists(temp_csv):
             os.remove(temp_csv)

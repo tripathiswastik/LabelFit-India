@@ -48,31 +48,32 @@ The Python `source_match` indicator only checks whether candidate text appears i
 
 ## Buildathon materials
 
-The repository PDF is the current seven-slide pitch deck (under 5 MB). It describes the local prototype, the exploratory 50-SKU validation milestone, and the unvalidated B2B label-digitization hypothesis. [Spoken pitch and judge Q&A notes](docs/PITCH_NOTES.md) are in the docs folder.
+The repository PDF is the current seven-slide pitch deck (under 5 MB). It describes the local prototype, the planned exploratory 50-SKU validation milestone, and the unvalidated B2B label-digitization hypothesis. [Spoken pitch and judge Q&A notes](docs/PITCH_NOTES.md) are in the docs folder.
 
 ## Development checks
 
 ```powershell
-# Run Node.js security & smoke test suite (19 tests)
+# Run Node.js security & smoke test suite
 npm test
 
 # Syntax & AST checks
 node --check server.js
 node --check app.js
 
-# Run full Python test suite (25 tests covering models, validator, extractor, benchmark, and usability)
+# Run Python test suite
 python -m pytest tests/
 
 # Evaluate benchmark worksheet
 python scripts/evaluate_benchmark.py --csv docs/benchmark-template.csv
 
-# Evaluate caregiver usability study dataset
+# Evaluate a caregiver usability dataset only after verified rows are collected
 python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv
 ```
 
 ## Governance & Verification Milestones
 
-- [Smoke Test Audit Report](docs/SMOKE_TEST_REPORT.md): 7/7 automated smoke tests on synthetic packaging fixtures.
-- [Caregiver Usability Protocol](docs/USABILITY_STUDY_PROTOCOL.md) & [Evaluation Report](docs/USABILITY_EVALUATION_REPORT.md): Measured 56.4% faster inspection with 0.0% safety misinterpretation rate.
-- [Privacy, Data Handling & Regulatory Domain Gate](docs/PRIVACY_AND_COMPLIANCE_GATE.md): FSSAI Foods for Infant Nutrition compliance, DPDP Act 2023 zero-child-PII audit, and Gemini API Paid vs Unpaid data retention governance.
+- [Smoke-test notes](docs/SMOKE_TEST_REPORT.md): Synthetic software checks only; no live Gemini result or accuracy evidence.
+- [Caregiver usability protocol](docs/USABILITY_STUDY_PROTOCOL.md) and [evaluation report](docs/USABILITY_EVALUATION_REPORT.md): The study is planned; no verified participant results are recorded.
+- [B2B discovery plan](docs/B2B_DISCOVERY_PLAN.md): Interview hypotheses only; no verified customer interviews or pricing evidence are recorded.
+- [Privacy and regulatory review checklist](docs/PRIVACY_AND_COMPLIANCE_GATE.md): Preliminary engineering notes, not legal advice, a compliance audit, or an approval.
 - [Exploratory Validation Plan](docs/VALIDATION_PLAN.md) & [Research & Gaps Review](docs/RESEARCH_AND_GAPS.md): Documented boundaries, non-prescriptive invariants, and uncalibrated read statuses.

@@ -83,7 +83,7 @@ class UsabilityEvaluator:
             return {
                 "total_trials": 0,
                 "unique_caregivers": 0,
-                "safety_gate_passed": True,
+                "safety_gate_passed": None,
                 "mean_time_without_sec": 0.0,
                 "mean_time_with_sec": 0.0,
                 "time_reduction_pct": 0.0,
@@ -196,6 +196,15 @@ class UsabilityEvaluator:
 
     def format_markdown_report(self, results: Dict[str, Any]) -> str:
         """Generates a structured GitHub Flavored Markdown summary report."""
+        if results["total_trials"] == 0:
+            return "\n".join([
+                "# LabelFit India: Caregiver Usability Evaluation Report",
+                "",
+                "**Status: NOT EVALUATED**",
+                "",
+                "No verified trial rows are available. No usability or safety-gate result can be calculated.",
+            ])
+
         passed_badge = "✅ PASSED" if results["safety_gate_passed"] else "❌ FAILED (SAFETY VIOLATION)"
         time_target_met = "✅ Met" if results["time_reduction_pct"] >= self.TIME_REDUCTION_TARGET_PCT else "⚠️ Under Target"
         comp_target_met = "✅ Met" if results["status_comprehension_rate"] >= self.STATUS_COMPREHENSION_TARGET else "⚠️ Under Target"
@@ -230,11 +239,9 @@ class UsabilityEvaluator:
 
         lines.extend([
             "",
-            "## 3. Findings & Behavioral Observations",
+            "## Interpretation limits",
             "",
-            "- **Zero Safety Confusion**: Caregivers understood badges (`Readable`, `Check text`, `Not visible`) indicate OCR read clarity, not baby food safety or nutritional suitability.",
-            "- **Snippet Utility**: Displaying the exact packaging snippet reduced search time across dense multi-lingual panels, serving as an index to the physical container.",
-            "- **Check Text Prompting**: When marked `Check text`, caregivers immediately inspected the actual packaging to confirm ambiguous or blurry wording.",
+            "These descriptive results apply only to the rows supplied. They do not establish general user benefit, product safety, or performance outside the recorded participants, tasks, and packages.",
         ])
 
         return "\n".join(lines)
@@ -270,7 +277,7 @@ def main():
             f.write(evaluator.format_markdown_report(results))
         print(f"\nReport exported to: {args.export_markdown}")
 
-    if not results["safety_gate_passed"]:
+    if results["safety_gate_passed"] is False:
         print(
             "\n[CRITICAL FAILURE] Usability study triggered safety stop condition: "
             f"{results['safety_misinterpretation_count']} participant(s) misinterpreted read status as safety score.",
