@@ -170,6 +170,29 @@ test('Step 3: Devanagari numerals are normalized and evaluated in nutrition chec
   assert.equal(result.readStatus, 'uncertain');
 });
 
+test('Step 4: ageMarking derived from RDA or caloric guideline footnote is downgraded to uncertain', () => {
+  const result = normalizeField({
+    value: '8 year old child',
+    evidence: '8 year old child',
+    readStatus: 'clear'
+  }, 'ageMarking');
+  assert.equal(result.readStatus, 'uncertain');
+
+  const footnote = normalizeField({
+    value: '8 year old child',
+    evidence: '*Guideline Daily Amounts of an average 8 year old child (1700 kcal)',
+    readStatus: 'clear'
+  }, 'ageMarking');
+  assert.equal(footnote.readStatus, 'uncertain');
+
+  const validInfantAge = normalizeField({
+    value: 'Stage 1: From 6 to 24 Months',
+    evidence: 'Stage 1: From 6 to 24 Months',
+    readStatus: 'clear'
+  }, 'ageMarking');
+  assert.equal(validInfantAge.readStatus, 'clear');
+});
+
 // Step 5: Production Security & Cloud Run Spend Locks Tests
 
 test('Step 5: Cloud Run status endpoint reports unconfigured when analysis is disabled', async () => {

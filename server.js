@@ -153,6 +153,11 @@ function parseImagePayload(payload) {
 
 const ALLERGEN_DECLARATION_PATTERN = /\b(contains?|allergen|allergens?|may\s+contain|traces?|free\s+from|facility|equipment)\b/i;
 const TRUNCATION_SUFFIX_PATTERN = /(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$/i;
+const CALORIC_OR_GUIDELINE_PATTERN = /(?:guideline\s*daily\s*amounts?|gda|rda|kcal|calorie|कैलोरी|energy\s*requirement|daily\s*allowance|adult\s*diet|\b(?:[4-9]|\d{2,})\s*years?\s*old\b)/i;
+
+function isCaloricOrGuidelineFootnote(value, evidence) {
+  return CALORIC_OR_GUIDELINE_PATTERN.test(value) || CALORIC_OR_GUIDELINE_PATTERN.test(evidence);
+}
 
 const DEVANAGARI_DIGITS = {
   '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
@@ -271,6 +276,11 @@ function normalizeField(raw, fieldName = '') {
 
   // Step 3 Guard 2: Numeral conflict in key fields (ageMarking, preparationAndStorage, nutritionPanel)
   if ((fieldName === 'ageMarking' || fieldName === 'preparationAndStorage' || fieldName === 'nutritionPanel') && hasConflictingNumbers(value, evidence)) {
+    return { value, evidence, readStatus: 'uncertain' };
+  }
+
+  // Step 4 Guard: Age marking must not be a nutritional guideline or caloric reference footnote
+  if (fieldName === 'ageMarking' && isCaloricOrGuidelineFootnote(value, evidence)) {
     return { value, evidence, readStatus: 'uncertain' };
   }
 
@@ -472,6 +482,8 @@ module.exports = {
   MAX_IMAGE_BYTES,
   ALLERGEN_DECLARATION_PATTERN,
   TRUNCATION_SUFFIX_PATTERN,
+  CALORIC_OR_GUIDELINE_PATTERN,
+  isCaloricOrGuidelineFootnote,
   hasTokenSupport,
   hasConflictingNumbers,
   createRateLimiter,

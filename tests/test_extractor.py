@@ -154,3 +154,24 @@ def test_step3_devanagari_numerals_normalized_in_nutrition_check():
         }
     })
     assert fields["nutritionPanel"].read_status == "uncertain"
+
+
+def test_step4_caloric_or_guideline_footnote_downgraded_in_age_marking():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "ageMarking": {
+            "value": "8 year old child",
+            "evidence": "*Guideline Daily Amounts of an average 8 year old child (1700 kcal)",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["ageMarking"].read_status == "uncertain"
+
+    fields_valid = extractor._normalize({
+        "ageMarking": {
+            "value": "Stage 1: From 6 to 24 Months",
+            "evidence": "Stage 1: From 6 to 24 Months",
+            "readStatus": "clear",
+        }
+    })
+    assert fields_valid["ageMarking"].read_status == "clear"
