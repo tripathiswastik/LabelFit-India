@@ -103,3 +103,24 @@ def test_benchmark_evaluator_metrics():
     finally:
         if os.path.exists(temp_csv):
             os.remove(temp_csv)
+
+
+def test_50_sku_benchmark_template_integrity():
+    """Verifies that docs/benchmark-template.csv contains 50 distinct SKUs with all 6 fields."""
+    benchmark_csv = Path(__file__).resolve().parent.parent / "docs" / "benchmark-template.csv"
+    assert benchmark_csv.exists(), "benchmark-template.csv should exist"
+
+    evaluator = BenchmarkEvaluator(str(benchmark_csv))
+    results = evaluator.evaluate()
+
+    assert results["total_rows"] == 300, "Should contain exactly 300 evaluation rows"
+    assert results["unique_skus_count"] == 50, "Should evaluate exactly 50 distinct SKUs"
+    assert results["unique_images_count"] == 100, "Should evaluate exactly 100 images (front + info panel)"
+
+    expected_fields = {
+        "productName", "ageMarking", "ingredients",
+        "allergenDeclaration", "nutritionPanel", "preparationAndStorage"
+    }
+    assert set(results["by_field"].keys()) == expected_fields
+    for field in expected_fields:
+        assert results["by_field"][field]["total_rows"] == 50
