@@ -12,14 +12,19 @@
 |---|---|---|---|---|
 | `SKU-PROD-001` | **Nescafe** | Nescafe Classic Soluble Coffee (90g Jar) | `1000084112.jpg` | ✅ Transcribed |
 | `SKU-PROD-002` | **Haldiram's** | Haldiram's Bhujia Sev (1 Kg Pouch) | `1000084113.jpg` | ✅ Transcribed |
-| `SKU-PROD-003` | **Maggi** | Maggi Rich Tomato Ketchup Pichkoo (75g Pouch) | `1000084114.jpg` | ✅ Transcribed |
+| `SKU-PROD-003` | **Maggi** | Maggi Rich Tomato Ketchup Pichkoo (Back Panel) | `1000084114.jpg` | ✅ Transcribed |
+| `SKU-PROD-003-FRONT` | **Maggi** | Maggi Rich Tomato Ketchup Pichkoo (Front Panel) | `1000084115.jpg` | ✅ Transcribed |
 | `SKU-PROD-004` | **KKK** | KKK Poha Rice Flakes (500g Pouch) | `1000084116.jpg` | ✅ Transcribed |
-| `SKU-PROD-005` | **Namaste India** | Namaste India Desi Ghee (1L Tin Can) | `1000084117.jpg` | ✅ Transcribed |
+| `SKU-PROD-005` | **Namaste India** | Namaste India Desi Ghee (Tin Front & Nutrition) | `1000084117.jpg` | ✅ Transcribed |
+| `SKU-PROD-005-SIDE` | **Namaste India** | Namaste India Desi Ghee (Tin Side Manufacturer Panel) | `1000084118.jpg` | ✅ Transcribed |
+| `SKU-PROD-005-LID` | **Namaste India** | Namaste India Desi Ghee (Tin Top Lid Batch & Dates) | `1000084119.jpg` | ✅ Transcribed |
+| `SKU-PROD-006-SIDE` | **Amul** | Amul Pure Ghee (Jar Marketing & Serving Panel) | `1000084120.jpg` | ✅ Transcribed |
 | `SKU-PROD-006` | **Amul** | Amul Pure Ghee (500 mL Plastic Jar) | `1000084121.jpg` | ✅ Transcribed |
 | `SKU-PROD-007` | **Aravan Traders** | Shakti Kuttu Atta Buckwheat Flour (250g Pouch) | `IMG-20261115-WA0001.jpg` | ✅ Transcribed |
 | `SKU-PROD-008` | **Fortune (AWL)** | Fortune Refined Sunflower Seed Oil (1L Pouch) | `IMG-20261115-WA0004.jpg` | ✅ Transcribed |
 | `SKU-PROD-009` | **Dabur** | Dabur Hajmola Imli Tasty Digestive Tablets (Bottle) | `IMG-20261115-WA0006.jpg` | ✅ Transcribed |
 | `SKU-PROD-010` | **VLCC** | VLCC Cocoa Butter Detan Glow Body Lotion (400ml Bottle) | `IMG-20261115-WA0009.jpg` | ✅ Transcribed |
+| `SKU-PROD-011` | **Cadbury** | Cadbury Dairy Milk Chocolate (Back Panel) | `dairymilk.png` | ✅ Transcribed |
 
 ---
 
@@ -49,7 +54,7 @@
 | **nutritionPanel** | `clear` | `uncertain` | NUTRITIONAL INFORMATION (Approximate Values) Per 100g % RDA ... | `NUTRITIONAL INFORMATION (Approximate Val...` | ⚠️ Downgraded by Normalizer |
 | **preparationAndStorage** | `clear` | `clear` | STORE IN A COOL & DRY PLACE, ONCE OPENED KEEP THE MATERIAL I... | `STORE IN A COOL & DRY PLACE, ONCE OPENED...` | ✅ Clear Match |
 
-### SKU-PROD-003: Maggi — Maggi Rich Tomato Ketchup Pichkoo (75g Pouch)
+### SKU-PROD-003: Maggi — Maggi Rich Tomato Ketchup Pichkoo (Back Panel)
 - **Image**: `1000084114.jpg` | **Model**: `gemini-3.6-flash`
 
 | Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
@@ -60,6 +65,18 @@
 | **allergenDeclaration** | `clear` | `clear` | Allergen Note: May contain Wheat, Milk, Mustard and Soy. | `Allergen Note: May contain Wheat, Milk, ...` | ✅ Clear Match |
 | **nutritionPanel** | `clear` | `uncertain` | NUTRITIONAL INFORMATION If a serve is 1 Tbsp (9 g) NUTRITION... | `NUTRITIONAL INFORMATION If a serve is 1 ...` | ⚠️ Downgraded by Normalizer |
 | **preparationAndStorage** | `clear` | `clear` | STORAGE ADVICE Store In A Cool, Dry And Hygienic Place. Clos... | `STORAGE ADVICE Store In A Cool, Dry And ...` | ✅ Clear Match |
+
+### SKU-PROD-003-FRONT: Maggi — Maggi Rich Tomato Ketchup Pichkoo (Front Panel)
+- **Image**: `1000084115.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | Maggi Rich tomato Ketchup Pichkoo | `Maggi Rich tomato Ketchup Pichkoo` | ✅ Clear Match |
+| **ageMarking** | `clear` | `uncertain` | 8 year old child | `8 year old child` | ⚠️ Downgraded by Normalizer |
+| **ingredients** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `clear` | `uncertain` | 1 Tbsp = Energy 7 kcal 0% % of Guideline Daily Amounts of an... | `1 Tbsp = Energy 7 kcal 0%` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
 
 ### SKU-PROD-004: KKK — KKK Poha Rice Flakes (500g Pouch)
 - **Image**: `1000084116.jpg` | **Model**: `gemini-3.6-flash`
@@ -73,7 +90,7 @@
 | **nutritionPanel** | `clear` | `uncertain` | Nutritional Information* (Serve Size: 30g) Serving per pack ... | `Nutritional Information* (Serve Size: 30...` | ⚠️ Downgraded by Normalizer |
 | **preparationAndStorage** | `clear` | `clear` | Keep in cool dry and hygienic place,away from sunlight. Stor... | `Keep in cool dry and hygienic place,away...` | ✅ Clear Match |
 
-### SKU-PROD-005: Namaste India — Namaste India Desi Ghee (1L Tin Can)
+### SKU-PROD-005: Namaste India — Namaste India Desi Ghee (Tin Front & Nutrition)
 - **Image**: `1000084117.jpg` | **Model**: `gemini-3.6-flash`
 
 | Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
@@ -84,6 +101,42 @@
 | **allergenDeclaration** | `clear` | `clear` | Allergen Information : Contains Milk Fat | `Allergen Information : Contains Milk Fat` | ✅ Clear Match |
 | **nutritionPanel** | `clear` | `uncertain` | NUTRITIONAL INFORMATION AMOUNT PER 100 g*, Per serve and % R... | `NUTRITIONAL INFORMATION AMOUNT PER 100 g...` | ⚠️ Downgraded by Normalizer |
 | **preparationAndStorage** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+
+### SKU-PROD-005-SIDE: Namaste India — Namaste India Desi Ghee (Tin Side Manufacturer Panel)
+- **Image**: `1000084118.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | namaste india Desi Ghee | `namaste india Agmark Desi Ghee` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **preparationAndStorage** | `clear` | `clear` | BEST BEFORE TWELVE MONTHS FROM MANUFACTURING WHEN STORED IN ... | `BEST BEFORE TWELVE MONTHS FROM MANUFACTU...` | ✅ Clear Match |
+
+### SKU-PROD-005-LID: Namaste India — Namaste India Desi Ghee (Tin Top Lid Batch & Dates)
+- **Image**: `1000084119.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **preparationAndStorage** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+
+### SKU-PROD-006-SIDE: Amul — Amul Pure Ghee (Jar Marketing & Serving Panel)
+- **Image**: `1000084120.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | Amul Pure Ghee | `Amul Pure Ghee` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **preparationAndStorage** | `clear` | `uncertain` | For Enhanced Taste: Add a spoon of ghee to your food and mul... | `Add a spoon of ghee to your food and mul...` | ⚠️ Downgraded by Normalizer |
 
 ### SKU-PROD-006: Amul — Amul Pure Ghee (500 mL Plastic Jar)
 - **Image**: `1000084121.jpg` | **Model**: `gemini-3.6-flash`
@@ -144,3 +197,15 @@
 | **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
 | **nutritionPanel** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
 | **preparationAndStorage** | `clear` | `clear` | Directions For Use : Apply liberally all over your body afte... | `Directions For Use : Apply liberally all...` | ✅ Clear Match |
+
+### SKU-PROD-011: Cadbury — Cadbury Dairy Milk Chocolate (Back Panel)
+- **Image**: `dairymilk.png` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | Cadbury Dairy Milk Silk Mini Treats | `Cadbury Dairy Milk Silk Mini Treats` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `clear` | Sugar, Milk Solids (25%*), Cocoa Butter, Cocoa Solids, Emuls... | `Ingredients: Sugar, Milk Solids (25%*), ...` | ✅ Clear Match |
+| **allergenDeclaration** | `clear` | `clear` | Contains Milk, May Contain Tree Nuts, Wheat, Barley and Soy. | `Allergen Information: Contains Milk, May...` | ✅ Clear Match |
+| **nutritionPanel** | `clear` | `uncertain` | Serving size: 9 g; No. of Servings Per Package: 15* NUTRITIO... | `NUTRITION INFORMATION (Per 100 g)*: Ener...` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `clear` | `uncertain` | 1 Eat it. Lock it. Repeat. 2 Store it in your fridge. Raid i... | `Storage Conditions: STORE IN A COOL, HYG...` | ⚠️ Downgraded by Normalizer |

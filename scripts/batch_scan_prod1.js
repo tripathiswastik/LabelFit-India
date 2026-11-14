@@ -38,8 +38,14 @@ const SKU_PANELS = [
   {
     sku_id: 'SKU-PROD-003',
     brand: 'Maggi',
-    product: 'Maggi Rich Tomato Ketchup Pichkoo (75g Pouch)',
+    product: 'Maggi Rich Tomato Ketchup Pichkoo (Back Panel)',
     image_file: '1000084114.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-003-FRONT',
+    brand: 'Maggi',
+    product: 'Maggi Rich Tomato Ketchup Pichkoo (Front Panel)',
+    image_file: '1000084115.jpg',
   },
   {
     sku_id: 'SKU-PROD-004',
@@ -50,8 +56,26 @@ const SKU_PANELS = [
   {
     sku_id: 'SKU-PROD-005',
     brand: 'Namaste India',
-    product: 'Namaste India Desi Ghee (1L Tin Can)',
+    product: 'Namaste India Desi Ghee (Tin Front & Nutrition)',
     image_file: '1000084117.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-005-SIDE',
+    brand: 'Namaste India',
+    product: 'Namaste India Desi Ghee (Tin Side Manufacturer Panel)',
+    image_file: '1000084118.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-005-LID',
+    brand: 'Namaste India',
+    product: 'Namaste India Desi Ghee (Tin Top Lid Batch & Dates)',
+    image_file: '1000084119.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-006-SIDE',
+    brand: 'Amul',
+    product: 'Amul Pure Ghee (Jar Marketing & Serving Panel)',
+    image_file: '1000084120.jpg',
   },
   {
     sku_id: 'SKU-PROD-006',
@@ -82,6 +106,12 @@ const SKU_PANELS = [
     brand: 'VLCC',
     product: 'VLCC Cocoa Butter Detan Glow Body Lotion (400ml Bottle)',
     image_file: 'IMG-20261115-WA0009.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-011',
+    brand: 'Cadbury',
+    product: 'Cadbury Dairy Milk Chocolate (Back Panel)',
+    image_file: 'dairymilk.png',
   },
 ];
 
@@ -119,6 +149,8 @@ async function scanPackage(apiKey, skuInfo) {
   const imgPath = path.join(PROD_DIR, skuInfo.image_file);
   const imgBytes = fs.readFileSync(imgPath);
   const base64Data = imgBytes.toString('base64');
+  const ext = path.extname(skuInfo.image_file).toLowerCase();
+  const mimeType = ext === '.png' ? 'image/png' : (ext === '.webp' ? 'image/webp' : 'image/jpeg');
 
   const payload = {
     model: 'gemini-3.5-flash',
@@ -131,7 +163,7 @@ async function scanPackage(apiKey, skuInfo) {
         text:
           'Transcribe only visible details from this packaged food label: product name, printed age marking, ingredient list, printed allergen declaration, nutrition panel, and preparation or storage text. For each field return a concise literal transcription, one short exact snippet copied from the same image, and readStatus. Use clear only when both the field and snippet are legible; use uncertain for partial or blurry text; use not_visible with empty value and evidence when the field is absent. Never translate, normalize units, infer missing words, or convert the age marking into advice. Return only the six requested fields.',
       },
-      { type: 'image', data: base64Data, mime_type: 'image/jpeg' },
+      { type: 'image', data: base64Data, mime_type: mimeType },
     ],
     response_format: { type: 'text', mime_type: 'application/json', schema: RESPONSE_SCHEMA },
     generation_config: { max_output_tokens: 3000 },
