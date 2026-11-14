@@ -14,8 +14,9 @@ strictly aligned with docs/VALIDATION_PLAN.md:
 import os
 import csv
 import json
+from typing import List, Dict, Any
 
-def get_50_sku_definitions():
+def get_50_sku_definitions() -> List[Dict[str, Any]]:
     skus = [
         # --- Brand 1: Nestlé Cerelac (10 SKUs) ---
         {
@@ -1989,7 +1990,7 @@ def get_50_sku_definitions():
     ]
     return skus
 
-def build_benchmark_csv(output_path: str):
+def build_benchmark_csv(output_path: str) -> None:
     skus = get_50_sku_definitions()
     fieldnames = [
         "image_id", "sku_id", "brand", "market_city", "package_language_script",
@@ -2003,13 +2004,18 @@ def build_benchmark_csv(output_path: str):
         writer.writeheader()
 
         for sku in skus:
-            sku_id = sku["sku_id"]
-            brand = sku["brand"]
-            city = sku["market_city"]
-            script = sku["script"]
-            cond = sku["condition"]
+            sku_id = str(sku["sku_id"])
+            brand = str(sku["brand"])
+            city = str(sku["market_city"])
+            script = str(sku["script"])
+            cond = str(sku["condition"])
+            fields = sku.get("fields")
+            if not isinstance(fields, dict):
+                continue
 
-            for field_name, f_data in sku["fields"].items():
+            for field_name, f_data in fields.items():
+                if not isinstance(f_data, dict):
+                    continue
                 image_id = f"IMG-{sku_id}-FRONT" if field_name in ("productName", "ageMarking") else f"IMG-{sku_id}-PANEL"
                 row = {
                     "image_id": image_id,
@@ -2018,15 +2024,15 @@ def build_benchmark_csv(output_path: str):
                     "market_city": city,
                     "package_language_script": script,
                     "photo_condition": cond,
-                    "field": field_name,
-                    "ground_truth": f_data["gt"],
-                    "model_output": f_data["pred"],
-                    "read_status": f_data["status"],
-                    "evidence_located": f_data["ev"],
-                    "unsupported_text": f_data["unsupp"],
-                    "error_category": f_data["err"],
-                    "review_seconds": str(f_data["sec"]),
-                    "reviewer_notes": f_data["notes"]
+                    "field": str(field_name),
+                    "ground_truth": str(f_data.get("gt", "")),
+                    "model_output": str(f_data.get("pred", "")),
+                    "read_status": str(f_data.get("status", "")),
+                    "evidence_located": str(f_data.get("ev", "")),
+                    "unsupported_text": str(f_data.get("unsupp", "")),
+                    "error_category": str(f_data.get("err", "")),
+                    "review_seconds": str(f_data.get("sec", "")),
+                    "reviewer_notes": str(f_data.get("notes", ""))
                 }
                 writer.writerow(row)
                 total_rows += 1
