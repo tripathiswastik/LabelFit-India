@@ -174,11 +174,19 @@ async function runProof() {
   ];
 
   for (const field of requiredFields) {
-    if (!result[field] || !result[field].value || !result[field].evidence) {
+    const item = result[field];
+    if (!item || typeof item.value !== 'string' || typeof item.evidence !== 'string' ||
+        !['clear', 'uncertain', 'not_visible'].includes(item.readStatus)) {
       throw new Error(`Field missing or unnormalized: ${field}`);
     }
+    if (item.readStatus === 'clear' && (!item.value || !item.evidence)) {
+      throw new Error(`Clear field is missing text or snippet: ${field}`);
+    }
+    if (item.readStatus === 'not_visible' && (item.value || item.evidence)) {
+      throw new Error(`Not-visible field must be empty: ${field}`);
+    }
   }
-  console.log('[4] All six candidate fields successfully normalized and rendered.');
+  console.log('[4] All six candidate fields have valid text and read-status shapes.');
 
   // 6. Confirm Cloud Run Analysis Guard
   const serverJsContent = fs.readFileSync(path.join(REPO_ROOT, 'server.js'), 'utf8');
@@ -193,7 +201,7 @@ async function runProof() {
   const markdownReport = [
     '# LabelFit India: Local End-to-End Workflow Scan Proof',
     '',
-    '**Status:** Verified Local Workflow Integration Check  ',
+    '**Status:** Local workflow integration check (not an accuracy test)  ',
     '**Date:** ' + new Date().toISOString().split('T')[0] + '  ',
     '**Notice:** This is a software and integration workflow check only; it does not establish model accuracy, OCR reliability, clinical safety, or caregiver comprehension on real-world packaging.',
     '',
@@ -221,7 +229,7 @@ async function runProof() {
     USER_PROMPT,
     '```',
     '',
-    '## 3. Verified Field Extraction & Normalization Output',
+    '## 3. Response Normalization Output (execution mode shown above)',
     '',
     '| Field | Normalized Value | Model Source Snippet | Read Status |',
     '|---|---|---|---|',
@@ -237,9 +245,9 @@ async function runProof() {
     '- [x] Binary magic-byte signature check passes before JSON parsing.',
     '- [x] Outbound interaction payload enforces `store: false` and `max_output_tokens: 1800`.',
     '- [x] Server-side normalization validates all six required fields.',
-    '- [x] Model-provided source snippet anchors candidate text.',
-    '- [x] Cloud Run analysis lock responds with HTTP 503.',
-    '- [x] Ephemeral session: zero images written to server disk or database.',
+    '- [x] Candidate fields are checked for token support against model-provided snippets; snippets are not independently verified against image pixels.',
+    '- [x] Source inspection confirms the Cloud Run analysis guard is present. The HTTP 503 behavior is covered by `test/server.test.js`, not exercised by this local image request.',
+    '- [x] The Node request path does not intentionally write the uploaded image to an application file or database; this is not a secure-erasure or provider-retention guarantee.',
     '',
     '---',
     '*Report generated automatically by `scripts/prove_local_workflow_scan.js`.*',

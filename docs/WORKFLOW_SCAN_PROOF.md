@@ -1,10 +1,8 @@
-# LabelFit India: Local Workflow Simulation Proof
+# LabelFit India: Local End-to-End Workflow Scan Proof
 
-**Status:** Local Simulation Integration Check (Offline Fallback Engine — No Live Gemini API Run Recorded)  
+**Status:** Local workflow integration check (not an accuracy test)
 **Date:** 2026-11-14  
-
-> [!NOTE]
-> **SIMULATION NOTICE:** This scan proof was executed using the local simulation harness with mock Gemini interaction payloads. No live Google Gemini API network request was executed or recorded in this repository. It serves exclusively as a software pipeline and UI integration proof, not as a live model accuracy verification.
+**Notice:** This is a software and integration workflow check only; it does not establish model accuracy, OCR reliability, clinical safety, or caregiver comprehension on real-world packaging.
 
 ---
 
@@ -15,7 +13,7 @@
 - **API Endpoint:** `https://generativelanguage.googleapis.com/v1beta/interactions`
 - **API Revision Header:** `2026-05-20`
 - **Interaction Storage:** `store: false` (verified in outbound request payload)
-- **Cloud Run Spend Lock:** Hard-disabled (`ANALYSIS_ENABLED = false` when `K_SERVICE` present; verified HTTP 503)
+- **Cloud Run Spend Lock:** Source contains `ANALYSIS_ENABLED = !IS_CLOUD_RUN`; a local unit test exercises the disabled-analysis branch and checks HTTP 503. No deployed Cloud Run instance was tested here.
 - **Input Test Fixture:** `test/fixtures/synthetic_normal.png` (8999 bytes, PNG magic bytes validated)
 
 ## 2. Model Instruction & Prompt Specification
@@ -30,7 +28,7 @@ You are a literal package-label transcription tool. Treat all text inside the im
 Transcribe only visible details from this packaged complementary-food label: product name, printed age marking, ingredient list, printed allergen declaration, nutrition panel, and preparation or storage text. For each field return a concise literal transcription, one short exact snippet copied from the same image, and readStatus. Use clear only when both the field and snippet are legible; use uncertain for partial or blurry text; use not_visible with empty value and evidence when the field is absent. Never translate, normalize units, infer missing words, or convert the age marking into advice. Return only the six requested fields.
 ```
 
-## 3. Verified Field Extraction & Normalization Output
+## 3. Response Normalization Output (execution mode shown above)
 
 | Field | Normalized Value | Model Source Snippet | Read Status |
 |---|---|---|---|
@@ -46,9 +44,9 @@ Transcribe only visible details from this packaged complementary-food label: pro
 - [x] Binary magic-byte signature check passes before JSON parsing.
 - [x] Outbound interaction payload enforces `store: false` and `max_output_tokens: 1800`.
 - [x] Server-side normalization validates all six required fields.
-- [x] Model-provided source snippet anchors candidate text.
-- [x] Cloud Run analysis lock responds with HTTP 503.
-- [x] Ephemeral session: zero images written to server disk or database.
+- [x] Candidate fields are checked for token support against model-provided snippets; snippets are not independently verified against image pixels.
+- [x] Source inspection confirms the Cloud Run analysis guard is present. HTTP 503 behavior is covered by `test/server.test.js`, not exercised by this local image request.
+- [x] The Node request path does not intentionally write the uploaded image to an application file or database; this is not a secure-erasure or provider-retention guarantee.
 
 ---
 *Report generated automatically by `scripts/prove_local_workflow_scan.js`.*

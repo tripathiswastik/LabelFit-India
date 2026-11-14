@@ -134,15 +134,17 @@ def has_token_support(value: str, evidence: str) -> bool:
     ev_tokens = extract_significant_tokens(evidence)
     if not val_tokens or not ev_tokens:
         return True
-    return bool(val_tokens & ev_tokens)
+    return val_tokens.issubset(ev_tokens)
 
 
 def has_conflicting_numbers(value: str, evidence: str) -> bool:
     val_nums = extract_numeric_tokens(value)
-    ev_nums = set(extract_numeric_tokens(evidence))
-    if not val_nums or not ev_nums:
-        return False
-    return not any(d in ev_nums for d in val_nums)
+    ev_nums = extract_numeric_tokens(evidence)
+    for number in val_nums:
+        if number not in ev_nums:
+            return True
+        ev_nums.remove(number)
+    return False
 
 
 class GeminiLabelExtractor:

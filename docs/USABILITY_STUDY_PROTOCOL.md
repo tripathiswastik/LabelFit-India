@@ -75,4 +75,4 @@ Each session consists of two alternating blocks: **Baseline (Physical Pack Alone
 
 ## 6. Data Collection
 
-If the study is conducted, record anonymized, consented trials in [docs/usability-evaluation-sheet.csv](usability-evaluation-sheet.csv) and analyze the rows using `python scripts/evaluate_usability.py`. The current CSV is an empty template; the protocol itself is not evidence that sessions took place.
+If the study is conducted, record anonymized, consented trials in [docs/usability-evaluation-sheet.csv](usability-evaluation-sheet.csv) and analyze the rows using `python scripts/evaluate_usability.py`. The CSV is an empty template; the protocol itself is not evidence that sessions took place. Keep consent records separate from the analysis worksheet and document the facilitator, session dates, participant count, task order, and protocol deviations in a restricted study record.

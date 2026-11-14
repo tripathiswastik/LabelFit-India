@@ -273,6 +273,8 @@ def main():
 
     evaluator = UsabilityEvaluator(args.csv)
     results = evaluator.evaluate()
+    if not results.get("total_trials"):
+        parser.exit(2, "No usability trials found. Run and document consented sessions before evaluating results.\n")
 
     if args.json:
         print(json.dumps(results, indent=2))

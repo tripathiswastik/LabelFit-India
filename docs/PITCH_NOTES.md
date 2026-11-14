@@ -4,7 +4,7 @@
 
 LabelFit India is an idea-stage project by the two-member LABEL CHECK team, with a local photo-upload prototype and a Gemini API request path. The team is Swastik Tripathi and Saumya Tripathi. The repository has automated checks for request handling, response normalization, synthetic image intake, and the disabled Cloud Run analysis path. These are software checks; they do not establish that Gemini reads package text accurately or that caregivers benefit from the interface.
 
-No independently verifiable Gemini scan, physical-package benchmark, caregiver study, customer interview, revenue, or traction is documented. The repository contains populated benchmark and usability artifacts, but their source records and evaluation provenance are missing; treat all reported metrics and observations as unverified and do not present them as results. No B2B interview evidence is recorded.
+No independently verifiable Gemini scan, physical-package benchmark, caregiver study, customer interview, revenue, or traction is documented. The previous generated benchmark and usability metrics have been withdrawn; both worksheets are blank pending source-backed evaluations. No B2B interview evidence is recorded.
 
 ## 60-90 second pitch
 

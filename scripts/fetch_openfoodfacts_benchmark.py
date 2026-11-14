@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-LabelFit India: Open Food Facts India Complementary Food Fetcher & Benchmark Ingest.
-Queries Open Food Facts for Indian complementary foods (6+ months), extracts product
-metadata and high-resolution packaging photo URLs (front, ingredients, nutrition),
-and formats candidate rows for the benchmark harness.
+LabelFit India: Open Food Facts candidate catalog fetcher.
+Queries Open Food Facts for possible Indian complementary-food products and exports
+source-linked candidates for manual review. Database fields are not package ground
+truth; images and data require license and source checks before benchmark use.
 """
 
 import os
@@ -18,7 +18,7 @@ from typing import List, Dict, Any, Optional
 
 USER_AGENT = "LabelFitIndia-BenchmarkFetcher/1.0 (+https://github.com/tripathiswastik/LabelFit-India; contact: swastik.tripathi842@gmail.com)"
 
-# FSSAI Complementary scope keywords vs 0-6m Formula exclusion
+# Candidate search terms only; every result requires manual scope verification.
 COMPLEMENTARY_KEYWORDS = [
     "cereal", "ragi", "oats", "wheat", "rice", "porridge", "puree",
     "biscuit", "cookie", "stage 2", "stage 3", "stage 4", "6 months",
@@ -27,24 +27,32 @@ COMPLEMENTARY_KEYWORDS = [
 ]
 
 EXCLUDED_FORMULA_KEYWORDS = [
-    "stage 1", "infant formula 1", "lactogen 1", "dexolac 1",
-    "nan pro 1", "similac 1", "0-6 months", "0 to 6 months", "starter infant formula"
+    "formula", "formulae", "lactogen", "aptamil", "nan pro", "similac",
+    "dexolac", "enfamil", "infant milk substitute", "follow-up milk", "follow on milk",
 ]
 
 
 def is_complementary_food(product: Dict[str, Any]) -> bool:
-    """Filters for complementary foods (6+ months) and flags 0-6m infant formulas."""
+    """Broad candidate filter; manual review is required before including a product."""
     name = (product.get("product_name") or product.get("product_name_en") or "").lower()
     categories = str(product.get("categories_tags", [])).lower()
     generic_name = (product.get("generic_name") or "").lower()
     full_text = f"{name} {generic_name} {categories}"
 
-    # Exclude 0-6m starter infant formulas per FSSAI / LabelFit scope
+    # LabelFit's V1 excludes all formula products, including follow-up formula.
     if any(k in full_text for k in EXCLUDED_FORMULA_KEYWORDS):
         return False
+    if any(tag in categories for tag in ("infant-formulas", "baby-milks", "baby-milk")):
+        return False
 
-    # Check if name or category matches complementary food indicators
-    return any(k in full_text for k in COMPLEMENTARY_KEYWORDS)
+    # Broad food keywords (e.g. "wheat") must never pull ordinary groceries in.
+    baby_category = any(tag in categories for tag in ("baby-food", "cereals-for-babies", "complementary-food"))
+    baby_name = any(term in f"{name} {generic_name}" for term in ("baby", "infant", "weaning", "complementary"))
+    if not (baby_category or baby_name):
+        return False
+
+    # Candidate search filter only; presence here does not prove printed age marking or scope.
+    return baby_category or any(k in full_text for k in COMPLEMENTARY_KEYWORDS)
 
 
 def extract_best_image_url(product: Dict[str, Any], image_type: str = "front") -> Optional[str]:
@@ -115,66 +123,33 @@ def fetch_off_products(limit: int = 50) -> List[Dict[str, Any]]:
     return collected
 
 
-def export_benchmark_csv(products: List[Dict[str, Any]], output_path: str):
-    """Exports candidate benchmark rows into docs/benchmark-template.csv schema."""
+def export_candidate_csv(products: List[Dict[str, Any]], output_path: str):
+    """Export source-linked product candidates, never benchmark ground truth."""
     fieldnames = [
-        "image_id", "sku_id", "brand", "market_city", "package_language_script",
-        "photo_condition", "field", "ground_truth", "model_output", "read_status",
-        "evidence_located", "unsupported_text", "error_category", "review_seconds", "reviewer_notes"
+        "code", "product_name", "brand", "categories", "source_url",
+        "ingredients_text_from_database", "front_image_url", "ingredients_image_url",
+        "nutrition_image_url", "source_license_note", "candidate_status"
     ]
 
     with open(output_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
 
-        for idx, prod in enumerate(products):
-            code = prod.get("code", f"SKU-{idx+1:03d}")
-            sku_id = f"OFF-{code}"
-            brand = prod.get("brands") or "Unknown"
-            p_name = prod.get("product_name") or prod.get("product_name_en") or ""
-            ingredients = prod.get("ingredients_text") or ""
-
-            front_img = extract_best_image_url(prod, "front") or ""
-            ingr_img = extract_best_image_url(prod, "ingredients") or front_img
-
-            # Row for productName
+        for prod in products:
+            code = str(prod.get("code", ""))
             writer.writerow({
-                "image_id": f"IMG-{code}-FRONT",
-                "sku_id": sku_id,
-                "brand": brand,
-                "market_city": "India (National Retail)",
-                "package_language_script": "English-Latin",
-                "photo_condition": "openfoodfacts_packshot",
-                "field": "productName",
-                "ground_truth": p_name,
-                "model_output": "",
-                "read_status": "",
-                "evidence_located": "",
-                "unsupported_text": "",
-                "error_category": "",
-                "review_seconds": "",
-                "reviewer_notes": f"Photo URL: {front_img}"
+                "code": code,
+                "product_name": prod.get("product_name") or prod.get("product_name_en") or "",
+                "brand": prod.get("brands") or "",
+                "categories": ";".join(prod.get("categories_tags", []) or []),
+                "source_url": f"https://world.openfoodfacts.org/product/{code}",
+                "ingredients_text_from_database": prod.get("ingredients_text") or "",
+                "front_image_url": extract_best_image_url(prod, "front") or "",
+                "ingredients_image_url": extract_best_image_url(prod, "ingredients") or "",
+                "nutrition_image_url": extract_best_image_url(prod, "nutrition") or "",
+                "source_license_note": "Open Food Facts database: ODbL; product images: CC BY-SA; verify attribution and image-specific rights before reuse.",
+                "candidate_status": "Unverified candidate; inspect package and source image before use.",
             })
-
-            # Row for ingredients
-            if ingredients:
-                writer.writerow({
-                    "image_id": f"IMG-{code}-INGR",
-                    "sku_id": sku_id,
-                    "brand": brand,
-                    "market_city": "India (National Retail)",
-                    "package_language_script": "English-Latin",
-                    "photo_condition": "openfoodfacts_packshot",
-                    "field": "ingredients",
-                    "ground_truth": ingredients,
-                    "model_output": "",
-                    "read_status": "",
-                    "evidence_located": "",
-                    "unsupported_text": "",
-                    "error_category": "",
-                    "review_seconds": "",
-                    "reviewer_notes": f"Photo URL: {ingr_img}"
-                })
 
 
 def download_images(products: List[Dict[str, Any]], dest_dir: str, max_downloads: int = 10):
@@ -212,7 +187,7 @@ def main():
     default_json = os.path.join(repo_root, "docs", "off_india_complementary_manifest.json")
     default_csv = os.path.join(repo_root, "docs", "off_india_benchmark_candidates.csv")
 
-    parser = argparse.ArgumentParser(description="Fetch Indian complementary food packaging from Open Food Facts.")
+    parser = argparse.ArgumentParser(description="Fetch unverified Open Food Facts product candidates for manual review.")
     parser.add_argument("--limit", type=int, default=50, help="Target number of SKUs (default: 50)")
     parser.add_argument("--output-json", default=default_json,
                         help="Path to save JSON catalog manifest")
@@ -237,6 +212,10 @@ def main():
             "brand": p.get("brands"),
             "categories": p.get("categories_tags"),
             "ingredients_text": p.get("ingredients_text"),
+            "source": "Open Food Facts",
+            "source_url": f"https://world.openfoodfacts.org/product/{p.get('code', '')}",
+            "source_license_note": "Database: ODbL; product images: CC BY-SA; verify attribution and image-specific rights before reuse.",
+            "candidate_status": "Unverified candidate; inspect package and source image before use.",
             "front_image_url": extract_best_image_url(p, "front"),
             "ingredients_image_url": extract_best_image_url(p, "ingredients"),
             "nutrition_image_url": extract_best_image_url(p, "nutrition"),
@@ -247,9 +226,9 @@ def main():
         json.dump(manifest_records, f, indent=2, ensure_ascii=False)
     print(f"--> Saved JSON manifest: {args.output_json}")
 
-    # Save benchmark CSV candidate sheet
-    export_benchmark_csv(products, args.output_csv)
-    print(f"--> Exported benchmark candidate sheet: {args.output_csv}")
+    # Save source-linked candidates separately from the evaluation worksheet.
+    export_candidate_csv(products, args.output_csv)
+    print(f"--> Exported unverified product candidates: {args.output_csv}")
 
     # Download images if requested
     if args.download_images:

@@ -40,4 +40,4 @@ Before testing with caregivers, obtain expert and privacy review. Initial testin
 
 ## Recordkeeping
 
-Use `benchmark-template.csv` as a blank worksheet. Store image files and any identifiable research material in access-controlled storage with an agreed deletion date. Keep only the minimum data needed for error analysis. Publish sample counts and limitations alongside any result; do not describe these checks as clinical, regulatory, or safety validation.
+Use `benchmark-template.csv` as a blank worksheet. For each sample, retain a stable package-image reference and source/permission record; two independent literal transcriptions; the actual model output, model ID, prompt/code version, and run date; and an adjudication record for disagreements. Keep image files and identifiable research material in access-controlled storage with an agreed deletion date. Keep only the minimum data needed for error analysis. Publish sample counts and limitations alongside any result; do not describe these checks as clinical, regulatory, or safety validation. Do not use hand-authored outputs or outputs copied from ground truth as model evaluation data.

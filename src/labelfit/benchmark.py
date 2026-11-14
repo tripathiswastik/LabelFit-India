@@ -258,6 +258,8 @@ def main():
 
     evaluator = BenchmarkEvaluator(args.csv)
     results = evaluator.evaluate()
+    if not results.get("total_rows"):
+        parser.exit(2, "No benchmark rows found. Collect source-backed transcriptions and actual model outputs first.\n")
 
     if args.json:
         print(json.dumps(results, indent=2))

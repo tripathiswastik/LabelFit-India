@@ -1,9 +1,9 @@
-# LabelFit India: Cloud Run Production Security & Spend Control Audit
+# LabelFit India: Cloud Run Guard & Local Security Review Notes
 
 **Date:** November 2026  
 **Audience:** Google Cloud Reviewers, Startup Buildathon India 2026 Jury, Technical Operations  
 **Scope:** Server Architecture, Runtime Spend Locks, Security Headers, and Privacy Gates  
-**Status:** Verification Complete — Cloud Run Analysis Guard **Hard-Locked**  
+**Status:** Code and local test review — Cloud Run Analysis Guard **Hard-Locked**
 
 ---
 
@@ -21,7 +21,7 @@ const ANALYSIS_ENABLED = !IS_CLOUD_RUN;
 ### Risk Rationale
 1. **Uncontrolled Spend Exposure:** An unauthenticated public web endpoint making live multimodal Gemini calls can be automated or scraped, leading to rapid API quota depletion or unexpected Google Cloud bills.
 2. **Absence of User Identity & Quotas:** Without durable per-user authentication (e.g. Google Cloud Identity Platform / Firebase Auth), in-memory IP rate limiting is insufficient for distributed public traffic.
-3. **Regulatory Privacy Review Precondition:** Per the [Privacy & Compliance Gate](file:///D:/ag-ai/LabelFit%20India/docs/PRIVACY_AND_COMPLIANCE_GATE.md), child-adjacent food packaging tools require formal review under India's Digital Personal Data Protection (DPDP) Act 2023 before unauthenticated public deployment.
+3. **Privacy Review Precondition:** The intended use involves caregiver-facing food-label information. Obtain qualified privacy advice on the applicable DPDP Act and Rules, their commencement and scope, and the proposed data flow before a public pilot. This engineering audit does not determine legal applicability.
 
 ---
 
@@ -44,15 +44,15 @@ graph TD
 
 ### Verified Runtime Guarantees
 1. **Automatic Environment Detection:** The server detects Google Cloud Run via the runtime environment variable `process.env.K_SERVICE`.
-2. **Status Downgrade:** `GET /api/status` returns `{ configured: false, model: null }` on Cloud Run, signaling to the UI that live scanning is disabled.
-3. **Immediate Analysis Rejection:** `POST /api/analyze` immediately halts at line 348 and returns HTTP `503 Service Unavailable` with `{ error: 'Analysis is disabled on this Cloud Run prototype.' }`. No request payload is processed, no API key is read, and zero upstream requests are sent to Google Gemini.
+2. **Status Downgrade:** The source returns `{ configured: false, model: null }` when the disabled-analysis flag is active. A local unit test exercises this flag; no deployed Cloud Run instance was tested.
+3. **Immediate Analysis Rejection:** `POST /api/analyze` checks the disabled-analysis flag before parsing the request body and returns HTTP `503 Service Unavailable` with `{ error: 'Analysis is disabled on this Cloud Run prototype.' }`. The API key may exist in the process environment, but this request path makes no Gemini call. The test sets the flag directly rather than launching an actual Cloud Run service.
 4. **Origin Check:** `isAllowedOrigin` verifies same-origin requests, blocking external sites from issuing cross-origin requests (`HTTP 403`).
 5. **Memory and Rate Bounds:** Local development enforces an in-memory sliding window rate limiter (max 10 requests / minute) and a concurrency limiter (max 2 parallel image processing jobs, returning `HTTP 429`).
 6. **Payload Guard:** File uploads are strictly capped at 7 MB with base64 size checks and binary magic-number validation (JPEG `0xFFD8FF`, PNG `\x89PNG`, WebP `RIFF...WEBP`).
 
 ---
 
-## 3. Security Headers & Zero-Retention Data Policy
+## 3. Security Headers & Application-Side Image Handling
 
 Every response issued by `server.js` attaches strict production security headers:
 
@@ -65,9 +65,10 @@ Every response issued by `server.js` attaches strict production security headers
 | **`Permissions-Policy`** | `camera=(), microphone=(), geolocation=()` | Blocks browser hardware access. |
 | **`Content-Security-Policy`** | `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'` | Strict allowlist; zero third-party scripts or CDNs. |
 
-### Zero-Retention Ephemeral Pipeline
+### Application-Side Handling (not a provider retention guarantee)
 - **API Store Flag:** All Gemini Interactions requests explicitly declare `"store": false`.
-- **No Database or Disk Writes:** Uploaded image buffers exist strictly in ephemeral process memory during request handling and are cleared immediately after analysis.
+- **No Intentional Application Writes:** The current request path does not intentionally write uploaded images to an application file or database. Process memory and runtime infrastructure are not secure-erasure guarantees.
+- **Provider Terms Still Apply:** `store: false` controls Interactions object storage; it does not promise zero retention or change the provider's service-tier terms, abuse monitoring, or processing. The UI notice must remain visible and the selected account tier must be documented before any pilot.
 - **Zero Child Data:** The application collects no user names, email addresses, child profiles, infant ages, or locations.
 
 ---

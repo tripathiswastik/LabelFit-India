@@ -237,16 +237,23 @@ function hasTokenSupport(value, evidence) {
   const evTokens = extractSignificantTokens(evidence);
   if (valTokens.size === 0 || evTokens.size === 0) return true;
   for (const token of valTokens) {
-    if (evTokens.has(token)) return true;
+    if (!evTokens.has(token)) return false;
   }
-  return false;
+  return true;
 }
 
 function hasConflictingNumbers(value, evidence) {
   const valNums = extractNumericTokens(value);
-  const evNums = new Set(extractNumericTokens(evidence));
-  if (valNums.length === 0 || evNums.size === 0) return false;
-  return !valNums.some(d => evNums.has(d));
+  const evCounts = new Map();
+  for (const number of extractNumericTokens(evidence)) {
+    evCounts.set(number, (evCounts.get(number) || 0) + 1);
+  }
+  for (const number of valNums) {
+    const count = evCounts.get(number) || 0;
+    if (count === 0) return true;
+    evCounts.set(number, count - 1);
+  }
+  return false;
 }
 
 function normalizeField(raw, fieldName = '') {
