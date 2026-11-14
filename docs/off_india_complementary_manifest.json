@@ -1,0 +1,512 @@
+[
+  {
+    "code": "8901058015799",
+    "product_name": "Nestle Cerelac Wheat Apple Carrot",
+    "brand": "Nestlé",
+    "categories": [
+      "en:plant-based-foods-and-beverages",
+      "en:plant-based-foods",
+      "en:breakfasts",
+      "en:cereals-and-potatoes",
+      "en:cereals-and-their-products",
+      "en:baby-foods",
+      "en:breakfast-cereals",
+      "en:cereals-for-babies"
+    ],
+    "ingredients_text": "Wheat flour (Atta) (58%), Milk solids (31.8%), Apple juice concentrate (11.4%), Soyabean oil, Carrot juice concentrate (1.1%), Minerals, Vitamins and Enzyme (Alpha amylase).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/5799/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/5799/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/5799/nutrition_en.jpg"
+  },
+  {
+    "code": "8906011141447",
+    "product_name": "Fortified Baby Cereal",
+    "brand": "British Life Sciences, mum's care",
+    "categories": [
+      "en:baby-foods",
+      "en:cereals-for-babies"
+    ],
+    "ingredients_text": "Wheat, Rice, Moongdal, Milk Solids, Sugar, Vitamins & Minerals, Maltodextrin, Apple Powder & Fruit Flakes (Strawberry Fruit Flakes, Pineapple Fruit Flakes, Banana Fruit Flakes, Orange Fruit Flakes & Mango Fruit Flakes)",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/601/114/1447/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/601/114/1447/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/601/114/1447/nutrition_en.jpg"
+  },
+  {
+    "code": "8906048501238",
+    "product_name": "Aptamil Gold Stage 3 Follow-up Formula Powder (From 12 Months Onwards)",
+    "brand": "Aptamil",
+    "categories": [
+      "en:baby-foods",
+      "en:dried-products",
+      "en:baby-milks",
+      "en:infant-formulas",
+      "en:baby-milks-in-powder",
+      "en:first-age-baby-milk-powder"
+    ],
+    "ingredients_text": "Milk Solids, Demineralized Whey and Whey Solids, Edible Vegetable Oils (Corn Oil and Canola Oil), Minerals*, Docosahexaenoic Acid Powder-0.76% (Schizochytrium sp.oil), Arachidonic Acid Powder-0.64% (Mortierella Alpina Oil), Choline, Emulsifier (Soy Lecithin), Acidity Regulator (Sodium Hydroxide), Nucleotides Premix-0.027%, Vitamins*, Antioxidant (Mixed Tocopherols),Taurine, L-Carnitine, Inositol, Beta Carotene. Ingredients of the product when prepared in accordance with the directions on the label: Water, Milk Solids, Demineralized Whey and Whey Solids, Edible Vegetable Oils (Corn Oil and Canola Oil), Minerals*, Docosahexaenoic Acid Powder (Schizochytrium sp.oil), Arachidonic Acid Powder (Mortierella Alpina Oil), Choline, Emulsifier (Soya Lecithin), Acidity Regulator (Sodium Hydroxide), Nucleotides Premix, Vitamins, Antioxidant (Mixed Tocopherols), Taurine, L-Carnitine, Inositol, Beta Carotene.",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/604/850/1238/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/604/850/1238/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/604/850/1238/nutrition_en.jpg"
+  },
+  {
+    "code": "8901058015805",
+    "product_name": "Cerelac Wheat",
+    "brand": "Nestlé",
+    "categories": [
+      "en:baby-foods"
+    ],
+    "ingredients_text": "WHEAT FLOUR. MILK SOLIDS, SUCROSE, SOYABEAN OIL.",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/5805/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/5805/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/5805/nutrition_en.jpg"
+  },
+  {
+    "code": "8939997430236",
+    "product_name": "bebe burp Ragi Cookies",
+    "brand": "bebe burp",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:baby-foods",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits"
+    ],
+    "ingredients_text": "Ragi Flour (48%), Whole Wheat Flour (20%), Cow Ghee (15%), Jaggery Powder (11.25%), Milk (5%), Cardamom (0.75%)",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/893/999/743/0236/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/893/999/743/0236/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/893/999/743/0236/nutrition_en.jpg"
+  },
+  {
+    "code": "8901058905656",
+    "product_name": "Cerelac",
+    "brand": "Nestlé",
+    "categories": [
+      "en:baby-foods"
+    ],
+    "ingredients_text": "",
+    "front_image_url": null,
+    "ingredients_image_url": null,
+    "nutrition_image_url": null
+  },
+  {
+    "code": "8906008350630",
+    "product_name": "ragi rich baby cereal",
+    "brand": "manna",
+    "categories": [
+      "en:baby-foods"
+    ],
+    "ingredients_text": "",
+    "front_image_url": null,
+    "ingredients_image_url": null,
+    "nutrition_image_url": null
+  },
+  {
+    "code": "8908020208081",
+    "product_name": "Jeeni Infants",
+    "brand": "Jeeni Infants",
+    "categories": [
+      "en:baby-foods"
+    ],
+    "ingredients_text": "",
+    "front_image_url": null,
+    "ingredients_image_url": null,
+    "nutrition_image_url": null
+  },
+  {
+    "code": "8901058023848",
+    "product_name": "Baby Cereal Rice",
+    "brand": "Nestlé, Nestum",
+    "categories": [
+      "en:plant-based-foods-and-beverages",
+      "en:plant-based-foods",
+      "en:cereals-and-potatoes",
+      "en:cereals-and-their-products",
+      "en:baby-foods"
+    ],
+    "ingredients_text": "Rice flour (86.9%), Sugar, Apple juice concentrate, Minerals, Acidity regulator (Dibasic potassium phosphate), Vitamins, Inositol and Enzyme (Alpha amylase).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/105/802/3848/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/105/802/3848/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/105/802/3848/nutrition_en.jpg"
+  },
+  {
+    "code": "8901058018424",
+    "product_name": "Cerelac",
+    "brand": "Nestlé",
+    "categories": [
+      "en:baby-foods"
+    ],
+    "ingredients_text": "Wheat flour (Atta) (43%), Milk solids (34.4%), Rice flour (8.9%), Corn puffs (3.9%), Apple juice concentrate (3.5%), Sugar, Orange juice concentrate (3%), Soyabean oil, Cherry flakes (2.6%), Minerals, Vitamins and Enzyme (Alpha amylase).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/8424/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/8424/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/105/801/8424/nutrition_en.jpg"
+  },
+  {
+    "code": "8901058031638",
+    "product_name": "Cerelac Wheat Apple Carrot",
+    "brand": "Nestlé",
+    "categories": [
+      "en:baby-foods"
+    ],
+    "ingredients_text": "",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/105/803/1638/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/105/803/1638/1.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/105/803/1638/1.jpg"
+  },
+  {
+    "code": "8901719134845",
+    "product_name": "Parle-G Biscuit",
+    "brand": "Parle",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:dry-biscuits"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR (MAIDA) 68%, SUGAR, REFINED PALM OIL, INVERT SUGAR SYRUP (SUGAR, CITRIC ACID), IODISED SALT, RAISING AGENTS [INS 503(ii), 500(ii)], MILK SOLIDS, FLOUR TREATMENT AGENTS [INS 1101(ii)] AND EMULSIFIER OF VEGETABLE ORIGIN [INS 472e]\r\nCONTAINS ADDED FLAVOURS (ARTIFICIAL FLAVOURING SUBSTANCE - VANILLA)mm",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/4845/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/4845/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/4845/nutrition_en.jpg"
+  },
+  {
+    "code": "8901719134852",
+    "product_name": "Parle-G",
+    "brand": "Parle",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:dry-biscuits",
+      "en:plain-biscuit"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR (MAIDA) (70%), SUGAR, REFINED PALM OIL, INVERT SUGAR SYRUP# [SUGAR, CITRIC ACID], IODISED SALT, RAISING AGENTS [503(ii), 500(ii)], MILK SOLIDS, ARTIFICIAL (VANILLA) FLAVOURING SUBSTANCES, EMULSIFIER OF VEGETABLE ORIGIN [472e] AND FLOUR TREATMENT AGENT [1101(ii)]. #(D-GLUCOSE, LEVULOSE). CONTAINS: WHEAT, MILK",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/4852/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/4852/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/4852/nutrition_en.jpg"
+  },
+  {
+    "code": "8901063139329",
+    "product_name": "bourbon",
+    "brand": "Britannia",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits"
+    ],
+    "ingredients_text": "Flavoured\nSandwich BiscuitsINGREDIENTS: REFINED WHEAT FLOUR (MAIDAL SUGAR (331 Nutr\nREFINED PALM OIL, EDIBLE MAIZE STARCH, COCOA SOLIDS (2:7% Per 1\nMILK SOLIDS, RAISING AGENTS (500i)& 503(0)1, EMULSIRERS r\n(471& 322(0)) AND IODISED SALT,\nCONTAINS PERMITTED HATURAL (150a&150d)&SYNTHETIC\n(122,110, 133&102) FOOD COLOURS AND ADDED FLAVOURS\n(NATURE IDENTICAL&ARTIFICIAL (VANILLA, CHOCOLATE MILK\nMILKY COCOA) FLAVOURING SUBSTANCES\n(Numbers in brackets as per International Numbering System\nCONTAINS WHEAT, MILK AND SOYA\nSTORE IN A CO00L, HYGIENIC AND DRY PLACE TRANSFER wChole\nCONTENTS T0 A CLEAN AIRTIGHT CONTAINER ONCE OPENEDof wFatEner",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/106/313/9329/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/106/313/9329/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/106/313/9329/nutrition_en.jpg"
+  },
+  {
+    "code": "8906010500764",
+    "product_name": "balaji wafers chataka pataka",
+    "brand": "Balaji",
+    "categories": [
+      "en:snacks",
+      "en:salty-snacks",
+      "en:sweet-snacks",
+      "en:appetizers",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:chips-and-fries",
+      "en:biscuits",
+      "en:crisps",
+      "en:crackers-appetizers",
+      "en:namkeen"
+    ],
+    "ingredients_text": "Rice meal (43%), edible vegetable oil (palmolein, rice bran), corn meal (3%), chickpea flour, edible common salt, spices & condiments 2% (cumin, chilli black pepper, dry mango), dehydrated vegetable powder (onion, garlic) sugar, acidity regulator (ins 330), anticaking agent (ins 551), flavour enhancer (ins 627, ins 631), natural and nature identical flavouring substances (garlic, black pepper), paprika extract (ins 160C).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/0764/1.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/0764/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/0764/nutrition_en.jpg"
+  },
+  {
+    "code": "8901063093522",
+    "product_name": "Good Day - Cashew Cookies",
+    "brand": "Britannia",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:cooking-helpers",
+      "en:pastry-helpers",
+      "en:baking-mixes",
+      "en:dessert-mixes",
+      "en:variety-packs",
+      "en:biscuits-or-cookies-variety-packs",
+      "en:biscuit-mixes",
+      "en:biscuits-cookies-shelf-stable"
+    ],
+    "ingredients_text": "INGREDIENTS REFINED WHEAT FLOUR (MAIDA), EDIBLE VEGETABLE OIL (PALM), SUGAR, CASHEW NUTS (4.5%), INVERT SYRUP, MILK SOLIDS, BUTTER (96%), RAISING AGENTS (503&5000TH 100ISED SALT AND EMULSIFIERS (322,471,472) CONTAINS ADDED FLAVOURS (NATURE IDENTICAL AND ARTIFICIAL (MILK AND VANILLA) FLAVOURING SUBSTANCES! (Numbers in brackets as per laternational Numbering System) CONTAINS WHEAT, NUTS, MILK AND SOYA.",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/106/309/3522/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/106/309/3522/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/106/309/3522/nutrition_en.jpg"
+  },
+  {
+    "code": "8901063162914",
+    "product_name": "Marie Gold Biscuit",
+    "brand": "Britannia",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR (MAIDA) (73%), SUGAR, REFINED PALM OIL, INVERT SUGAR SYRUP, MILK PRODUCTS (MILK SOLIDS & SWEETENED CONDENSED PARTLY SKIMMED MILK), RAISING AGENTS [503(i)&500), 10DISED SALT, MINERALS, ARTIFICIAL (MILK & VANILLA) & NATURE IDENTICAL FLAVOURING SUBSTANCES, EMULSIFIER (472e), DOUGH CONDITIONER (223) VITAMINS AND COLOUR (150d).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/106/316/2914/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/106/316/2914/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/106/316/2914/nutrition_en.jpg"
+  },
+  {
+    "code": "8906010500245",
+    "product_name": "Balaji Wafers Masala Sev Murmura",
+    "brand": "Balaji Wafers",
+    "categories": [
+      "en:snacks",
+      "en:salty-snacks",
+      "en:sweet-snacks",
+      "en:appetizers",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:chips-and-fries",
+      "en:biscuits",
+      "en:crisps",
+      "en:wafers"
+    ],
+    "ingredients_text": "puffed rice (85%), chickpea flour, edible vegetable oil (contains one or more of the following: palmolein, rice bran, corn, cottonseed, rice flour, red lentils, spices & condiments (chilli, black pepper, curry leaves, dried ginger, dry mango powder, coriander, turmeric, fennel, black salt, cumin, asafoetida), sugar, salt, dehydrated vegetable powder (garlic, tamarind, onion), dry mango powder, black salt, sugar, hydrolyzed vegetable protein (soya), maltodextrin, anticaking substances, acidity regulator (E330), raising agent (E500), flavour enhancer (E635)",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/0245/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/0245/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/0245/nutrition_en.jpg"
+  },
+  {
+    "code": "7622202225512",
+    "product_name": "Original Oreo",
+    "brand": "Cadbury",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:filled-biscuits",
+      "en:Des"
+    ],
+    "ingredients_text": "Refined Wheat Flour (Maida), Sugar, Fractionated Fat, Palmolein, Invert Sugar, Cocoa Solids (2%), Leavening Agents (500)(ii), 503 (ii)), Starch, lodised Salt, Emulsifier (322), Nature Identical Flavouring Substances. Allergen Information: Contains Wheat, Sulphite, Soy. \nMay Contain Milk and Barley.",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/762/220/222/5512/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/762/220/222/5512/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/762/220/222/5512/nutrition_en.jpg"
+  },
+  {
+    "code": "8901063092853",
+    "product_name": "Good Day cashew cookie",
+    "brand": "Britannia",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR, SUGAR, EDIBLE VEGETABLE OIL (PALM), SUGAR, CASHEW BUTS (4.5%), INTERESTERIFIED VEGETABLE FAT, COCOA SOLIDS (3%), INVERT SYRUP, MILK SOLIDS, BUTTER (0.6%) RAISING AGENTS [503(II), 500(II), IODISED SALT AND EMULSIFIER(322, 471, 472E). CONTAINS ADDED FLAVOURS [NATURE IDENTICAL AND ARTIFICIAL FLAVOURING SUBSTANCES - MILK AND VANILLA]",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/106/309/2853/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/106/309/2853/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/106/309/2853/nutrition_en.jpg"
+  },
+  {
+    "code": "8901719129988",
+    "product_name": "Happy happy - Parl",
+    "brand": "Parle",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:Happy happy biscuit"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR(MAIDA), SUGAR, REFINED PALM OIL, CHOCO CHIPS(8.4%), [SUGAR, EDIBLE VEGETABLE FAT (HYDROGENATED OILS), COCOA SOLIDS, DEXTROSE, EMULSIFIER (SOY LECITHIN) AND ARTIFICIAL FLAVOURING SUBSTANCES (VANILLA)], INVERT SUGAR SYRUP, COCOA SOLIDS (0.5%), IODISED SALT, RAISING AGENTS [503 (ii), 500 (ii)] AND EMULSIFIER OF VEGETABLE ORIGIN (472e)\r\nCONTAINS PERMITTED NATURAL FOOD COLOURS [ 150c, 150d ] AND ADDED FLAVOUR (ARTIFICIAL FLAVOURING SUBSTANCES - CHOCOLATE).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/171/912/9988/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/171/912/9988/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/171/912/9988/nutrition_en.jpg"
+  },
+  {
+    "code": "8901063029255",
+    "product_name": "Jimjam 57g (57)",
+    "brand": "Britannia",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR (MAIDA), SUGAR (24%), REFINED PALM OIL & INTERESTERIFIED VEGETABLE FAT, INVERT SUGAR SYRUP, DEXTROSE, MILK PRODUCTS (MILK SOLIDS & SWEETENED CONDENSED MILK), EDIBLE MAIZE STARCH, MALTODEXTRIN, FRUIT PRODUCTS (0.7%) (APPLE JUICE CONCENTRATE, BANANA POWDER & PLUM JUICE CONCENTRATE), IODISED SALT, EMULSIFIERS [322(i) & 471], RAISING AGENTS [503(ii) & 500(ii)], NATURE IDENTICAL AND ARTIFICIAL (MIXED FRUIT, VANILLA & BUTTER) FLAVOURING SUBSTANCES, ACIDITY REGULATORS (330 & 331), GELLING AGENT (440) AND COLOUR (122). (Numbers in brackets as per International Numbering System) CONTAINS WHEAT, MILK AND SOYA. ydrate-73g, of which Total 31 Total Fat-19g/141 no unsaturated fatty acids-7.29 fss Lic. No. 10015 100120260N For Mfg unit address & Lic. No. read the last two characters of CWALIOR 474005, MADHYA PRADESH Lic. No. the &quot;Lot No. and see address panel. 06-1.8. MANGHARAM FOODS 01129",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/106/302/9255/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/106/302/9255/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/106/302/9255/nutrition_en.jpg"
+  },
+  {
+    "code": "8901491366052",
+    "product_name": "Puffcorn",
+    "brand": "Kurkure",
+    "categories": [
+      "en:snacks",
+      "en:salty-snacks",
+      "en:appetizers",
+      "en:biscuits-and-crackers",
+      "en:chips-and-fries",
+      "en:crisps",
+      "en:crackers-appetizers",
+      "en:corn-chips",
+      "en:puffed-salty-snacks"
+    ],
+    "ingredients_text": "Cereal Products (67%) (Corn Meal (53%). Rice Meal), Edible Vegetable Oil (Palmolein), ++Seasoning (Sugar, lodised Salt, Maltodextrin, &quot;Spices and Condiments, Milk Solids, Cheese, Salt Substitute (Potassium Chloride), Flavour (Natural and Nature Identical Flavouring Substances), Flavour Enhancers (627, 631), Acidity Regulators (296, 330), Emulsifying & Stabilising Agent (331 (iii), 471, 327), Gram Meal, Firming Agent (170(i)), lodised Salt. **As flavouring agent. ~Contains Onion and Garlic ALLERGEN ADVICE: Contains Soy, Milk, Wheat",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/149/136/6052/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/149/136/6052/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/149/136/6052/nutrition_en.jpg"
+  },
+  {
+    "code": "8901719135248",
+    "product_name": "Krackjack",
+    "brand": "Parle",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR (MAIDA), REFINED OILS (PALMOLEIN AND PALM), SUGAR (19.1%), RAISING AGENTS [ 503 (ii), 10 (ii), 341 (i) ], INVERT SUGAR SYRUP, IODISED SALT(0.9%) YEAST, ACIDITY REGULATORS [270,296], FLOUR TREATMENT AGENTS [223,1101 (ii),1100(i)], EMULSIFIER OF VEGETABLE ORIGIN [472e] CONTAINS ADDED FLAVOURS (ARTIFICIAL FLAVOURING SUBSTANCE-VANILLA, BUT ER)",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/5248/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/5248/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/5248/nutrition_en.jpg"
+  },
+  {
+    "code": "8906010501570",
+    "product_name": "Balaji Wafers Crunchex",
+    "brand": "Balaji",
+    "categories": [
+      "en:plant-based-foods-and-beverages",
+      "en:plant-based-foods",
+      "en:snacks",
+      "en:cereals-and-potatoes",
+      "en:salty-snacks",
+      "en:appetizers",
+      "en:chips-and-fries",
+      "en:potatoes-and-their-products",
+      "en:crisps",
+      "en:salty-snacks-made-from-potato",
+      "en:Kurkure"
+    ],
+    "ingredients_text": "POTATO (84%), EDIBLE VEGETABLE OIL (CONTAINS ONE OR MORE OF THE FOLLOWINGS: PALMOLEIN, GROUNDNUT), **SEASONING [SUGAR, MALTODEXTRIN, SALT, SPICES & CONDIMENTS (CHILLI (0.5%), PEPPER), DEHYDRATED VEGETABLE POWDER (ONION, GARLIC, TOMATO), BLACK SALT, ACIDITY REGULATOR (INS 330, INS 296, INS 334), MILK SOLIDS (0.1%), HYDROLYZED VEGETABLE PROTEIN SOYA), ANTICAKING AGENT (INS 551), FLAVOUR ENHANCER (INS 627, INS 631) FLAVOUR (NATURAL & NATURE IDENTICAL FLAVOURING SUBSTANCES), PAPRIKA EXTRACT (INS 160C), STABILIZER (INS 340), EMULSIFIER (INS 470)]",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/1570/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/1570/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/601/050/1570/1.jpg"
+  },
+  {
+    "code": "8996001312506",
+    "product_name": "Malkist Cheese Flavoured Crunchy Layered Cracker Biscuits",
+    "brand": "Mayora",
+    "categories": [
+      "en:snacks",
+      "en:salty-snacks",
+      "en:sweet-snacks",
+      "en:appetizers",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:crackers-appetizers",
+      "en:cream-biscuit"
+    ],
+    "ingredients_text": "Refined Wheat Flour Edible Vegetable Oil (Palmolein) Sugar (15.8%), Whey Powder, Glucose Syrup, Milk Solids (1.67%)(SMP), Cheese Powder (Cheese, Maltodextrin)(1.62%), Tapioca Starch, Leavening Agent (E503(ii), E500(ii)), Edible Common Salt, Baker's Yeast, Malt Extract (0.42%), Butter, Artificial Flavouring Substance (Cheese), Emulsifier (Soy Lecithin E322(i)), Vitamin Premix (Thiamine Mononitrate, Riboflavin, Pyridoxine Hydrochloride, Cyanocobalamin), Permitted Synthetic Food Colour (E102, E110).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/899/600/131/2506/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/899/600/131/2506/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/899/600/131/2506/nutrition_en.jpg"
+  },
+  {
+    "code": "8901058005233",
+    "product_name": "Kitkat mini chocolate coated wafer",
+    "brand": "KitKat, Nestle nutrition",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:cocoa-and-its-products",
+      "en:confectioneries",
+      "en:biscuits",
+      "en:chocolate-candies",
+      "en:chocolates",
+      "en:bars",
+      "en:chocolate-bars",
+      "en:chocolate-biscuits",
+      "en:dark-chocolates",
+      "en:dark-chocolate-bars"
+    ],
+    "ingredients_text": "Sugar, Milk Solids. Fractionated vegetable Fat, Hydrogenated Vegetable fats, Refined Wheat flour (Maida), Cocoa solids (4.5%), Emulsifier (Soya lecithin), Yeast, Raising agent, Artificial flavouring substance (vanilla), Iodised salt, Flour treatment agent (516) and Nature Identical flavoring substance",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/105/800/5233/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/105/800/5233/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/105/800/5233/nutrition_en.jpg"
+  },
+  {
+    "code": "8901063023901",
+    "product_name": "Marie Gold",
+    "brand": "Britannia",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:snack-biscuit-with-fruits-filling"
+    ],
+    "ingredients_text": "REFINED WHEAT FLOUR (MAIDA)(73%), SUGAR, REFINED PALM OIL, INVERT SUGAR SYRUP, MILK SOLIDS, RAISING AGENTS [503(ii) & 500 (ii)], IODIZED SALT, EMULSIFIER(472e), CALCIUM SALT, DOUGH CONDITIONER(223), VITAMINS*, FERROUS SALT AND POTASSIUM IODATE. CONTAINS PERMITTED NATURAL COLOUR (150d) AND ADDED FLAVOURS NATURE IDENTICAL & ARTIFICIAL (MILK & VANILLA) FLAVOURING SUBSTANCES] (Numbers in brackets as per International Numbering System) CONTAINS WHEAT, MILK AND SULPHITE.",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/106/302/3901/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/106/302/3901/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/106/302/3901/nutrition_en.jpg"
+  },
+  {
+    "code": "8901719135118",
+    "product_name": "MONACO",
+    "brand": "Parle",
+    "categories": [
+      "en:snacks",
+      "en:salty-snacks",
+      "en:sweet-snacks",
+      "en:appetizers",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits",
+      "en:Monaco-biscuit"
+    ],
+    "ingredients_text": "Biscuit",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/5118/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/5118/ingredients_en.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/171/913/5118/nutrition_en.jpg"
+  },
+  {
+    "code": "8901063162532",
+    "product_name": "Marie gold",
+    "brand": "Britannia",
+    "categories": [
+      "en:snacks",
+      "en:sweet-snacks",
+      "en:biscuits-and-cakes",
+      "en:biscuits-and-crackers",
+      "en:biscuits"
+    ],
+    "ingredients_text": "Refined Wheat Flour (maida) (74%), Sugar, Refined Palm Oil, Invert Sugar Syrup, Milk Products (sweetened Condensed Party Skimmed Milk And Milk Solids), Raising Agents [503(i) & 500(1)], Iodised Sali, Minerals** Emulsifier (472e), Artificial (milk & Vanilla) & Nature Identical Flavouring Substances, Dough Conditioner (223), Vitamins*, Colour (150d) And Improver (1101(i)).",
+    "front_image_url": "https://images.openfoodfacts.org/images/products/890/106/316/2532/front_en.jpg",
+    "ingredients_image_url": "https://images.openfoodfacts.org/images/products/890/106/316/2532/1.jpg",
+    "nutrition_image_url": "https://images.openfoodfacts.org/images/products/890/106/316/2532/nutrition_en.jpg"
+  }
+]
