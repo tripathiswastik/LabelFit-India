@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test",
+    "baseline:verify": "node scripts/verify_baseline.js",
     "prove:scan": "node scripts/prove_local_workflow_scan.js",
     "benchmark:off": "python scripts/fetch_openfoodfacts_benchmark.py",
     "benchmark:build": "python scripts/build_50sku_benchmark.py",
