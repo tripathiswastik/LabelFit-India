@@ -8,7 +8,7 @@
 
 ## 1. Execution Parameters
 
-- **Execution Mode:** Local verified simulation (set GEMINI_API_KEY for live call)
+- **Execution Mode:** Local mocked-response simulation (no live Gemini request)
 - **Model ID:** `gemini-3.8-flash`
 - **API Endpoint:** `https://generativelanguage.googleapis.com/v1beta/interactions`
 - **API Revision Header:** `2026-05-20`

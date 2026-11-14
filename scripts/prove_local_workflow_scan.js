@@ -88,7 +88,7 @@ async function runProof() {
   let capturedRequestBody = null;
   const liveApiKey = process.env.GEMINI_API_KEY;
   const isLive = Boolean(liveApiKey);
-  console.log(`[Mode] ${isLive ? 'LIVE Gemini API call' : 'Local verified simulation (set GEMINI_API_KEY for live call)'}`);
+  console.log(`[Mode] ${isLive ? 'LIVE Gemini API call' : 'Local mocked-response simulation (no live Gemini request)'}`);
 
   const mockFetch = async (url, options) => {
     capturedRequestHeaders = options.headers;
@@ -195,7 +195,7 @@ async function runProof() {
   if (!hasCloudRunDetection || !hasAnalysisSpendLock) {
     throw new Error('Cloud Run spend lock logic missing from server.js');
   }
-  console.log('[5] Cloud Run spend-lock verified: ANALYSIS_ENABLED is hard-locked to !IS_CLOUD_RUN.');
+  console.log('[5] Source inspection found the Cloud Run analysis guard. This script did not exercise a deployed Cloud Run service.');
 
   // 7. Generate Documentation Proof
   const markdownReport = [
@@ -209,12 +209,12 @@ async function runProof() {
     '',
     '## 1. Execution Parameters',
     '',
-    `- **Execution Mode:** ${isLive ? 'LIVE Gemini API call' : 'Local verified simulation (set GEMINI_API_KEY for live call)'}`,
+    `- **Execution Mode:** ${isLive ? 'LIVE Gemini API call' : 'Local mocked-response simulation (no live Gemini request)'}`,
     `- **Model ID:** \`${MODEL_ID}\``,
     `- **API Endpoint:** \`https://generativelanguage.googleapis.com/v1beta/interactions\``,
     `- **API Revision Header:** \`${API_REVISION}\``,
     `- **Interaction Storage:** \`store: false\` (verified in outbound request payload)`,
-    `- **Cloud Run Spend Lock:** Hard-disabled (\`ANALYSIS_ENABLED = false\` when \`K_SERVICE\` present; verified HTTP 503)`,
+    `- **Cloud Run Spend Lock:** Source inspection found \`ANALYSIS_ENABLED = !IS_CLOUD_RUN\`; HTTP 503 branch is covered by a local unit test, not a deployed service test.`,
     `- **Input Test Fixture:** \`test/fixtures/synthetic_normal.png\` (${imageBuffer.length} bytes, PNG magic bytes validated)`,
     '',
     '## 2. Model Instruction & Prompt Specification',
