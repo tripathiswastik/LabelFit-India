@@ -175,3 +175,24 @@ def test_step4_caloric_or_guideline_footnote_downgraded_in_age_marking():
         }
     })
     assert fields_valid["ageMarking"].read_status == "clear"
+
+
+def test_step4_dosage_instruction_downgraded_in_age_marking():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "ageMarking": {
+            "value": "Children: 1 tablet",
+            "evidence": "Children: 1 tablet",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["ageMarking"].read_status == "uncertain"
+
+    fields_drops = extractor._normalize({
+        "ageMarking": {
+            "value": "Give 5 drops daily",
+            "evidence": "Give 5 drops daily",
+            "readStatus": "clear",
+        }
+    })
+    assert fields_drops["ageMarking"].read_status == "uncertain"

@@ -31,12 +31,24 @@ CALORIC_OR_GUIDELINE_PATTERN = re.compile(
     r'(?:guideline\s*daily\s*amounts?|gda|rda|kcal|calorie|कैलोरी|energy\s*requirement|daily\s*allowance|adult\s*diet|\b(?:[4-9]|\d{2,})\s*years?\s*old\b)',
     re.IGNORECASE
 )
+DOSAGE_OR_ADMINISTRATION_PATTERN = re.compile(
+    r'\b(?:tablets?|capsules?|drops?|dosage|dose|pills?)\b',
+    re.IGNORECASE
+)
 
 
 def is_caloric_or_guideline_footnote(value: str, evidence: str) -> bool:
     return bool(
         CALORIC_OR_GUIDELINE_PATTERN.search(value)
         or CALORIC_OR_GUIDELINE_PATTERN.search(evidence)
+    )
+
+
+def is_invalid_age_marking(value: str, evidence: str) -> bool:
+    return bool(
+        is_caloric_or_guideline_footnote(value, evidence)
+        or DOSAGE_OR_ADMINISTRATION_PATTERN.search(value)
+        or DOSAGE_OR_ADMINISTRATION_PATTERN.search(evidence)
     )
 STOP_WORDS = {'the', 'and', 'for', 'with', 'from', 'this', 'that', 'per', 'net', 'pkg'}
 
@@ -282,8 +294,8 @@ class GeminiLabelExtractor:
                 # Step 3 Guard 2: Numeral conflict in key fields (ageMarking, preparationAndStorage, nutritionPanel)
                 elif name in ("ageMarking", "preparationAndStorage", "nutritionPanel") and has_conflicting_numbers(value, evidence):
                     status = "uncertain"
-                # Step 4 Guard: Age marking must not be a nutritional guideline or caloric reference footnote
-                elif name == "ageMarking" and is_caloric_or_guideline_footnote(value, evidence):
+                # Step 4 Guard: Age marking must not be a nutritional guideline, caloric footnote, or dosage instruction
+                elif name == "ageMarking" and is_invalid_age_marking(value, evidence):
                     status = "uncertain"
                 # Step 3 Guard 3: Ingredient or prep truncation (trailing punctuation or unclosed delimiters)
                 elif name in ("ingredients", "preparationAndStorage") and (TRUNCATION_SUFFIX_PATTERN.search(value) or has_unbalanced_delimiters(value)):

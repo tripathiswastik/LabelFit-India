@@ -154,9 +154,13 @@ function parseImagePayload(payload) {
 const ALLERGEN_DECLARATION_PATTERN = /\b(contains?|allergen|allergens?|may\s+contain|traces?|free\s+from|facility|equipment)\b/i;
 const TRUNCATION_SUFFIX_PATTERN = /(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$/i;
 const CALORIC_OR_GUIDELINE_PATTERN = /(?:guideline\s*daily\s*amounts?|gda|rda|kcal|calorie|कैलोरी|energy\s*requirement|daily\s*allowance|adult\s*diet|\b(?:[4-9]|\d{2,})\s*years?\s*old\b)/i;
+const DOSAGE_OR_ADMINISTRATION_PATTERN = /\b(?:tablets?|capsules?|drops?|dosage|dose|pills?)\b/i;
 
-function isCaloricOrGuidelineFootnote(value, evidence) {
-  return CALORIC_OR_GUIDELINE_PATTERN.test(value) || CALORIC_OR_GUIDELINE_PATTERN.test(evidence);
+function isInvalidAgeMarking(value, evidence) {
+  return CALORIC_OR_GUIDELINE_PATTERN.test(value) ||
+         CALORIC_OR_GUIDELINE_PATTERN.test(evidence) ||
+         DOSAGE_OR_ADMINISTRATION_PATTERN.test(value) ||
+         DOSAGE_OR_ADMINISTRATION_PATTERN.test(evidence);
 }
 
 const DEVANAGARI_DIGITS = {
@@ -279,8 +283,8 @@ function normalizeField(raw, fieldName = '') {
     return { value, evidence, readStatus: 'uncertain' };
   }
 
-  // Step 4 Guard: Age marking must not be a nutritional guideline or caloric reference footnote
-  if (fieldName === 'ageMarking' && isCaloricOrGuidelineFootnote(value, evidence)) {
+  // Step 4 Guard: Age marking must not be a nutritional guideline, caloric footnote, or dosage instruction
+  if (fieldName === 'ageMarking' && isInvalidAgeMarking(value, evidence)) {
     return { value, evidence, readStatus: 'uncertain' };
   }
 
@@ -483,7 +487,9 @@ module.exports = {
   ALLERGEN_DECLARATION_PATTERN,
   TRUNCATION_SUFFIX_PATTERN,
   CALORIC_OR_GUIDELINE_PATTERN,
-  isCaloricOrGuidelineFootnote,
+  DOSAGE_OR_ADMINISTRATION_PATTERN,
+  isCaloricOrGuidelineFootnote: isInvalidAgeMarking,
+  isInvalidAgeMarking,
   hasTokenSupport,
   hasConflictingNumbers,
   createRateLimiter,

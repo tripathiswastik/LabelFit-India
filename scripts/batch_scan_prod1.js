@@ -59,6 +59,30 @@ const SKU_PANELS = [
     product: 'Amul Pure Ghee (500 mL Plastic Jar)',
     image_file: '1000084121.jpg',
   },
+  {
+    sku_id: 'SKU-PROD-007',
+    brand: 'Aravan Traders',
+    product: 'Shakti Kuttu Atta Buckwheat Flour (250g Pouch)',
+    image_file: 'IMG-20261115-WA0001.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-008',
+    brand: 'Fortune (AWL)',
+    product: 'Fortune Refined Sunflower Seed Oil (1L Pouch)',
+    image_file: 'IMG-20261115-WA0004.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-009',
+    brand: 'Dabur',
+    product: 'Dabur Hajmola Imli Tasty Digestive Tablets (Bottle)',
+    image_file: 'IMG-20261115-WA0006.jpg',
+  },
+  {
+    sku_id: 'SKU-PROD-010',
+    brand: 'VLCC',
+    product: 'VLCC Cocoa Butter Detan Glow Body Lotion (400ml Bottle)',
+    image_file: 'IMG-20261115-WA0009.jpg',
+  },
 ];
 
 const FIELD_SCHEMA = {
@@ -156,11 +180,36 @@ async function main() {
   const apiKey = loadApiKey();
   console.log('✓ API Key loaded securely into memory.');
 
+  const outJson = path.join(PROD_DIR, 'batch_scan_results.json');
+  let existingResults = [];
+  if (fs.existsSync(outJson)) {
+    try {
+      existingResults = JSON.parse(fs.readFileSync(outJson, 'utf8'));
+    } catch {
+      existingResults = [];
+    }
+  }
+
   const results = [];
 
   for (let i = 0; i < SKU_PANELS.length; i++) {
     const sku = SKU_PANELS[i];
-    console.log(`[${i + 1}/${SKU_PANELS.length}] Scanning ${sku.brand} - ${sku.product} (${sku.image_file})...`);
+    const cached = existingResults.find(r => r.sku_id === sku.sku_id || r.image_file === sku.image_file);
+    if (cached && cached.raw) {
+      console.log(`[${i + 1}/${SKU_PANELS.length}] Re-normalizing cached scan for ${sku.brand} - ${sku.product}...`);
+      results.push({
+        sku_id: sku.sku_id,
+        brand: sku.brand,
+        product: sku.product,
+        image_file: sku.image_file,
+        model: cached.model || 'gemini-3.5-flash',
+        raw: cached.raw,
+        normalized: normalizeExtraction(cached.raw),
+      });
+      continue;
+    }
+
+    console.log(`[${i + 1}/${SKU_PANELS.length}] Live scanning ${sku.brand} - ${sku.product} (${sku.image_file})...`);
     try {
       const scanResult = await scanPackage(apiKey, sku);
       results.push(scanResult);
@@ -173,7 +222,6 @@ async function main() {
   }
 
   // Save JSON
-  const outJson = path.join(PROD_DIR, 'batch_scan_results.json');
   fs.writeFileSync(outJson, JSON.stringify(results, null, 2));
   console.log(`\n✓ Raw & normalized results saved to: ${outJson}`);
 

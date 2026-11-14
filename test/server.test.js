@@ -193,6 +193,22 @@ test('Step 4: ageMarking derived from RDA or caloric guideline footnote is downg
   assert.equal(validInfantAge.readStatus, 'clear');
 });
 
+test('Step 4: ageMarking derived from medicine or supplement dosage instruction is downgraded to uncertain', () => {
+  const result = normalizeField({
+    value: 'Children: 1 tablet',
+    evidence: 'Children: 1 tablet',
+    readStatus: 'clear'
+  }, 'ageMarking');
+  assert.equal(result.readStatus, 'uncertain');
+
+  const drops = normalizeField({
+    value: 'Give 5 drops daily',
+    evidence: 'Give 5 drops daily',
+    readStatus: 'clear'
+  }, 'ageMarking');
+  assert.equal(drops.readStatus, 'uncertain');
+});
+
 // Step 5: Production Security & Cloud Run Spend Locks Tests
 
 test('Step 5: Cloud Run status endpoint reports unconfigured when analysis is disabled', async () => {

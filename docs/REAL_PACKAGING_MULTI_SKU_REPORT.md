@@ -16,6 +16,10 @@
 | `SKU-PROD-004` | **KKK** | KKK Poha Rice Flakes (500g Pouch) | `1000084116.jpg` | ✅ Transcribed |
 | `SKU-PROD-005` | **Namaste India** | Namaste India Desi Ghee (1L Tin Can) | `1000084117.jpg` | ✅ Transcribed |
 | `SKU-PROD-006` | **Amul** | Amul Pure Ghee (500 mL Plastic Jar) | `1000084121.jpg` | ✅ Transcribed |
+| `SKU-PROD-007` | **Aravan Traders** | Shakti Kuttu Atta Buckwheat Flour (250g Pouch) | `IMG-20261115-WA0001.jpg` | ✅ Transcribed |
+| `SKU-PROD-008` | **Fortune (AWL)** | Fortune Refined Sunflower Seed Oil (1L Pouch) | `IMG-20261115-WA0004.jpg` | ✅ Transcribed |
+| `SKU-PROD-009` | **Dabur** | Dabur Hajmola Imli Tasty Digestive Tablets (Bottle) | `IMG-20261115-WA0006.jpg` | ✅ Transcribed |
+| `SKU-PROD-010` | **VLCC** | VLCC Cocoa Butter Detan Glow Body Lotion (400ml Bottle) | `IMG-20261115-WA0009.jpg` | ✅ Transcribed |
 
 ---
 
@@ -51,7 +55,7 @@
 | Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
 |---|---|---|---|---|---|
 | **productName** | `clear` | `clear` | Tomato Ketchup | `Tomato Ketchup` | ✅ Clear Match |
-| **ageMarking** | `clear` | `uncertain` | 8 year old child | `8 year old child` | ⚠️ Downgraded by Normalizer (RDA Footnote) |
+| **ageMarking** | `clear` | `uncertain` | 8 year old child | `8 year old child` | ⚠️ Downgraded by Normalizer |
 | **ingredients** | `clear` | `clear` | Water, Tomato paste (24.5%), Sugar, Iodized salt, Thickeners... | `Water, Tomato paste (24.5%), Sugar, Iodi...` | ✅ Clear Match |
 | **allergenDeclaration** | `clear` | `clear` | Allergen Note: May contain Wheat, Milk, Mustard and Soy. | `Allergen Note: May contain Wheat, Milk, ...` | ✅ Clear Match |
 | **nutritionPanel** | `clear` | `uncertain` | NUTRITIONAL INFORMATION If a serve is 1 Tbsp (9 g) NUTRITION... | `NUTRITIONAL INFORMATION If a serve is 1 ...` | ⚠️ Downgraded by Normalizer |
@@ -92,3 +96,51 @@
 | **allergenDeclaration** | `clear` | `clear` | Allergen Information: Contains milk. | `Allergen Information: Contains milk.` | ✅ Clear Match |
 | **nutritionPanel** | `clear` | `uncertain` | Nutritional Information 33 servings per container Serving si... | `Nutritional Information` | ⚠️ Downgraded by Normalizer |
 | **preparationAndStorage** | `clear` | `uncertain` | STORE IN COOL, DRY AND HYGIENIC PLACE, AWAY FROM DIRECT SUN ... | `STORE IN COOL, DRY AND HYGIENIC PLACE` | ⚠️ Downgraded by Normalizer |
+
+### SKU-PROD-007: Aravan Traders — Shakti Kuttu Atta Buckwheat Flour (250g Pouch)
+- **Image**: `IMG-20261115-WA0001.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `uncertain` | शक्ति कुट्टू आटा Kuttu Atta | `Kuttu Atta` | ⚠️ Downgraded by Normalizer |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `clear` | BUCKWHEAT | `INGREDIENT : BUCKWHEAT` | ✅ Clear Match |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `clear` | `uncertain` | NUTRITION FACTS SERVING SIZE 100g (Approx) Energy 345Kcal Ca... | `NUTRITION FACTS` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `clear` | `uncertain` | How to store : In Clean, Cool & Dry Place, Free From Moistur... | `TRANSFER INTO AIRTIGHT CONTAINER AFTER O...` | ⚠️ Downgraded by Normalizer |
+
+### SKU-PROD-008: Fortune (AWL) — Fortune Refined Sunflower Seed Oil (1L Pouch)
+- **Image**: `IMG-20261115-WA0004.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | REFINED SUNFLOWER SEED OIL | `REFINED SUNFLOWER SEED OIL` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `uncertain` | Please refer to the bracketed portion of the batch code prin... | `Refined Sunflower Oil, Antioxidants (INS...` | ⚠️ Downgraded by Normalizer |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `clear` | `uncertain` | Nutritional Information Serving Size : 15 ml/13.65 g (1 tabl... | `Nutritional Information Serving Size : 1...` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `clear` | `clear` | USE BY DATE IS VALID IF STORED IN A COOL, DRY PLACE. KEEP AW... | `USE BY DATE IS VALID IF STORED IN A COOL...` | ✅ Clear Match |
+
+### SKU-PROD-009: Dabur — Dabur Hajmola Imli Tasty Digestive Tablets (Bottle)
+- **Image**: `IMG-20261115-WA0006.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `uncertain` | `uncertain` | Hajmola Imli Tasty Digestive Tablets | `Imli Tasty Digestive Tablets` | ℹ️ uncertain |
+| **ageMarking** | `clear` | `uncertain` | Children: 1 tablet | `Children: 1 tablet` | ⚠️ Downgraded by Normalizer |
+| **ingredients** | `clear` | `uncertain` | Composition: Each Tablet is prepared/derived from: Powder mi... | `Composition: Each Tablet is prepared/der...` | ⚠️ Downgraded by Normalizer |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **preparationAndStorage** | `clear` | `uncertain` | Storage: Store in cool and dry place, protected from moistur... | `Store in cool and dry place, protected f...` | ⚠️ Downgraded by Normalizer |
+
+### SKU-PROD-010: VLCC — VLCC Cocoa Butter Detan Glow Body Lotion (400ml Bottle)
+- **Image**: `IMG-20261115-WA0009.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | VLCC COCOA BUTTER DETAN GLOW | `VLCC COCOA BUTTER DETAN GLOW` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `uncertain` | Aqua, Paraffinum liquidum, Sunflower (Helianthus annuus) See... | `Ingredients: Aqua, Paraffinum liquidum, ...` | ⚠️ Downgraded by Normalizer |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **preparationAndStorage** | `clear` | `clear` | Directions For Use : Apply liberally all over your body afte... | `Directions For Use : Apply liberally all...` | ✅ Clear Match |
