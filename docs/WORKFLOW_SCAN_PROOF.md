@@ -1,8 +1,10 @@
-# LabelFit India: Local End-to-End Workflow Scan Proof
+# LabelFit India: Local Workflow Simulation Proof
 
-**Status:** Verified Local Workflow Integration Check  
+**Status:** Local Simulation Integration Check (Offline Fallback Engine — No Live Gemini API Run Recorded)  
 **Date:** 2026-11-14  
-**Notice:** This is a software and integration workflow check only; it does not establish model accuracy, OCR reliability, clinical safety, or caregiver comprehension on real-world packaging.
+
+> [!NOTE]
+> **SIMULATION NOTICE:** This scan proof was executed using the local simulation harness with mock Gemini interaction payloads. No live Google Gemini API network request was executed or recorded in this repository. It serves exclusively as a software pipeline and UI integration proof, not as a live model accuracy verification.
 
 ---
 

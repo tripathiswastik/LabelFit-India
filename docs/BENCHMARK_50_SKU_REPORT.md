@@ -5,17 +5,21 @@
 **Scope:** Packaged Complementary Infant Foods (6+ months) in Indian Retail  
 **Harness Executable:** `npm run benchmark:eval` / `python scripts/evaluate_benchmark.py --csv docs/benchmark-template.csv`  
 
+> [!IMPORTANT]
+> **SYNTHETIC / DEMO DATA NOTICE:**
+> The 50-SKU benchmark dataset and derived metrics presented in this report represent an **illustrative synthetic demonstration and error-pattern modeling dataset**. While the packaging texts, brand compositions, and nutrient profiles are modeled on authentic Indian retail complementary foods, the row evaluations and model outputs were generated to stress-test the normalization and failure-detection harnesses (`evaluate_benchmark.py`)—NOT from a live, instrumented multimodal model execution on physical packaging photos. Do not treat these numbers as measured live accuracy or empirical model validation.
+
 ---
 
 ## 1. Executive Summary & Purpose
 
-The purpose of this 50-SKU exploratory benchmark is to discover where multimodal packaging transcription fails on authentic Indian complementary infant foods before proceeding with caregiver testing or wider deployment.
+The purpose of this 50-SKU exploratory benchmark is to exercise the validation and error-detection harnesses on modeled Indian complementary infant food packaging before proceeding with live model benchmarking or caregiver testing.
 
-Per the [Validation Plan](file:///D:/ag-ai/LabelFit%20India/docs/VALIDATION_PLAN.md), this 50-product evaluation is an **exploratory engineering check**, not a clinical study, regulatory submission, or nationwide accuracy claim.
+Per the [Validation Plan](file:///D:/ag-ai/LabelFit%20India/docs/VALIDATION_PLAN.md), this 50-product evaluation is an **illustrative synthetic engineering check**, not a clinical study, regulatory submission, or live empirical accuracy claim.
 
 ### Core Protocol Safeguards
 - **Scope Restriction:** Strictly commercial complementary foods intended for infants aged 6+ months (porridges, baby cereals, purees, teething biscuits, puffed snacks). Starter infant formula (0–6 months) and Foods for Special Medical Purposes (FSMP) are strictly out of scope.
-- **Independent Ground Truth:** Two independent transcribers manually verified package panels against physical retail packs and high-resolution photography. Disagreements were resolved by physical pack inspection. Model outputs were never used to construct ground truth.
+- **Independent Ground Truth Modeling:** Ground truth text is modeled on authentic physical retail packaging labels and high-resolution packaging panels, independent of Gemini outputs.
 - **Complete-SKU Holdout:** All photographed panels (front, nutrition, ingredients, preparation) for each SKU remain grouped in the same evaluation unit to prevent data leakage between packaging faces.
 - **Zero Prescriptive Claims:** Evaluates literal transcription fidelity only. Zero health ratings, nutritional scores, or feeding advice.
 

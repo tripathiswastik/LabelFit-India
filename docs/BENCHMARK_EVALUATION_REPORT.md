@@ -3,7 +3,7 @@
 ```
 
 ================================================================================
-  LABELFIT INDIA - BENCHMARK EVALUATION AUDIT REPORT
+  LABELFIT INDIA - BENCHMARK EVALUATION AUDIT REPORT (SYNTHETIC DEMO)
 ================================================================================
 Total Rows:     300
 Unique SKUs:    50
@@ -41,7 +41,8 @@ low_light                | 36       | 94.4          % | 0.028
 curved_tin               | 12       | 83.3          % | 0.002   
 
 ================================================================================
-Note: Small exploratory check (target 50 SKUs). Not a clinical or nationwide claim.
+Note: Synthetic demonstration check (50 SKUs). Exercises failure-mode harnesses.
+      Does not represent live empirical model output on physical packaging photos.
 ================================================================================
 
 ```

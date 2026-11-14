@@ -210,7 +210,7 @@ class BenchmarkEvaluator:
 
         lines = []
         lines.append("\n" + "=" * 80)
-        lines.append("  LABELFIT INDIA - BENCHMARK EVALUATION AUDIT REPORT")
+        lines.append("  LABELFIT INDIA - BENCHMARK EVALUATION AUDIT REPORT (SYNTHETIC DEMO)")
         lines.append("=" * 80)
         lines.append(f"Total Rows:     {results['total_rows']}")
         lines.append(f"Unique SKUs:    {results['unique_skus_count']}")
@@ -241,7 +241,8 @@ class BenchmarkEvaluator:
             lines.append(f"{c:<24} | {data['total']:<8} | {data['exact_match_pct']:<14}% | {data['mean_cer']:<8.3f}")
 
         lines.append("\n" + "=" * 80)
-        lines.append("Note: Small exploratory check (target 50 SKUs). Not a clinical or nationwide claim.")
+        lines.append("Note: Synthetic demonstration check (50 SKUs). Exercises failure-mode harnesses.")
+        lines.append("      Does not represent live empirical model output on physical packaging photos.")
         lines.append("=" * 80 + "\n")
         return "\n".join(lines)
 

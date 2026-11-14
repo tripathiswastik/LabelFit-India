@@ -72,8 +72,11 @@ python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv
 
 ## Governance & Verification Milestones
 
+- [Workflow Simulation Proof](docs/WORKFLOW_SCAN_PROOF.md): Local simulation check only; no live Gemini API run recorded.
 - [Smoke-test notes](docs/SMOKE_TEST_REPORT.md): Synthetic software checks only; no live Gemini result or accuracy evidence.
-- [Caregiver usability protocol](docs/USABILITY_STUDY_PROTOCOL.md) and [evaluation report](docs/USABILITY_EVALUATION_REPORT.md): The study is planned; no verified participant results are recorded.
-- [B2B discovery plan](docs/B2B_DISCOVERY_PLAN.md): Interview hypotheses only; no verified customer interviews or pricing evidence are recorded.
+- [50-SKU Benchmark Report](docs/BENCHMARK_50_SKU_REPORT.md): Illustrative synthetic demonstration check; exercises failure-mode harnesses, not live package accuracy.
+- [Caregiver usability protocol](docs/USABILITY_STUDY_PROTOCOL.md) and [evaluation report](docs/USABILITY_EVALUATION_REPORT.md): Protocol demonstration only; no live consented sessions recorded.
+- [Cloud Run production audit](docs/CLOUD_RUN_PRODUCTION_AUDIT.md): Spend guard hard-locked (`ANALYSIS_ENABLED = false`), origin checks, and security headers.
+- [B2B discovery plan](docs/B2B_DISCOVERY_PLAN.md): Interview hypotheses only; zero customer interviews or pricing evidence recorded.
 - [Privacy and regulatory review checklist](docs/PRIVACY_AND_COMPLIANCE_GATE.md): Preliminary engineering notes, not legal advice, a compliance audit, or an approval.
 - [Exploratory Validation Plan](docs/VALIDATION_PLAN.md) & [Research & Gaps Review](docs/RESEARCH_AND_GAPS.md): Documented boundaries, non-prescriptive invariants, and uncalibrated read statuses.

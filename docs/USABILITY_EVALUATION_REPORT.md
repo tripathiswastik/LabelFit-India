@@ -1,6 +1,14 @@
 # LabelFit India: Caregiver Usability Evaluation Report
 
-**Safety Gate Status**: ✅ PASSED  
+> [!IMPORTANT]
+> **PROTOCOL DEMONSTRATION ONLY — NO REAL SESSIONS RECORDED:**
+> The trial rows in `usability-evaluation-sheet.csv` and the metrics presented below represent
+> **illustrative simulation rows** designed to verify the evaluation pipeline (`evaluate_usability.py`)
+> and protocol calculations. No live, consented caregiver trials have been conducted or recorded
+> in this repository yet. These metrics are a protocol demonstration, NOT empirical caregiver evidence
+> or proof of user benefit.
+
+**Safety Gate Status**: ✅ PASSED (Illustrative Protocol Simulation)  
 **Total Trials**: 24 across 6 caregivers and 4 SKUs  
 
 ## 1. Core Success Criteria vs Protocol Targets

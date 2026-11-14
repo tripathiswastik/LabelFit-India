@@ -1,14 +1,15 @@
 """
-LabelFit India: 50-SKU Exploratory Benchmark Builder.
-Constructs the complete 50-SKU complementary infant food benchmark dataset
-strictly aligned with docs/VALIDATION_PLAN.md:
-- 50 authentic Indian complementary infant food SKUs (6+ months)
+LabelFit India: 50-SKU Synthetic Demonstration Benchmark Builder.
+Constructs an illustrative synthetic benchmark dataset aligned with docs/VALIDATION_PLAN.md:
+- 50 modeled Indian complementary infant food SKUs (6+ months)
 - 10 representative brands across national and regional Indian retail
 - 6 target fields per SKU (300 total row evaluations)
 - 4 language/script strata: English-Latin, Hindi-Devanagari, Tamil-Tamil, Marathi-Devanagari
 - 6 physical photo conditions: standard_indoor, glare_glossy_pouch, curved_tin, low_light, slight_angle, creased_foil
-- 2-person independent transcription ground truth with strict complete-SKU holdout
-- Real-world failure mode tracking: altered numbers, unsupported claims, dropped ingredients, script confusion, allergen inference
+- Illustrative failure mode tracking to stress-test evaluation & normalization harnesses
+
+NOTICE: This script generates illustrative synthetic demo data to exercise the evaluation
+harness (evaluate_benchmark.py). It does not represent live model execution on physical photos.
 """
 
 import os
