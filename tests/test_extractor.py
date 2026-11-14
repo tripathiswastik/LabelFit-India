@@ -94,3 +94,63 @@ def test_step3_allergen_inferred_from_ingredients_downgraded():
         }
     })
     assert explicit["allergenDeclaration"].read_status == "clear"
+
+
+def test_step3_nutrition_conflicting_numbers_downgraded():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "nutritionPanel": {
+            "value": "Per 100g: Energy 414 kcal, Iron 75 mg",
+            "evidence": "Nutrition: Energy 414 kcal, Iron 7.5 mg",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["nutritionPanel"].read_status == "uncertain"
+
+
+def test_step3_nutrition_impossible_macro_downgraded():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "nutritionPanel": {
+            "value": "Per 100g: Energy 418 kcal, Protein 152 g, Fat 9.5 g",
+            "evidence": "Per 100g: Energy 418 kcal, Protein 15.2 g, Fat 9.5 g",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["nutritionPanel"].read_status == "uncertain"
+
+
+def test_step3_allergen_hallucinated_unprinted_terms_downgraded():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "allergenDeclaration": {
+            "value": "Contains Wheat and Milk. May contain gluten, soy, and peanuts.",
+            "evidence": "Contains Wheat and Milk.",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["allergenDeclaration"].read_status == "uncertain"
+
+
+def test_step3_ingredients_unclosed_delimiter_downgraded():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "ingredients": {
+            "value": "Wheat flour (Atta) (51.6%), Milk solids (35.2%",
+            "evidence": "Wheat flour (Atta) (51.6%), Milk solids (35.2%",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["ingredients"].read_status == "uncertain"
+
+
+def test_step3_devanagari_numerals_normalized_in_nutrition_check():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "nutritionPanel": {
+            "value": "प्रति १०० ग्रॅम: लोह ५० मि.ग्रॅ",
+            "evidence": "प्रति १०० ग्रॅम: लोह ५.० मि.ग्रॅ",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["nutritionPanel"].read_status == "uncertain"

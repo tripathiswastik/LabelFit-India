@@ -154,6 +154,72 @@ function parseImagePayload(payload) {
 const ALLERGEN_DECLARATION_PATTERN = /\b(contains?|allergen|allergens?|may\s+contain|traces?|free\s+from|facility|equipment)\b/i;
 const TRUNCATION_SUFFIX_PATTERN = /(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$/i;
 
+const DEVANAGARI_DIGITS = {
+  '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
+  '५': '5', '६': '6', '७': '7', '८': '8', '९': '9'
+};
+
+const KNOWN_ALLERGENS = [
+  'wheat', 'milk', 'dairy', 'soy', 'soya', 'peanut', 'peanuts',
+  'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
+  'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley'
+];
+
+function normalizeDigits(text) {
+  if (!text) return '';
+  return text.replace(/[०-९]/g, ch => DEVANAGARI_DIGITS[ch] || ch);
+}
+
+function extractNumericTokens(text) {
+  if (!text) return [];
+  const normalized = normalizeDigits(text);
+  return normalized.match(/\b\d+(?:\.\d+)?\b/g) || [];
+}
+
+function hasUnbalancedDelimiters(text) {
+  if (!text) return false;
+  let paren = 0;
+  let bracket = 0;
+  for (const char of text) {
+    if (char === '(') paren += 1;
+    else if (char === ')') paren = Math.max(0, paren - 1);
+    else if (char === '[') bracket += 1;
+    else if (char === ']') bracket = Math.max(0, bracket - 1);
+  }
+  return paren > 0 || bracket > 0;
+}
+
+function hasHallucinatedAllergen(value, evidence) {
+  if (!value || !evidence) return false;
+  const valLower = value.toLowerCase();
+  const evLower = evidence.toLowerCase();
+  for (const allergen of KNOWN_ALLERGENS) {
+    const regex = new RegExp(`\\b${allergen}\\b`, 'i');
+    if (regex.test(valLower) && !regex.test(evLower)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function hasImpossibleNutrientValue(text) {
+  if (!text) return false;
+  const normalized = normalizeDigits(text);
+  // Macronutrients: single macro over 100g per 100g is physically impossible
+  const macroMatches = normalized.matchAll(/(?:protein|fat|carbohydrate|sugars?|fibre|fiber|प्रोटीन|वसा|कार्बोहाइड्रेट|प्रथिने)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*(?:g|ग्राम|ग्रॅम)/gi);
+  for (const m of macroMatches) {
+    const val = parseFloat(m[1]);
+    if (val > 100) return true;
+  }
+  // Micronutrient: Iron > 30mg/100g in complementary cereal indicates a 10x decimal drop
+  const ironMatches = normalized.matchAll(/(?:iron|आयरन|लोह)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*(?:mg|मिलीग्राम|मि\.?\s*ग्रॅ[म]?|मि\.?\s*ग्रा[म]?)/gi);
+  for (const m of ironMatches) {
+    const val = parseFloat(m[1]);
+    if (val > 30) return true;
+  }
+  return false;
+}
+
 function cleanText(value, maxLength = MAX_FIELD_CHARS) {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : '';
 }
@@ -177,10 +243,10 @@ function hasTokenSupport(value, evidence) {
 }
 
 function hasConflictingNumbers(value, evidence) {
-  const valDigits = (value.match(/\b\d+\b/g) || []);
-  const evDigits = new Set(evidence.match(/\b\d+\b/g) || []);
-  if (valDigits.length === 0 || evDigits.size === 0) return false;
-  return !valDigits.some(d => evDigits.has(d));
+  const valNums = extractNumericTokens(value);
+  const evNums = new Set(extractNumericTokens(evidence));
+  if (valNums.length === 0 || evNums.size === 0) return false;
+  return !valNums.some(d => evNums.has(d));
 }
 
 function normalizeField(raw, fieldName = '') {
@@ -196,19 +262,31 @@ function normalizeField(raw, fieldName = '') {
     return { value, evidence, readStatus: 'uncertain' };
   }
 
-  // Step 3 Guard 2: Numeral conflict in key fields (e.g. ageMarking or preparation)
-  if ((fieldName === 'ageMarking' || fieldName === 'preparationAndStorage') && hasConflictingNumbers(value, evidence)) {
+  // Step 3 Guard 2: Numeral conflict in key fields (ageMarking, preparationAndStorage, nutritionPanel)
+  if ((fieldName === 'ageMarking' || fieldName === 'preparationAndStorage' || fieldName === 'nutritionPanel') && hasConflictingNumbers(value, evidence)) {
     return { value, evidence, readStatus: 'uncertain' };
   }
 
-  // Step 3 Guard 3: Ingredient or prep truncation (e.g. cut off at panel boundary)
-  if ((fieldName === 'ingredients' || fieldName === 'preparationAndStorage') && TRUNCATION_SUFFIX_PATTERN.test(value)) {
-    return { value, evidence, readStatus: 'uncertain' };
+  // Step 3 Guard 3: Ingredient or prep truncation (trailing punctuation or unclosed brackets)
+  if (fieldName === 'ingredients' || fieldName === 'preparationAndStorage') {
+    if (TRUNCATION_SUFFIX_PATTERN.test(value) || hasUnbalancedDelimiters(value)) {
+      return { value, evidence, readStatus: 'uncertain' };
+    }
   }
 
-  // Step 3 Guard 4: Allergen declaration inferred from ingredients without explicit declaration marker
+  // Step 3 Guard 4: Allergen declaration guards (must have declaration marker AND no hallucinated unprinted allergens)
   if (fieldName === 'allergenDeclaration') {
     if (!ALLERGEN_DECLARATION_PATTERN.test(evidence)) {
+      return { value, evidence, readStatus: 'uncertain' };
+    }
+    if (hasHallucinatedAllergen(value, evidence)) {
+      return { value, evidence, readStatus: 'uncertain' };
+    }
+  }
+
+  // Step 3 Guard 5: Nutrition plausibility guard (macronutrient >100g, iron >30mg)
+  if (fieldName === 'nutritionPanel') {
+    if (hasImpossibleNutrientValue(value)) {
       return { value, evidence, readStatus: 'uncertain' };
     }
   }

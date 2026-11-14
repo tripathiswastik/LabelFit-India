@@ -114,3 +114,57 @@ test('Step 3: allergen declaration inferred from ingredients without declaration
   }, 'allergenDeclaration');
   assert.equal(explicit.readStatus, 'clear');
 });
+
+test('Step 3: nutritionPanel with conflicting numbers is downgraded to uncertain', () => {
+  const result = normalizeField({
+    value: 'Per 100g: Energy 414 kcal, Iron 75 mg',
+    evidence: 'Nutrition: Energy 414 kcal, Iron 7.5 mg',
+    readStatus: 'clear'
+  }, 'nutritionPanel');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: nutritionPanel with physically impossible macronutrient is downgraded', () => {
+  const result = normalizeField({
+    value: 'Per 100g: Energy 418 kcal, Protein 152 g, Fat 9.5 g',
+    evidence: 'Per 100g: Energy 418 kcal, Protein 15.2 g, Fat 9.5 g',
+    readStatus: 'clear'
+  }, 'nutritionPanel');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: nutritionPanel with decimal-dropped excessive iron is downgraded', () => {
+  const result = normalizeField({
+    value: 'Per 100g: Iron 75 mg, Calcium 500 mg',
+    evidence: 'Per 100g: Iron 75 mg, Calcium 500 mg',
+    readStatus: 'clear'
+  }, 'nutritionPanel');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: allergen declaration containing unprinted hallucinated allergen is downgraded', () => {
+  const result = normalizeField({
+    value: 'Contains Wheat and Milk. May contain gluten, soy, and peanuts.',
+    evidence: 'Contains Wheat and Milk.',
+    readStatus: 'clear'
+  }, 'allergenDeclaration');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: ingredients with unclosed delimiter is downgraded to uncertain', () => {
+  const result = normalizeField({
+    value: 'Wheat flour (Atta) (51.6%), Milk solids (35.2%',
+    evidence: 'Wheat flour (Atta) (51.6%), Milk solids (35.2%',
+    readStatus: 'clear'
+  }, 'ingredients');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: Devanagari numerals are normalized and evaluated in nutrition check', () => {
+  const result = normalizeField({
+    value: 'प्रति १०० ग्रॅम: लोह ५० मि.ग्रॅ',
+    evidence: 'प्रति १०० ग्रॅम: लोह ५.० मि.ग्रॅ',
+    readStatus: 'clear'
+  }, 'nutritionPanel');
+  assert.equal(result.readStatus, 'uncertain');
+});

@@ -29,6 +29,96 @@ ALLERGEN_DECLARATION_PATTERN = re.compile(
 TRUNCATION_SUFFIX_PATTERN = re.compile(r'(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$', re.IGNORECASE)
 STOP_WORDS = {'the', 'and', 'for', 'with', 'from', 'this', 'that', 'per', 'net', 'pkg'}
 
+DEVANAGARI_DIGITS = {
+    '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
+    '५': '5', '६': '6', '७': '7', '८': '8', '९': '9'
+}
+
+KNOWN_ALLERGENS = [
+    'wheat', 'milk', 'dairy', 'soy', 'soya', 'peanut', 'peanuts',
+    'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
+    'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley'
+]
+
+
+def normalize_digits(text: str) -> str:
+    if not text:
+        return ""
+    for dev, asc in DEVANAGARI_DIGITS.items():
+        text = text.replace(dev, asc)
+    return text
+
+
+def extract_numeric_tokens(text: str) -> list:
+    if not text:
+        return []
+    normalized = normalize_digits(text)
+    return re.findall(r'\b\d+(?:\.\d+)?\b', normalized)
+
+
+def has_unbalanced_delimiters(text: str) -> bool:
+    if not text:
+        return False
+    paren = 0
+    bracket = 0
+    for char in text:
+        if char == '(':
+            paren += 1
+        elif char == ')':
+            paren = max(0, paren - 1)
+        elif char == '[':
+            bracket += 1
+        elif char == ']':
+            bracket = max(0, bracket - 1)
+    return paren > 0 or bracket > 0
+
+
+def has_hallucinated_allergen(value: str, evidence: str) -> bool:
+    if not value or not evidence:
+        return False
+    val_lower = value.lower()
+    ev_lower = evidence.lower()
+    for allergen in KNOWN_ALLERGENS:
+        pattern = re.compile(rf'\b{allergen}\b', re.IGNORECASE)
+        if pattern.search(val_lower) and not pattern.search(ev_lower):
+            return True
+    return False
+
+
+def has_impossible_nutrient_value(text: str) -> bool:
+    if not text:
+        return False
+    normalized = normalize_digits(text)
+    # Macros over 100g per 100g are physically impossible
+    macro_matches = re.finditer(
+        r'(?:protein|fat|carbohydrate|sugars?|fibre|fiber|प्रोटीन|वसा|कार्बोहाइड्रेट|प्रथिने)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*(?:g|ग्राम|ग्रॅम)',
+        normalized,
+        re.IGNORECASE
+    )
+    for m in macro_matches:
+        try:
+            val = float(m.group(1))
+            if val > 100:
+                return True
+        except ValueError:
+            pass
+
+    # Micronutrient: Iron > 30mg/100g in complementary cereal indicates a decimal drop
+    iron_matches = re.finditer(
+        r'(?:iron|आयरन|लोह)\s*[:\-]?\s*(\d+(?:\.\d+)?)\s*(?:mg|मिलीग्राम|मि\.?\s*ग्रॅ[म]?|मि\.?\s*ग्रा[म]?)',
+        normalized,
+        re.IGNORECASE
+    )
+    for m in iron_matches:
+        try:
+            val = float(m.group(1))
+            if val > 30:
+                return True
+        except ValueError:
+            pass
+
+    return False
+
 
 def extract_significant_tokens(text: str) -> set:
     if not text:
@@ -48,11 +138,11 @@ def has_token_support(value: str, evidence: str) -> bool:
 
 
 def has_conflicting_numbers(value: str, evidence: str) -> bool:
-    val_digits = set(re.findall(r'\b\d+\b', value))
-    ev_digits = set(re.findall(r'\b\d+\b', evidence))
-    if not val_digits or not ev_digits:
+    val_nums = extract_numeric_tokens(value)
+    ev_nums = set(extract_numeric_tokens(evidence))
+    if not val_nums or not ev_nums:
         return False
-    return not bool(val_digits & ev_digits)
+    return not any(d in ev_nums for d in val_nums)
 
 
 class GeminiLabelExtractor:
@@ -176,14 +266,17 @@ class GeminiLabelExtractor:
                 # Step 3 Guard 1: Unsupported clear read
                 if not has_token_support(value, evidence):
                     status = "uncertain"
-                # Step 3 Guard 2: Numeral conflict in key fields
-                elif name in ("ageMarking", "preparationAndStorage") and has_conflicting_numbers(value, evidence):
+                # Step 3 Guard 2: Numeral conflict in key fields (ageMarking, preparationAndStorage, nutritionPanel)
+                elif name in ("ageMarking", "preparationAndStorage", "nutritionPanel") and has_conflicting_numbers(value, evidence):
                     status = "uncertain"
-                # Step 3 Guard 3: Ingredient or prep truncation
-                elif name in ("ingredients", "preparationAndStorage") and TRUNCATION_SUFFIX_PATTERN.search(value):
+                # Step 3 Guard 3: Ingredient or prep truncation (trailing punctuation or unclosed delimiters)
+                elif name in ("ingredients", "preparationAndStorage") and (TRUNCATION_SUFFIX_PATTERN.search(value) or has_unbalanced_delimiters(value)):
                     status = "uncertain"
-                # Step 3 Guard 4: Allergen inferred from ingredients without explicit declaration marker
-                elif name == "allergenDeclaration" and not ALLERGEN_DECLARATION_PATTERN.search(evidence):
+                # Step 3 Guard 4: Allergen declaration guards (must have marker AND no hallucinated unprinted allergens)
+                elif name == "allergenDeclaration" and (not ALLERGEN_DECLARATION_PATTERN.search(evidence) or has_hallucinated_allergen(value, evidence)):
+                    status = "uncertain"
+                # Step 3 Guard 5: Nutrition plausibility guard (macronutrient >100g, iron >30mg)
+                elif name == "nutritionPanel" and has_impossible_nutrient_value(value):
                     status = "uncertain"
 
             result[name] = ExtractedField(name, value, evidence, status)
