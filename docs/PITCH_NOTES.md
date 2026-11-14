@@ -2,13 +2,13 @@
 
 ## Current project status
 
-LabelFit India is an idea-stage solo project with a local photo-upload prototype and a Gemini API request path. The repository has automated checks for request handling, response normalization, synthetic image intake, and the disabled Cloud Run analysis path. These are software checks; they do not establish that Gemini reads package text accurately or that caregivers benefit from the interface.
+LabelFit India is an idea-stage project by the two-member LABEL CHECK team, with a local photo-upload prototype and a Gemini API request path. The team is Swastik Tripathi and Saumya Tripathi. The repository has automated checks for request handling, response normalization, synthetic image intake, and the disabled Cloud Run analysis path. These are software checks; they do not establish that Gemini reads package text accurately or that caregivers benefit from the interface.
 
 No live Gemini scan output, completed physical-package accuracy benchmark, documented caregiver study, verified customer interviews, revenue, or traction is available in the repository. Treat the usability CSV and B2B evidence rows as unverified until the founder can provide source records. Do not present their numbers, quotes, or interest signals as results.
 
 ## 60-90 second pitch
 
-Packaged complementary-food labels can spread details across several panels, and small print and varied layouts can make it slow to find exact wording. LabelFit India is a solo-founder project exploring a photo-first way to locate printed details on packaged complementary foods labelled for babies 6 months and older.
+Packaged complementary-food labels can spread details across several panels, and small print and varied layouts can make it slow to find exact wording. We are the two-member LABEL CHECK team exploring a photo-first way to locate printed details on packaged complementary foods labelled for babies 6 months and older.
 
 A person photographs one label panel. The configured Gemini API returns candidate text for six fields: product name, printed age marking, ingredients, explicit allergen declaration, nutrition information, and preparation or storage wording. Each candidate is paired with a model-provided snippet and a read status so the person can compare it with the package.
 
@@ -27,7 +27,7 @@ LabelFit India is an early photo-based transcription prototype for packaged comp
 
 ## Slide-by-slide speaker notes
 
-1. **Title:** LabelFit India is a solo-founder, idea-stage project focused on the printed wording on packaged complementary-food labels.
+1. **Title:** LabelFit India is an idea-stage project from LABEL CHECK, a two-member team: Swastik Tripathi and Saumya Tripathi.
 2. **Problem:** The label-reading problem and its importance in India are hypotheses that still need caregiver validation.
 3. **Solution:** Photograph one panel, extract candidate fields, review the snippet and status, then compare against the physical package. The product displays package text; it does not interpret health or allergy risk or direct feeding decisions.
 4. **Architecture:** Package photo, Gemini API, Node server checks, review page. A snippet match does not prove the text is correct.

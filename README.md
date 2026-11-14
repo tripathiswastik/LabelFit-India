@@ -1,6 +1,6 @@
 # LabelFit India
 
-LabelFit is an idea-stage, solo-founder prototype for reading package text on packaged complementary foods labelled for babies 6+ months. It sends a package photo to Gemini and displays candidate transcriptions with a model-provided snippet and a read status. A person must compare every result with the physical pack.
+LabelFit India is an idea-stage prototype by LABEL CHECK, a two-member team: Swastik Tripathi and Saumya Tripathi. It reads package text on packaged complementary foods labelled for babies 6+ months, sending a package photo to Gemini and displaying candidate transcriptions with a model-provided snippet and read status. A person must compare every result with the physical pack.
 
 The current build is **label transcription only**. It does not translate, look up products, or explain nutrition. It does not make safety or suitability decisions, interpret allergy risk, diagnose, score health, or tell a caregiver what to feed. Infant formula and foods for special medical purposes are outside this prototype's scope.
 
