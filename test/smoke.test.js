@@ -104,10 +104,10 @@ test('4. Smoke Test: Blurry synthetic packaging image parses successfully', () =
 test('5. Smoke Test: Missing fields handling in normalization', () => {
   // Simulate Gemini output on synthetic_missing_fields where allergen & prep are omitted
   const rawModelOutput = {
-    productName: { value: 'PureBite Single-Grain Baby Porridge', evidence: 'PureBite Single-Grain', readStatus: 'clear' },
-    ageMarking: { value: 'STAGE 1: 6+ MONTHS', evidence: '6+ MONTHS', readStatus: 'clear' },
-    ingredients: { value: '100% Organic Spelt Grain', evidence: 'Organic Spelt Grain', readStatus: 'clear' },
-    nutritionPanel: { value: 'Energy 360 kcal, Protein 11g', evidence: 'Energy 360 kcal', readStatus: 'clear' }
+    productName: { value: 'PureBite Single-Grain Baby Porridge', evidence: 'PureBite Single-Grain Baby Porridge', readStatus: 'clear' },
+    ageMarking: { value: 'STAGE 1: 6+ MONTHS', evidence: 'STAGE 1: 6+ MONTHS', readStatus: 'clear' },
+    ingredients: { value: '100% Organic Spelt Grain', evidence: '100% Organic Spelt Grain', readStatus: 'clear' },
+    nutritionPanel: { value: 'Energy 360 kcal, Protein 11g', evidence: 'Energy 360 kcal, Protein 11g', readStatus: 'clear' }
     // allergenDeclaration and preparationAndStorage are completely absent from model output
   };
 
