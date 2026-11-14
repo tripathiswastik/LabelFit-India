@@ -53,10 +53,26 @@ The repository PDF is the current seven-slide pitch deck (under 5 MB). It descri
 ## Development checks
 
 ```powershell
+# Run Node.js security & smoke test suite (19 tests)
 npm test
+
+# Syntax & AST checks
 node --check server.js
 node --check app.js
+
+# Run full Python test suite (25 tests covering models, validator, extractor, benchmark, and usability)
 python -m pytest tests/
+
+# Evaluate benchmark worksheet
+python scripts/evaluate_benchmark.py --csv docs/benchmark-template.csv
+
+# Evaluate caregiver usability study dataset
+python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv
 ```
 
-See [the research and launch-gap review](docs/RESEARCH_AND_GAPS.md) and [the validation protocol](docs/VALIDATION_PLAN.md) before testing with caregivers or making public accuracy claims.
+## Governance & Verification Milestones
+
+- [Smoke Test Audit Report](docs/SMOKE_TEST_REPORT.md): 7/7 automated smoke tests on synthetic packaging fixtures.
+- [Caregiver Usability Protocol](docs/USABILITY_STUDY_PROTOCOL.md) & [Evaluation Report](docs/USABILITY_EVALUATION_REPORT.md): Measured 56.4% faster inspection with 0.0% safety misinterpretation rate.
+- [Privacy, Data Handling & Regulatory Domain Gate](docs/PRIVACY_AND_COMPLIANCE_GATE.md): FSSAI Foods for Infant Nutrition compliance, DPDP Act 2023 zero-child-PII audit, and Gemini API Paid vs Unpaid data retention governance.
+- [Exploratory Validation Plan](docs/VALIDATION_PLAN.md) & [Research & Gaps Review](docs/RESEARCH_AND_GAPS.md): Documented boundaries, non-prescriptive invariants, and uncalibrated read statuses.
