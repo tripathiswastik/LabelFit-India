@@ -12,7 +12,7 @@ Packaged complementary-food labels can spread details across several panels, and
 
 A person photographs one label panel. The configured Gemini API returns candidate text for six fields: product name, printed age marking, ingredients, explicit allergen declaration, nutrition information, and preparation or storage wording. Each candidate is paired with a model-provided snippet and a read status so the person can compare it with the package.
 
-The project is at an early prototype stage. Automated tests cover parts of the software flow, but a live model result and field-level accuracy have not been demonstrated. The next milestone is an exploratory benchmark on 50 locally available products, held out by SKU and reviewed across languages. After accuracy, usability, and privacy review, I plan to test whether brands or retailers need structured label digitization. The business case is still a hypothesis.
+The project is at an early prototype stage. Automated tests cover parts of the software flow, but a live model result and field-level accuracy have not been demonstrated. The next milestone is an exploratory benchmark on 50 locally available products, held out by SKU and reviewed across languages. After accuracy, usability, and privacy review, I plan to test whether brands or retailers need structured label digitization. The business case is still a hypothesis. As we move to the Thank You slide, I will close with that benchmark as our next step and invite feedback.
 
 ## Current evidence and demo status
 
@@ -27,13 +27,13 @@ LabelFit India is an early photo-based transcription prototype for packaged comp
 
 ## Slide-by-slide speaker notes
 
-1. **Title:** LabelFit India is an idea-stage project from LABEL CHECK, a two-member team: Swastik Tripathi and Saumya Tripathi.
-2. **Problem:** The label-reading problem and its importance in India are hypotheses that still need caregiver validation.
+1. **Title:** LABEL CHECK is a two-member team building LabelFit India, a photo-first label transcription prototype.
+2. **Problem:** Caregivers can struggle to quickly locate exact wording across dense package panels. The scale and importance of the problem in India still need caregiver validation.
 3. **Solution:** Photograph one panel, extract candidate fields, review the snippet and status, then compare against the physical package. The product displays package text; it does not interpret health or allergy risk or direct feeding decisions.
 4. **Architecture:** Package photo, Gemini API, Node server checks, review page. A snippet match does not prove the text is correct.
-5. **AI tools:** Gemini API is the current integration; Google AI Studio is planned for prompt and schema iteration. Cloud Run analysis is not enabled. Other Google tools are not part of the current prototype.
+5. **AI tools:** Gemini API is the current integration; Google AI Studio is planned for prompt and schema iteration. Cloud Run analysis is not enabled.
 6. **Model:** Gemini returns six candidate fields. Read status is a model output and is not a calibrated confidence score.
-7. **Next milestone:** Build independently transcribed ground truth for 50 local SKUs, hold out whole SKUs, and report exact field match, unsupported text, and uncertainty handling by field and language. Then run an appropriately reviewed usability study and conduct customer discovery.
+7. **Thank You / spoken close:** As this slide appears, say: “Our next step is to benchmark 50 local products, then review accuracy, usability and privacy before testing the business case. We welcome feedback on the benchmark and the workflow. Thank you.”
 
 ## Judge Q&A
 

@@ -9,7 +9,7 @@ LABEL CHECK
 LabelFit India turns a photo of a packaged complementary-food label into candidate text fields with source snippets and visible read status, so a person can check the wording against the pack.
 
 **Main problem**  
-Important package details such as the printed age marking, ingredients, allergen statement, nutrition panel, and preparation or storage text can be spread across small-print panels. Finding and transcribing that wording can take effort, especially when layouts vary.
+Caregivers can struggle to quickly locate age markings, ingredients, allergen statements, nutrition details, and storage wording across dense baby-food labels. Small print and varied layouts make the exact wording harder to find; the scale of this problem in India still needs validation.
 
 **Typical user/customer**  
 The initial user is a caregiver in India checking packaged complementary foods labelled for babies 6 months and older. Retailers or food brands are possible future customers for structured label data, subject to validation.
