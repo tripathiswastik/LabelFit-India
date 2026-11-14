@@ -86,6 +86,9 @@ async function runProof() {
   // 3. Start Local Ephemeral Server Instance
   let capturedRequestHeaders = null;
   let capturedRequestBody = null;
+  const liveApiKey = process.env.GEMINI_API_KEY;
+  const isLive = Boolean(liveApiKey);
+  console.log(`[Mode] ${isLive ? 'LIVE Gemini API call' : 'Local verified simulation (set GEMINI_API_KEY for live call)'}`);
 
   const mockFetch = async (url, options) => {
     capturedRequestHeaders = options.headers;
@@ -113,8 +116,8 @@ async function runProof() {
   };
 
   const server = createServer({
-    apiKey: 'mock-local-key-for-workflow-proof',
-    fetchImpl: mockFetch,
+    apiKey: liveApiKey || 'mock-local-key-for-workflow-proof',
+    fetchImpl: isLive ? globalThis.fetch : mockFetch,
     model: MODEL_ID,
   });
 
@@ -198,6 +201,7 @@ async function runProof() {
     '',
     '## 1. Execution Parameters',
     '',
+    `- **Execution Mode:** ${isLive ? 'LIVE Gemini API call' : 'Local verified simulation (set GEMINI_API_KEY for live call)'}`,
     `- **Model ID:** \`${MODEL_ID}\``,
     `- **API Endpoint:** \`https://generativelanguage.googleapis.com/v1beta/interactions\``,
     `- **API Revision Header:** \`${API_REVISION}\``,
