@@ -33,7 +33,7 @@ A user photographs one package panel. Gemini returns candidate text for selected
 **What is the stage of your product/project?**
 
 
-Select **Other** and enter: **Working local prototype with live Gemini scans and a small 10-package, 60-field engineering check. The sample covers mixed grocery categories and includes only one complementary-food package, so infant-food accuracy is not yet established. No caregiver study or commercial traction is claimed.**
+Select **Other** and enter: **Working local prototype. An earlier mixed-category check covered 10 packages; separately, founder transcriptions are ready for 10 packaged complementary-food products. Only one target package has a matching Gemini run so far, so category accuracy is not established. No caregiver study or commercial traction is claimed.**
 
 **What is the potential business model?**
 
@@ -68,7 +68,7 @@ Select **Gemini API**.
 **How will you use the selected Google AI model?**
 
 
-We use Gemini multimodal input and structured output to extract candidate label fields from package photos. Our early 10-package comparison covers mixed grocery products and includes only one complementary-food package; it exposed weak transcription of dense nutrition and preparation/storage text. Next we will evaluate a focused sample of 6+ month complementary-food labels before making claims about that category.
+We use Gemini multimodal input and structured output to extract candidate label fields from package photos. An earlier mixed-category check exposed weak transcription of dense nutrition and preparation/storage text. We have founder transcriptions for 10 packaged complementary-food products, but only one has a matching Gemini result so far. We will complete the paired scans before making claims about that category.
 
 **Which development platforms will you use?**
 
@@ -119,4 +119,4 @@ Select **< 12 months** if that matches when LABEL CHECK formed. Confirm the star
 
 ## Evidence limits to keep consistent
 
-The current 10-package benchmark includes nine general grocery products and one complementary-food product; it does not establish performance on baby-food labels. It reports package-text comparison only, not caregiver usability, health outcomes, product suitability, willingness to pay, or business traction. Automated tests check software behavior and are not model-accuracy results.
+The earlier mixed-category comparison includes nine general grocery products and one complementary-food product; it does not establish performance on baby-food labels. A separate target-category intake has 10 founder-transcribed products, with a matching Gemini scan currently recorded for only one. Pending scans are not accuracy results. No caregiver usability, health outcomes, product suitability, willingness to pay, or business traction is measured. Automated tests check software behavior and are not model-accuracy results.

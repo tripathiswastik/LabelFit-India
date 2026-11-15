@@ -67,6 +67,7 @@ class BenchmarkEvaluator:
     def __init__(self, csv_path: str):
         self.csv_path = csv_path
         self.rows: List[Dict[str, str]] = []
+        self.pending_rows_count = 0
         self._load_csv()
 
     def _load_csv(self):
@@ -82,13 +83,24 @@ class BenchmarkEvaluator:
             if not reader.fieldnames or not required_cols.issubset(set(reader.fieldnames)):
                 missing = required_cols - set(reader.fieldnames or [])
                 raise ValueError(f"CSV missing mandatory benchmark columns: {missing}")
-            self.rows = [r for r in reader if any(r.values())]
+            rows = [r for r in reader if any(r.values())]
+            self.pending_rows_count = sum(
+                1 for r in rows if r.get("read_status", "").strip().lower().startswith("pending_")
+            )
+            self.rows = [
+                r for r in rows
+                if not r.get("read_status", "").strip().lower().startswith("pending_")
+            ]
 
     def evaluate(self) -> Dict[str, Any]:
         """Calculates comprehensive benchmark metrics."""
         total_rows = len(self.rows)
         if total_rows == 0:
-            return {"total_rows": 0, "message": "CSV contains no data rows."}
+            return {
+                "total_rows": 0,
+                "pending_rows_count": self.pending_rows_count,
+                "message": "No completed model-output/reference pairs are available to score."
+            }
 
         fields_agg = defaultdict(lambda: {
             "total": 0, "exact_matches": 0, "total_cer": 0.0,
@@ -197,6 +209,7 @@ class BenchmarkEvaluator:
 
         return {
             "total_rows": total_rows,
+            "pending_rows_count": self.pending_rows_count,
             "unique_skus_count": len(unique_skus),
             "unique_images_count": len(unique_images),
             "by_field": field_summary,
@@ -206,13 +219,17 @@ class BenchmarkEvaluator:
 
     def format_text_report(self, results: Dict[str, Any]) -> str:
         if results.get("total_rows", 0) == 0:
-            return "No benchmark data rows to display."
+            return (
+                "No completed model-output/reference pairs are available to score. "
+                f"Pending rows not scored: {results.get('pending_rows_count', 0)}."
+            )
 
         lines = []
         lines.append("\n" + "=" * 80)
-        lines.append("  LABELFIT INDIA - EXPLORATORY 10-PACKAGE BENCHMARK")
+        lines.append("  LABELFIT INDIA - EXPLORATORY PACKAGE-LABEL COMPARISON")
         lines.append("=" * 80)
         lines.append(f"Total Evaluated Fields: {results['total_rows']}")
+        lines.append(f"Pending Rows Not Scored: {results.get('pending_rows_count', 0)}")
         lines.append(f"Unique Retail SKUs:     {results['unique_skus_count']}")
         lines.append(f"Unique Label Panels:    {results['unique_images_count']}")
         lines.append("-" * 80)
@@ -241,12 +258,12 @@ class BenchmarkEvaluator:
             lines.append(f"{c:<24} | {data['total']:<8} | {data['exact_match_pct']:<14}% | {data['mean_cer']:<8.3f}")
 
         lines.append("\n" + "=" * 80)
-        lines.append("Note: Exploratory comparison of recorded Gemini output with founder-entered package text.")
-        lines.append("      Sample: 10 mixed-category products; only one complementary-food package.")
+        lines.append("Note: Exploratory comparison of recorded Gemini output with package reference text.")
+        lines.append("      Pending ground-truth or model-scan rows are excluded from all scores.")
         lines.append("      Snippet% means a snippet was present, not verified against the image.")
         lines.append("      Flagged% reflects worksheet labels, not an independent token audit.")
         lines.append("      Clear CER>.15 is a heuristic mismatch count, not human error adjudication.")
-        lines.append("      Review time is not measured. Not an infant-food accuracy or clinical study.")
+        lines.append("      Review time is not measured. These scores are not clinical or safety validation.")
         lines.append("=" * 80 + "\n")
         return "\n".join(line.rstrip() for line in lines)
 
@@ -262,7 +279,7 @@ def main():
 
     evaluator = BenchmarkEvaluator(args.csv)
     results = evaluator.evaluate()
-    if not results.get("total_rows"):
+    if not results.get("total_rows") and not results.get("pending_rows_count"):
         parser.exit(2, "No benchmark rows found. Collect source-backed transcriptions and actual model outputs first.\n")
 
     if args.json:

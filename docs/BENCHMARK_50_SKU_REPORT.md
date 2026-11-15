@@ -1,41 +1,18 @@
-# Benchmark Audit Report
+# Complementary-food benchmark status
 
-```
+## Current evidence
 
-================================================================================
-  LABELFIT INDIA - EXPLORATORY 10-PACKAGE BENCHMARK
-================================================================================
-Total Evaluated Fields: 54
-Unique Retail SKUs:     10
-Unique Label Panels:    10
---------------------------------------------------------------------------------
+The founder transcription intake now contains label references for 10 packaged complementary-food products marked for 6+ months. Those references are useful preparation for an evaluation; they are not model results.
 
-[1] FIELD-BY-FIELD TEXT COMPARISON:
-Field                    | Exact Match  | CER    | Snippet %  | Flagged %  | Clear CER>.15
---------------------------------------------------------------------------------
-ingredients              | 11.1% (1/9)  | 0.889  | 11.1%      | 0.0%       | 0
-allergenDeclaration      | 11.1% (1/9)  | 0.889  | 11.1%      | 0.0%       | 0
-nutritionPanel           | 11.1% (1/9)  | 0.889  | 11.1%      | 0.0%       | 0
-preparationAndStorage    | 10.0% (1/10) | 0.900  | 10.0%      | 0.0%       | 0
-productName              | 0.0% (0/9)   | 1.000  | 0.0%       | 0.0%       | 0
-ageMarking               | 0.0% (0/8)   | 1.000  | 0.0%       | 0.0%       | 0
+The current comparison worksheet has **54 populated field rows**. Only **4 rows** have a recorded Gemini output, all from one Slurrp Farm package panel. The other **50 rows are marked `pending_model_scan`** and are excluded from scoring. The four completed fields are a single-package workflow check, not an accuracy estimate for the product category. Product name and age marking are not represented in those four fields because that photo shows a side panel.
 
-[2] STRATA BREAKDOWN BY SCRIPT:
-Script / Language        | Samples  | Exact Match %  | Mean CER
-------------------------------------------------------------
-English-Latin            | 54       | 7.4           % | 0.926
+The initial 50-SKU scorecard treated missing model outputs as empty predictions and carried the older mixed-category scope note. Those figures are withdrawn. Run `npm run benchmark:eval:50` to create a separate scorecard from completed pairs; the command leaves this status report intact.
 
-[3] STRATA BREAKDOWN BY PHOTO CONDITION:
-Condition                | Samples  | Exact Match %  | Mean CER
-------------------------------------------------------------
-pouch_panel              | 54       | 7.4           % | 0.926
+## What remains
 
-================================================================================
-Note: Exploratory comparison of recorded Gemini output with founder-entered package text.
-      Sample: 10 mixed-category products; only one complementary-food package.
-      Snippet% means a snippet was present, not verified against the image.
-      Flagged% reflects worksheet labels, not an independent token audit.
-      Clear CER>.15 is a heuristic mismatch count, not human error adjudication.
-      Review time is not measured. Not an infant-food accuracy or clinical study.
-================================================================================
-```
+- Capture and retain the package image reference, scan date, model ID, prompt/code version, raw response, and normalized output for each SKU.
+- Scan the remaining target packages and confirm each recorded reference is paired with the corresponding model result before scoring.
+- Keep `pending_model_scan` and `pending_ground_truth` rows visible in progress exports, but exclude them from accuracy denominators.
+- Expand toward 50 in-scope products only after the 10-product process is repeatable and representative package sources are documented.
+
+The repository does not contain the original package photos or raw batch JSON, so the current four-field check cannot be independently reproduced from the repository alone. No caregiver usability, customer demand, health, safety, or feeding outcome has been measured.

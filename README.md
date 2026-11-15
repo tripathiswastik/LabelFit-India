@@ -48,7 +48,7 @@ The Python `source_match` indicator only checks whether candidate text appears i
 
 ## Buildathon materials
 
-The revised seven-slide pitch deck is `output/pdf/LABEL_CHECK_Startup_Buildathon_2026.pdf`. It describes the local prototype and its current evidence limits. The internal 10-package check covers mixed grocery categories and only one complementary-food package; the next evaluation is focused on the 6+ month target category. [Spoken pitch and judge Q&A notes](docs/PITCH_NOTES.md) and [validation plan](docs/VALIDATION_PLAN.md) are in the docs folder.
+The revised seven-slide pitch deck is `output/pdf/LABEL_CHECK_Startup_Buildathon_2026.pdf`. It describes the local prototype and its current evidence limits. Ten 6+ month package references are transcribed; one package currently has a matching Gemini run. Pending scans are not scored. [Spoken pitch and judge Q&A notes](docs/PITCH_NOTES.md) and [validation plan](docs/VALIDATION_PLAN.md) are in the docs folder.
 
 ## Development checks
 
@@ -74,7 +74,7 @@ python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv
 
 - [Workflow Simulation Proof](docs/WORKFLOW_SCAN_PROOF.md): Local simulation check only; no live Gemini API run recorded.
 - [Smoke-test notes](docs/SMOKE_TEST_REPORT.md): Synthetic software checks only; no live Gemini result or accuracy evidence.
-- [50-SKU Benchmark Report](docs/BENCHMARK_50_SKU_REPORT.md): Prior synthetic metrics are withdrawn; the worksheet is blank pending source-backed evaluation.
+- [50-SKU Benchmark Status](docs/BENCHMARK_50_SKU_REPORT.md): ten target-package reference records are entered; only one package has a recorded Gemini run, so pending scans are excluded from scores.
 - [Caregiver usability protocol](docs/USABILITY_STUDY_PROTOCOL.md) and [evaluation report](docs/USABILITY_EVALUATION_REPORT.md): No verified sessions are documented; prior simulation metrics are withdrawn.
 - [Cloud Run guard and local security review](docs/CLOUD_RUN_PRODUCTION_AUDIT.md): Code and local-test notes only; no deployed Cloud Run service has been audited.
 - [B2B discovery plan](docs/B2B_DISCOVERY_PLAN.md): Interview hypotheses only; zero customer interviews or pricing evidence recorded.

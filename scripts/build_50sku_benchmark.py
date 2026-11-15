@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-LabelFit India: 50-SKU Evidence-Backed Benchmark Builder.
+LabelFit India: 50-SKU Exploratory Benchmark Builder.
 Constructs docs/benchmark-50sku-results.csv by pairing actual Gemini model outputs
 from prod1_tst/batch_scan_results.json with physical package ground truth
 independently transcribed and adjudicated by Swastik Tripathi & Saumya Tripathi.
@@ -108,13 +108,18 @@ def main() -> None:
     if args.strata:
         print_strata_breakdown(records)
 
-    # Load recorded Gemini outputs if present
+    # A comparison is meaningful only when actual model outputs are available.
+    # Refuse to silently turn missing scan data into all-blank predictions.
     batch_map = {}
     batch_path = Path(args.batch_json)
-    if batch_path.exists():
-        with open(batch_path, "r", encoding="utf-8") as f:
-            for item in json.load(f):
-                batch_map[item.get("sku_id")] = item
+    if not batch_path.is_file():
+        raise FileNotFoundError(
+            f"Gemini batch results not found at {batch_path}. "
+            "Provide recorded scan outputs before building comparison results."
+        )
+    with open(batch_path, "r", encoding="utf-8") as f:
+        for item in json.load(f):
+            batch_map[item.get("sku_id")] = item
 
     SKU_ALIASES = {
         "SKU-BF-001": "SKU-PROD-013-NUTRITION",
@@ -138,10 +143,17 @@ def main() -> None:
         field_data = norm_fields.get(r.field) or raw_fields.get(r.field) or {}
 
         model_text = field_data.get("value", "")
-        if r.is_pending and not model_text:
-            read_status = "pending_intake"
+        field_was_returned = isinstance(field_data, dict) and any(
+            key in field_data for key in ("value", "evidence", "readStatus")
+        )
+        if r.is_pending:
+            read_status = "pending_ground_truth"
+        elif batch_key not in batch_map:
+            read_status = "pending_model_scan"
+        elif not field_was_returned:
+            read_status = "pending_model_field"
         else:
-            read_status = field_data.get("readStatus", "uncertain") if (model_text or field_data.get("evidence")) else "not_visible"
+            read_status = field_data.get("readStatus", "uncertain")
 
         evidence_located = "yes" if field_data.get("evidence") else "no"
 
@@ -171,12 +183,12 @@ def main() -> None:
             "reviewer_notes": notes,
         })
 
-    # Filter to only records where physical ground truth or model output exists,
-    # unless --include-pending is explicitly requested.
+    # Score only rows with adjudicated reference and a corresponding model
+    # field. Pending rows remain available for intake tracking when requested.
     if args.include_pending:
         evaluated_rows = rows
     else:
-        evaluated_rows = [r for r in rows if r["ground_truth"].strip() or r["model_output"].strip()]
+        evaluated_rows = [r for r in rows if not r["read_status"].startswith("pending_")]
 
     out_path = Path(args.out)
     with open(out_path, "w", newline="", encoding="utf-8-sig") as f:

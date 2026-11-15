@@ -60,7 +60,7 @@ def make_slide_overlay(width: float, height: float) -> PdfReader:
     draw_row(
         pdf,
         "Pilot evidence:",
-        "10 mixed-category packages / 60 fields; only one complementary-food package.",
+        "10 target packages have transcripts; one has a matching Gemini run (4 fields).",
         90,
         width,
     )
@@ -74,7 +74,7 @@ def make_slide_overlay(width: float, height: float) -> PdfReader:
     draw_row(
         pdf,
         "Next:",
-        "Evaluate 6+ month labels, then caregiver usability and B2B export interest.",
+        "Scan the remaining packages, score matched fields, then test caregiver usability.",
         56,
         width,
     )

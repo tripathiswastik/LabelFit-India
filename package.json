@@ -13,7 +13,7 @@
     "benchmark:build:50": "python scripts/build_50sku_benchmark.py",
     "benchmark:strata": "python scripts/build_50sku_benchmark.py --strata",
     "benchmark:eval": "python scripts/evaluate_benchmark.py --csv docs/benchmark-10sku-results.csv --export-markdown docs/BENCHMARK_EVALUATION_REPORT.md",
-    "benchmark:eval:50": "python scripts/evaluate_benchmark.py --csv docs/benchmark-50sku-results.csv --export-markdown docs/BENCHMARK_50_SKU_REPORT.md",
+    "benchmark:eval:50": "python scripts/evaluate_benchmark.py --csv docs/benchmark-50sku-results.csv --export-markdown docs/BENCHMARK_50_SKU_SCORECARD.md",
     "transcription:input": "python scripts/transcribe_cli.py",
     "transcription:pending": "python scripts/transcribe_cli.py --list-pending",
     "transcription:adjudicate": "python scripts/adjudicate_transcriptions.py --csv docs/founder-independent-transcriptions.csv",

@@ -105,6 +105,55 @@ def test_benchmark_evaluator_metrics():
             os.remove(temp_csv)
 
 
+def test_pending_scan_rows_are_excluded_from_metrics():
+    with tempfile.NamedTemporaryFile("w", delete=False, suffix=".csv", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "image_id", "sku_id", "brand", "market_city", "package_language_script",
+            "photo_condition", "field", "ground_truth", "model_output", "read_status",
+            "evidence_located", "unsupported_text", "error_category", "review_seconds", "reviewer_notes"
+        ])
+        writer.writerow([
+            "IMG_01", "SKU_01", "Manna", "Delhi", "English-Latin",
+            "pouch_panel", "ingredients", "Sprouted Ragi (100%)", "",
+            "pending_model_scan", "no", "no", "pending_model_scan", "", "Awaiting Gemini output"
+        ])
+        temp_csv = f.name
+
+    try:
+        results = BenchmarkEvaluator(temp_csv).evaluate()
+        assert results["total_rows"] == 0
+        assert results["pending_rows_count"] == 1
+        assert "Pending rows not scored: 1" in BenchmarkEvaluator(temp_csv).format_text_report(results)
+    finally:
+        if os.path.exists(temp_csv):
+            os.remove(temp_csv)
+
+
+def test_pending_scan_rows_are_not_scored():
+    with tempfile.NamedTemporaryFile("w", delete=False, suffix=".csv", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "image_id", "sku_id", "brand", "market_city", "package_language_script",
+            "photo_condition", "field", "ground_truth", "model_output", "read_status",
+            "evidence_located", "unsupported_text", "error_category", "review_seconds", "reviewer_notes"
+        ])
+        writer.writerow([
+            "IMG_01", "SKU_01", "Manna", "Delhi", "English-Latin",
+            "pouch_panel", "ingredients", "Sprouted Ragi (100%)", "",
+            "pending_model_scan", "no", "no", "", "", "No Gemini output recorded"
+        ])
+        temp_csv = f.name
+
+    try:
+        results = BenchmarkEvaluator(temp_csv).evaluate()
+        assert results["total_rows"] == 0
+        assert results["pending_rows_count"] == 1
+    finally:
+        if os.path.exists(temp_csv):
+            os.remove(temp_csv)
+
+
 def test_blank_benchmark_template_integrity():
     """Verifies that the reusable benchmark template is blank and has a valid schema."""
     benchmark_csv = Path(__file__).resolve().parent.parent / "docs" / "benchmark-template.csv"
@@ -142,3 +191,12 @@ def test_recorded_10_package_benchmark_integrity():
     }
     assert set(results["by_field"].keys()) == expected_fields
     assert all(data["mean_review_seconds"] is None for data in results["by_field"].values())
+
+
+def test_50sku_status_csv_scores_only_recorded_pairs():
+    """Pending scans must be visible in progress counts but absent from score denominators."""
+    benchmark_csv = Path(__file__).resolve().parent.parent / "docs" / "benchmark-50sku-results.csv"
+    results = BenchmarkEvaluator(str(benchmark_csv)).evaluate()
+    assert results["total_rows"] == 4
+    assert results["pending_rows_count"] == 50
+    assert results["unique_skus_count"] == 1
