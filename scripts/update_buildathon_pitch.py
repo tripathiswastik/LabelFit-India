@@ -93,7 +93,7 @@ def make_slide_overlay(width: float, height: float) -> Any:
     draw_row(
         pdf,
         "Pilot evidence:",
-        "10 target products have founder-entered text; Gemini comparison covers 4 fields from 1 SKU.",
+        "10 target products have founder-entered text; Gemini comparison covers 6 fields across 2 SKUs.",
         94,
         width,
     )

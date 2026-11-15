@@ -33,7 +33,7 @@ A user photographs one package panel. Gemini returns candidate text for selected
 **What is the stage of your product/project?**
 
 
-Select **Other** and enter: **Working local prototype; the website is deployed on Cloud Run, with Gemini analysis disabled there. Founder-entered label references cover 10 target products; Gemini output is recorded for 4 fields from 1 SKU, which is not an accuracy estimate. The 20 usability rows in the repository are illustrative protocol data, not caregiver study results. Pre-commercial exploratory stage; no revenue or traction.**
+Select **Other** and enter: **Working local prototype; the website is deployed on Cloud Run, with Gemini analysis disabled there. Founder-entered label references cover 10 target products; Gemini output is recorded for 6 fields from 2 SKUs, which is not an accuracy estimate. The 20 usability rows in the repository are illustrative protocol data, not caregiver study results. Pre-commercial exploratory stage; no revenue or traction.**
 
 **What is the potential business model?**
 
@@ -119,4 +119,4 @@ Select **< 12 months** if that matches when LABEL CHECK formed. Confirm the star
 
 ## Evidence limits to keep consistent
 
-The project maintains strict evidence boundaries: founder-entered text references are prepared for 10 target products, while the current comparison records Gemini output for 4 fields from 1 SKU. The usability sheet contains 20 illustrative protocol rows; no live caregiver sessions are documented. These materials do not establish model accuracy across Indian retail packaging, user benefit, clinical outcomes, product safety, or willingness to pay. The next technical target is to pair model scans with product references and expand the benchmark toward 50 SKUs; a caregiver study would require real, consented adult participants and separate reporting.
+The project maintains strict evidence boundaries: founder-entered text references are prepared for 10 target products, while the current comparison records Gemini output for 6 fields from 2 SKUs. The usability sheet contains 20 illustrative protocol rows; no live caregiver sessions are documented. These materials do not establish model accuracy across Indian retail packaging, user benefit, clinical outcomes, product safety, or willingness to pay. The next technical target is to pair model scans with product references and expand the benchmark toward 50 SKUs; a caregiver study would require real, consented adult participants and separate reporting.
