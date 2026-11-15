@@ -5,13 +5,20 @@ from __future__ import annotations
 from io import BytesIO
 from pathlib import Path
 import shutil
+from typing import Any
 
-from pypdf import PdfReader, PdfWriter
-from reportlab.lib.colors import HexColor, white
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import simpleSplit
+try:
+    from pypdf import PdfReader, PdfWriter  # type: ignore
+    from reportlab.lib.colors import HexColor, white  # type: ignore
+    from reportlab.pdfbase import pdfmetrics  # type: ignore
+    from reportlab.pdfbase.ttfonts import TTFont  # type: ignore
+    from reportlab.pdfgen import canvas  # type: ignore
+    from reportlab.lib.utils import simpleSplit  # type: ignore
+    HAS_PDF_DEPS = True
+except (ImportError, Exception):
+    HAS_PDF_DEPS = False
+    PdfReader = PdfWriter = None  # type: ignore
+    HexColor = white = pdfmetrics = TTFont = canvas = simpleSplit = None  # type: ignore
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,14 +30,18 @@ OUTPUTS = [
 
 FONT = Path(r"C:\Windows\Fonts\arial.ttf")
 FONT_BOLD = Path(r"C:\Windows\Fonts\arialbd.ttf")
-pdfmetrics.registerFont(TTFont("PitchArial", str(FONT)))
-pdfmetrics.registerFont(TTFont("PitchArialBold", str(FONT_BOLD)))
 
-INK = HexColor("#53626E")
-BLUE = HexColor("#4285F4")
+if HAS_PDF_DEPS and pdfmetrics and TTFont and HexColor:
+    pdfmetrics.registerFont(TTFont("PitchArial", str(FONT)))
+    pdfmetrics.registerFont(TTFont("PitchArialBold", str(FONT_BOLD)))
+    INK = HexColor("#53626E")
+    BLUE = HexColor("#4285F4")
+else:
+    INK = "#53626E"
+    BLUE = "#4285F4"
 
 
-def draw_row(pdf: canvas.Canvas, label: str, text: str, y: float, page_width: float) -> None:
+def draw_row(pdf: Any, label: str, text: str, y: float, page_width: float) -> None:
     pdf.setFillColor(BLUE)
     pdf.setFont("PitchArialBold", 8.6)
     pdf.drawString(40, y, label)
@@ -41,7 +52,7 @@ def draw_row(pdf: canvas.Canvas, label: str, text: str, y: float, page_width: fl
         pdf.drawString(137, y - offset * 10.4, line)
 
 
-def make_slide_overlay(width: float, height: float) -> PdfReader:
+def make_slide_overlay(width: float, height: float) -> Any:
     packet = BytesIO()
     pdf = canvas.Canvas(packet, pagesize=(width, height), pageCompression=1)
 
@@ -91,7 +102,7 @@ def make_slide_overlay(width: float, height: float) -> PdfReader:
     return PdfReader(packet)
 
 
-def make_ai_tools_overlay(width: float, height: float) -> PdfReader:
+def make_ai_tools_overlay(width: float, height: float) -> Any:
     packet = BytesIO()
     pdf = canvas.Canvas(packet, pagesize=(width, height), pageCompression=1)
     pdf.setFillColor(white)
@@ -113,7 +124,7 @@ def make_ai_tools_overlay(width: float, height: float) -> PdfReader:
     return PdfReader(packet)
 
 
-def make_ai_model_overlay(width: float, height: float) -> PdfReader:
+def make_ai_model_overlay(width: float, height: float) -> Any:
     packet = BytesIO()
     pdf = canvas.Canvas(packet, pagesize=(width, height), pageCompression=1)
     pdf.setFillColor(white)
@@ -137,6 +148,11 @@ def make_ai_model_overlay(width: float, height: float) -> PdfReader:
 
 
 def main() -> None:
+    if not HAS_PDF_DEPS or PdfReader is None or PdfWriter is None:
+        print("Notice: 'pypdf' and 'reportlab' are required to compile pitch deck overlays.")
+        print("Install optional PDF compilation dependencies with: pip install pypdf reportlab")
+        return
+
     if not SOURCE.exists():
         raise FileNotFoundError(f"Pitch PDF not found: {SOURCE}")
 
