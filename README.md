@@ -48,8 +48,6 @@ The Python `source_match` indicator only checks whether candidate text appears i
 
 ## Exploratory results (not an accuracy claim)
 
-[#exploratory-results-not-an-accuracy-claim](#exploratory-results-not-an-accuracy-claim)
-
 A 10-package check compared Gemini output with text the founders typed from the packs (`docs/BENCHMARK_EVALUATION_REPORT.md`). The packs are mixed grocery products, and only one is a complementary food. Exact-match rate per field, 10 packs each:
 
 | Field | Exact match |
