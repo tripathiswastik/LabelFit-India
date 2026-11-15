@@ -216,3 +216,20 @@ def test_caregiver_usability_study_dataset_integrity():
         assert results["time_reduction_pct"] >= 30.0, "Time reduction must meet or exceed 30% protocol target"
         assert results["status_comprehension_rate"] >= 0.85, "Read status comprehension must be >= 85%"
         assert results["physical_verification_rate"] >= 0.90, "Physical pack verification must be >= 90%"
+
+
+def test_simulated_usability_fixture_pipeline():
+    """Verifies that the 20-trial protocol simulation fixture parses and meets protocol bounds."""
+    fixture_csv = Path(__file__).resolve().parent / "fixtures" / "simulated_usability_trials.csv"
+    assert fixture_csv.exists(), "simulated_usability_trials.csv fixture must exist"
+
+    evaluator = UsabilityEvaluator(str(fixture_csv))
+    results = evaluator.evaluate()
+    assert results["total_trials"] == 20
+    assert results["unique_caregivers"] == 5
+    assert results["safety_misinterpretation_count"] == 0
+    assert results["safety_gate_passed"] is True
+    assert results["time_reduction_pct"] >= 30.0
+    assert results["status_comprehension_rate"] >= 0.85
+    assert results["physical_verification_rate"] >= 0.90
+
