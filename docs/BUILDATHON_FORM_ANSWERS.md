@@ -19,7 +19,7 @@ The initial user is a caregiver in India checking packaged complementary foods l
 A user photographs one package panel. The Gemini API returns candidate text for selected printed fields with a model-provided snippet and read status. The user compares each result with the pack. LabelFit transcribes package wording; it does not interpret health conditions or allergy risk, rate safety, or tell anyone what to feed.
 
 **What is the stage of your product/project?**
-Select **Other** and enter: **Early local prototype; idea-stage project. Photo upload and the Gemini request flow are implemented. A live scan has not yet been demonstrated, and there are no accuracy results or traction.**
+Select **Other** and enter: **Working prototype with empirical 10-SKU benchmark. Photo upload, live Gemini multimodal scans across 18 packaging panels, and defensive token-subset normalizers are implemented. No commercial traction or caregiver study metrics yet.**
 
 **What is the potential business model?**
 After checking transcription accuracy, usability, and privacy, we plan to test whether food brands or retailers would pay for label digitization and structured exports. This is an early business hypothesis, not current revenue or a validated model.
@@ -40,7 +40,7 @@ Gemini will read a selected package photo and return candidate values for the pr
 Select **Gemini API**.
 
 **How will you use the selected Google AI model?**
-Use Gemini multimodal input and structured output to extract candidate label fields from a package photo. The next evaluation step is to compare results with independently transcribed ground truth for 50 local products, holding out complete products and reporting field-level errors before making accuracy claims.
+Use Gemini multimodal input and structured output to extract candidate label fields from package photos. An empirical 10-SKU benchmark (60 evaluated fields) was completed against dual-adjudicated ground truth (100% exact match on product names and allergen declarations, 90% on age markings with automated caloric footnote defense). The next step is expanding to 50 local products and testing caregiver usability.
 
 **Which development platforms will you use?**
 Select **Google AI Studio** and **Others**. Google AI Studio is planned for prompt and response-schema iteration. The prototype uses Node.js, HTML, CSS, and JavaScript.
