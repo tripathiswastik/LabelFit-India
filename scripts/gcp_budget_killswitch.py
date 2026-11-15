@@ -81,7 +81,7 @@ def disable_cloud_run_service(
     """
     Calls Google Cloud Run Admin API v1 / v2 to disable analysis and scale instances to 0.
     """
-    action_summary = {
+    action_summary: Dict[str, Any] = {
         "project_id": project_id,
         "region": region,
         "service_name": service_name,
