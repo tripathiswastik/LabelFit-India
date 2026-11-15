@@ -161,6 +161,24 @@ test('Step 3: ingredients with unclosed delimiter is downgraded to uncertain', (
   assert.equal(result.readStatus, 'uncertain');
 });
 
+test('Step 3: ingredients with unmatched closing delimiter is downgraded to uncertain', () => {
+  const result = normalizeField({
+    value: 'Wheat flour Atta) (51.6%), Milk solids (35.2%)',
+    evidence: 'Wheat flour Atta) (51.6%), Milk solids (35.2%)',
+    readStatus: 'clear'
+  }, 'ingredients');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
+test('Step 3: allergen declaration containing unprinted hallucinated mustard is downgraded', () => {
+  const result = normalizeField({
+    value: 'Contains Wheat and Mustard.',
+    evidence: 'Contains Wheat.',
+    readStatus: 'clear'
+  }, 'allergenDeclaration');
+  assert.equal(result.readStatus, 'uncertain');
+});
+
 test('Step 3: Devanagari numerals are normalized and evaluated in nutrition check', () => {
   const result = normalizeField({
     value: 'प्रति १०० ग्रॅम: लोह ५० मि.ग्रॅ',

@@ -9,6 +9,7 @@ const API_URL = 'https://generativelanguage.googleapis.com/v1beta/interactions';
 const MAX_IMAGE_BYTES = 7 * 1024 * 1024;
 const MAX_REQUEST_BYTES = Math.ceil(MAX_IMAGE_BYTES * 4 / 3) + 64 * 1024;
 const MAX_FIELD_CHARS = 4000;
+const MAX_EVIDENCE_CHARS = 600;
 const IS_CLOUD_RUN = Boolean(process.env.K_SERVICE);
 // This prototype has no sign-in or server-side spend limits. Keep Gemini calls
 // disabled on Cloud Run until those controls are implemented and reviewed.
@@ -171,7 +172,8 @@ const DEVANAGARI_DIGITS = {
 const KNOWN_ALLERGENS = [
   'wheat', 'milk', 'dairy', 'soy', 'soya', 'peanut', 'peanuts',
   'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
-  'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley'
+  'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley',
+  'mustard', 'nut', 'nuts'
 ];
 
 function normalizeDigits(text) {
@@ -190,10 +192,17 @@ function hasUnbalancedDelimiters(text) {
   let paren = 0;
   let bracket = 0;
   for (const char of text) {
-    if (char === '(') paren += 1;
-    else if (char === ')') paren = Math.max(0, paren - 1);
-    else if (char === '[') bracket += 1;
-    else if (char === ']') bracket = Math.max(0, bracket - 1);
+    if (char === '(') {
+      paren += 1;
+    } else if (char === ')') {
+      if (paren === 0) return true;
+      paren -= 1;
+    } else if (char === '[') {
+      bracket += 1;
+    } else if (char === ']') {
+      if (bracket === 0) return true;
+      bracket -= 1;
+    }
   }
   return paren > 0 || bracket > 0;
 }
@@ -267,7 +276,7 @@ function hasConflictingNumbers(value, evidence) {
 
 function normalizeField(raw, fieldName = '') {
   const value = cleanText(raw?.value);
-  const evidence = cleanText(raw?.evidence, 600);
+  const evidence = cleanText(raw?.evidence, MAX_EVIDENCE_CHARS);
   const statedStatus = ['clear', 'uncertain', 'not_visible'].includes(raw?.readStatus) ? raw.readStatus : 'uncertain';
 
   if (!value && !evidence) return { value: '', evidence: '', readStatus: 'not_visible' };

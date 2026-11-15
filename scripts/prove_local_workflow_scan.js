@@ -73,7 +73,7 @@ async function runProof() {
     },
     nutritionPanel: {
       value: 'Energy: 410 kcal, Protein: 12g, Carbohydrates: 75g per 100g',
-      evidence: 'Nutrition Facts (per 100g): Energy 410 kcal, Protein 12g',
+      evidence: 'Nutrition Facts (per 100g): Energy 410 kcal, Protein 12g, Carbohydrates 75g',
       readStatus: 'clear',
     },
     preparationAndStorage: {

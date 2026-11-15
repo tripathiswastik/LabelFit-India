@@ -144,6 +144,30 @@ def test_step3_ingredients_unclosed_delimiter_downgraded():
     assert fields["ingredients"].read_status == "uncertain"
 
 
+def test_step3_ingredients_unmatched_closing_delimiter_downgraded():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "ingredients": {
+            "value": "Wheat flour Atta) (51.6%), Milk solids (35.2%)",
+            "evidence": "Wheat flour Atta) (51.6%), Milk solids (35.2%)",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["ingredients"].read_status == "uncertain"
+
+
+def test_step3_allergen_unprinted_mustard_or_nuts_downgraded():
+    extractor = GeminiLabelExtractor()
+    fields = extractor._normalize({
+        "allergenDeclaration": {
+            "value": "Contains Wheat and Mustard.",
+            "evidence": "Contains Wheat.",
+            "readStatus": "clear",
+        }
+    })
+    assert fields["allergenDeclaration"].read_status == "uncertain"
+
+
 def test_step3_devanagari_numerals_normalized_in_nutrition_check():
     extractor = GeminiLabelExtractor()
     fields = extractor._normalize({

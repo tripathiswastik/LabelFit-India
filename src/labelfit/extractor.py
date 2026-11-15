@@ -19,6 +19,7 @@ MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 API_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
 MAX_TEXT_CHARS = 30_000
 MAX_FIELD_CHARS = 8_000
+MAX_EVIDENCE_CHARS = 600
 VALID_STATUSES = {"clear", "uncertain", "not_visible"}
 
 
@@ -60,7 +61,8 @@ DEVANAGARI_DIGITS = {
 KNOWN_ALLERGENS = [
     'wheat', 'milk', 'dairy', 'soy', 'soya', 'peanut', 'peanuts',
     'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
-    'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley'
+    'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley',
+    'mustard', 'nut', 'nuts',
 ]
 
 
@@ -88,11 +90,15 @@ def has_unbalanced_delimiters(text: str) -> bool:
         if char == '(':
             paren += 1
         elif char == ')':
-            paren = max(0, paren - 1)
+            if paren == 0:
+                return True
+            paren -= 1
         elif char == '[':
             bracket += 1
         elif char == ']':
-            bracket = max(0, bracket - 1)
+            if bracket == 0:
+                return True
+            bracket -= 1
     return paren > 0 or bracket > 0
 
 
@@ -282,7 +288,7 @@ class GeminiLabelExtractor:
             if status not in VALID_STATUSES:
                 status = "uncertain"
             value = value.strip()[:MAX_FIELD_CHARS]
-            evidence = evidence.strip()[:300]
+            evidence = evidence.strip()[:MAX_EVIDENCE_CHARS]
             if not value and not evidence:
                 status = "not_visible"
             elif not value or not evidence or status != "clear":

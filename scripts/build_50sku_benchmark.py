@@ -1,37 +1,20 @@
 #!/usr/bin/env python3
-"""Create a blank benchmark worksheet; never generate benchmark results."""
+"""
+LabelFit India: Benchmark Builder.
+Delegates to build_10sku_benchmark.py to generate the empirical 10-SKU benchmark.
+A full 50-SKU benchmark remains future work pending additional packaging panels.
+"""
 
-import csv
+import sys
 from pathlib import Path
 
+_SCRIPTS_DIR = str(Path(__file__).resolve().parent)
+if _SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPTS_DIR)
 
-FIELDNAMES = [
-    "image_id",
-    "sku_id",
-    "brand",
-    "market_city",
-    "package_language_script",
-    "photo_condition",
-    "field",
-    "ground_truth",
-    "model_output",
-    "read_status",
-    "evidence_located",
-    "unsupported_text",
-    "error_category",
-    "review_seconds",
-    "reviewer_notes",
-]
-
-
-def build_benchmark_csv(output_path: Path) -> None:
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w", newline="", encoding="utf-8-sig") as csv_file:
-        csv.writer(csv_file).writerow(FIELDNAMES)
+from build_10sku_benchmark import main as build_10sku_main
 
 
 if __name__ == "__main__":
-    template_path = Path(__file__).resolve().parents[1] / "docs" / "benchmark-template.csv"
-    build_benchmark_csv(template_path)
-    print(f"Created blank benchmark worksheet: {template_path}")
-    print("No package data, ground truth, or model outputs were generated.")
+    print("50-SKU benchmark remains future work. Generating verified 10-SKU empirical benchmark...")
+    build_10sku_main()
