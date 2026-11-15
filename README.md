@@ -34,7 +34,24 @@ The Python `source_match` indicator only checks whether candidate text appears i
 - The browser creates a temporary preview and sends the selected image to this server only after the user selects **Read this label** and checks the package-only confirmation.
 - The browser resizes large photos (long edge 2560 px, re-encoded as JPEG) before upload so phone photos fit the 7 MB server limit. The server validates the file type and size, forwards the image to Gemini using `store: false`, and does not write it to disk or a database. This is not a zero-retention guarantee: provider handling still depends on the API service and billing tier, and paid API use may still have abuse-monitoring logs. Unpaid Gemini API content may be used to improve Google products and may be reviewed by people. Do not use unpaid service for confidential or personal information.
 - Do not upload images containing people, child faces, names, phone numbers, addresses, or other personal details. There are no child profiles or saved scan history.
-- The prototype applies a small in-memory per-IP rate limit and allows at most two concurrent analyses. Those limits reset when the process restarts and are not a production spend-control system.
+- The prototype applies a small in-memory per-IP rate limit (expired entries are pruned and the table is capped), allows at most two concurrent analyses and eight uploads in progress, and cuts off uploads that take longer than 45 seconds. Uploads do not hold an analysis slot while they are still arriving. Those limits reset when the process restarts and are not a production spend-control system.
+
+## Server settings
+
+[#server-settings](#server-settings)
+
+All optional. Defaults are safe for local use.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `GEMINI_API_KEY` | none | API key. Also read from this project's own `.env` file; parent directories are never searched. |
+| `GEMINI_MODEL` | `gemini-3.8-flash` | Gemini model ID. |
+| `LABELFIT_BODY_TIMEOUT_MS` | `45000` | Maximum time to receive an upload before it is cut off. |
+| `LABELFIT_TRUST_PROXY_HOPS` | `1` on Cloud Run, `0` locally | Trusted proxies in front of the server. Only then is `X-Forwarded-For` used for the rate-limit key. |
+| `LABELFIT_ACCESS_TOKEN` | none | If set, `/api/analyze` requires a matching `X-LabelFit-Token` header. The web page does not send this header; it is for a trusted proxy or test client. |
+| `LABELFIT_ENABLE_ANALYSIS` | none | Cloud Run only. Analysis stays disabled there unless this is exactly `true` **and** `LABELFIT_ACCESS_TOKEN` is at least 24 characters. |
+
+The Cloud Run opt-in exists for a controlled pilot behind authenticated access. It adds no per-user quotas, spend cap, or privacy review, which are still required before any public use.
 
 ## Scope and known limits
 

@@ -151,14 +151,19 @@ test('6. Smoke Test: Photo change clears upload confirmation (app.js verificatio
   );
 });
 
-test('7. Smoke Test: Cloud Run analysis guard is hard-disabled', () => {
+test('7. Smoke Test: Cloud Run analysis stays disabled unless explicitly opted in with an access token', () => {
   const serverJs = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
   assert.ok(
     serverJs.includes('const IS_CLOUD_RUN = Boolean(process.env.K_SERVICE);'),
     'Must detect Cloud Run environment via K_SERVICE'
   );
-  assert.ok(
-    serverJs.includes('const ANALYSIS_ENABLED = !IS_CLOUD_RUN;'),
-    'Analysis must be disabled when IS_CLOUD_RUN is true'
-  );
+  const { resolveAnalysisEnabled } = require('../server.js');
+  const longToken = 'x'.repeat(24);
+  assert.equal(resolveAnalysisEnabled({}, true), false, 'disabled by default on Cloud Run');
+  assert.equal(resolveAnalysisEnabled({ LABELFIT_ENABLE_ANALYSIS: 'true' }, true), false, 'flag alone is not enough');
+  assert.equal(resolveAnalysisEnabled({ LABELFIT_ACCESS_TOKEN: longToken }, true), false, 'token alone is not enough');
+  assert.equal(resolveAnalysisEnabled({ LABELFIT_ENABLE_ANALYSIS: 'true', LABELFIT_ACCESS_TOKEN: 'short' }, true), false, 'short token is rejected');
+  assert.equal(resolveAnalysisEnabled({ LABELFIT_ENABLE_ANALYSIS: 'yes', LABELFIT_ACCESS_TOKEN: longToken }, true), false, 'flag must be exactly "true"');
+  assert.equal(resolveAnalysisEnabled({ LABELFIT_ENABLE_ANALYSIS: 'true', LABELFIT_ACCESS_TOKEN: longToken }, true), true);
+  assert.equal(resolveAnalysisEnabled({}, false), true, 'local runs are unchanged');
 });
