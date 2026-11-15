@@ -1,6 +1,6 @@
 # LabelFit India: Multi-SKU Live Scan Audit Report (Real Retail Packaging)
 
-**Date:** 2026-11-14  
+**Date:** 2026-11-15  
 **Scope:** Live packaged food transcription audit across authentic Indian retail grocery packages.  
 **Notice:** This evaluation records actual model responses and server-side defensive normalizer outcomes. It is an engineering verification check, not a clinical study or nationwide accuracy claim.
 
@@ -25,6 +25,9 @@
 | `SKU-PROD-009` | **Dabur** | Dabur Hajmola Imli Tasty Digestive Tablets (Bottle) | `IMG-20261115-WA0006.jpg` | ✅ Transcribed |
 | `SKU-PROD-010` | **VLCC** | VLCC Cocoa Butter Detan Glow Body Lotion (400ml Bottle) | `IMG-20261115-WA0009.jpg` | ✅ Transcribed |
 | `SKU-PROD-011` | **Cadbury** | Cadbury Dairy Milk Chocolate (Back Panel) | `dairymilk.png` | ✅ Transcribed |
+| `SKU-PROD-012` | **Conscious Food** | Conscious Food Millet Noodles (162g Pouch) | `millet_noodles_bop.webp` | ✅ Transcribed |
+| `SKU-PROD-013-BACK` | **Slurrp Farm** | Slurrp Farm Ragi & Jowar Cereal Stars & Moons (Back Panel) | `shopping.webp` | ✅ Transcribed |
+| `SKU-PROD-013-NUTRITION` | **Slurrp Farm** | Slurrp Farm Supergrain Cereal (Side Nutrition & Ingredients Panel) | `shopping (1).webp` | ✅ Transcribed |
 
 ---
 
@@ -209,3 +212,39 @@
 | **allergenDeclaration** | `clear` | `clear` | Contains Milk, May Contain Tree Nuts, Wheat, Barley and Soy. | `Allergen Information: Contains Milk, May...` | ✅ Clear Match |
 | **nutritionPanel** | `clear` | `uncertain` | Serving size: 9 g; No. of Servings Per Package: 15* NUTRITIO... | `NUTRITION INFORMATION (Per 100 g)*: Ener...` | ⚠️ Downgraded by Normalizer |
 | **preparationAndStorage** | `clear` | `uncertain` | 1 Eat it. Lock it. Repeat. 2 Store it in your fridge. Raid i... | `Storage Conditions: STORE IN A COOL, HYG...` | ⚠️ Downgraded by Normalizer |
+
+### SKU-PROD-012: Conscious Food — Conscious Food Millet Noodles (162g Pouch)
+- **Image**: `millet_noodles_bop.webp` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | Millet Noodles | `Millet Noodles:` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `uncertain` | Millet Noodles: Jowar millet flour (50%), Whole wheat flour ... | `Ingredients: Millet Noodles: Jowar mille...` | ⚠️ Downgraded by Normalizer |
+| **allergenDeclaration** | `clear` | `uncertain` | Allergy Advice: This product contains Wheat. Processed on a ... | `Allergy Advice: This product contains Wh...` | ⚠️ Downgraded by Normalizer |
+| **nutritionPanel** | `clear` | `uncertain` | Nutrition per 100g Serving per container: 2 Serving Size 82.... | `Nutrition per 100g` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `clear` | `uncertain` | COOKING INSTRUCTIONS Step 1: Cook noodles in boiling water f... | `COOKING INSTRUCTIONS` | ⚠️ Downgraded by Normalizer |
+
+### SKU-PROD-013-BACK: Slurrp Farm — Slurrp Farm Ragi & Jowar Cereal Stars & Moons (Back Panel)
+- **Image**: `shopping.webp` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | Slurrp Farm's Crunch | `WHAT'S IN SLURRP FARM'S CRUNCH?` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **allergenDeclaration** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **nutritionPanel** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **preparationAndStorage** | `clear` | `uncertain` | Add milk to our stars and moons, for the perfect breakfast o... | `HOW TO STORE Keep it in a cool, dry plac...` | ⚠️ Downgraded by Normalizer |
+
+### SKU-PROD-013-NUTRITION: Slurrp Farm — Slurrp Farm Supergrain Cereal (Side Nutrition & Ingredients Panel)
+- **Image**: `shopping (1).webp` | **Model**: `gemini-3.5-flash-lite`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `clear` | Supergrain blend (sorghum (jowar), finger millet (Ragi)) (25... | `Supergrain blend (sorghum (jowar), finge...` | ✅ Clear Match |
+| **allergenDeclaration** | `clear` | `clear` | Allergen Note: Contains Milk. Made in a facility that proces... | `Allergen Note: Contains Milk. Made in a ...` | ✅ Clear Match |
+| **nutritionPanel** | `clear` | `clear` | Nutritional Information Serving Size: Approx 20 g Servings P... | `Nutritional Information Serving Size: Ap...` | ✅ Clear Match |
+| **preparationAndStorage** | `clear` | `clear` | JUST ADD MILK | `JUST ADD MILK` | ✅ Clear Match |
