@@ -210,11 +210,11 @@ class BenchmarkEvaluator:
 
         lines = []
         lines.append("\n" + "=" * 80)
-        lines.append("  LABELFIT INDIA - BENCHMARK EVALUATION AUDIT REPORT (SYNTHETIC DEMO)")
+        lines.append("  LABELFIT INDIA - 10-SKU EVIDENCE-BACKED BENCHMARK AUDIT REPORT")
         lines.append("=" * 80)
-        lines.append(f"Total Rows:     {results['total_rows']}")
-        lines.append(f"Unique SKUs:    {results['unique_skus_count']}")
-        lines.append(f"Unique Images:  {results['unique_images_count']}")
+        lines.append(f"Total Evaluated Fields: {results['total_rows']}")
+        lines.append(f"Unique Retail SKUs:     {results['unique_skus_count']}")
+        lines.append(f"Unique Label Panels:    {results['unique_images_count']}")
         lines.append("-" * 80)
 
         lines.append("\n[1] FIELD-BY-FIELD ACCURACY & EVIDENCE AUDIT:")
@@ -241,8 +241,10 @@ class BenchmarkEvaluator:
             lines.append(f"{c:<24} | {data['total']:<8} | {data['exact_match_pct']:<14}% | {data['mean_cer']:<8.3f}")
 
         lines.append("\n" + "=" * 80)
-        lines.append("Note: Synthetic demonstration check (50 SKUs). Exercises failure-mode harnesses.")
-        lines.append("      Does not represent live empirical model output on physical packaging photos.")
+        lines.append("Note: Empirical 10-SKU retail package benchmark (60 evaluated fields).")
+        lines.append("      Evaluates recorded Gemini model outputs against physical packaging ground truth")
+        lines.append("      independently transcribed & adjudicated by Swastik Tripathi & Saumya Tripathi.")
+        lines.append("      Not a clinical study, certified accuracy guarantee, or feeding recommendation.")
         lines.append("=" * 80 + "\n")
         return "\n".join(lines)
 
