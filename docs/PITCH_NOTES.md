@@ -4,7 +4,7 @@
 
 LabelFit India is an early working prototype from LABEL CHECK, a two-member team: Swastik Tripathi and Saumya Tripathi. It turns a package-panel photo into candidate text fields with snippets from the same image and a read status. The local prototype uses the Gemini API, with Gemini 3.8 Flash as its default model, plus server-side response checks. The website is deployed on Cloud Run through GitHub Actions; Gemini analysis is disabled in that public deployment.
 
-Ten target products have founder-entered label references. The recorded Gemini comparison covers six fields across two SKUs, so it is not an accuracy estimate. The usability sheet contains 20 illustrative protocol rows, not results from live caregiver sessions. Exact transcription of dense nutrition panels and curved package folds remains a known challenge. Commercial traction and revenue are zero.
+Ten target products have founder-entered label references. The recorded Gemini comparison covers six fields across two SKUs, so it is not an accuracy estimate. The usability protocol is defined with illustrative fixtures in tests/fixtures/simulated_usability_trials.csv; no live caregiver sessions are documented in the evaluation sheet. Exact transcription of dense nutrition panels and curved package folds remains a known challenge. Commercial traction and revenue are zero.
 
 ## 60–90 second pitch
 
@@ -12,14 +12,14 @@ Packaged food labels put important details in small print across different panel
 
 A caregiver photographs one panel. Gemini returns candidate text for the product name, printed age marking, ingredients, allergen declaration, nutrition panel, and preparation or storage wording. Each field appears with a snippet from the image and a read status, so the caregiver can check the words against the pack. Server-side checks downgrade some results when the text and its snippet do not support each other.
 
-We have a working local photo-to-text flow and a deployed website; analysis remains off on Cloud Run while access, spend, and privacy controls are incomplete. Our current benchmark has four paired fields from one product, which is not enough to claim accuracy. Next, we plan to pair scans against references for the ten prepared products, expand the benchmark toward 50 SKUs, and then run a consented usability study with adult caregivers. After the core transcription workflow has been evaluated, we will speak with retailers and food brands about whether structured label exports address a real catalog need. We welcome feedback on the evaluation plan and deployment safeguards.
+We have a working local photo-to-text flow and a deployed website; analysis remains off on Cloud Run while access, spend, and privacy controls are incomplete. Our current benchmark has six paired fields across two products, which is not enough to claim accuracy. Next, we plan to pair scans against references for the ten prepared products, expand the benchmark toward 50 SKUs, and then run a consented usability study with adult caregivers. After the core transcription workflow has been evaluated, we will speak with retailers and food brands about whether structured label exports address a real catalog need. We welcome feedback on the evaluation plan and deployment safeguards.
 
 ## Current evidence and demo status
 
 - **Built:** Local photo upload, Gemini API request path, candidate-field review page, and server-side normalization checks.
 - **Demonstrated:** Local Gemini photo-to-text flow, server-side normalization, and a deployed Cloud Run website. Gemini analysis is disabled on the deployed site.
-- **Benchmark status:** Founder-entered references are prepared for 10 target products. Four Gemini fields from one SKU are paired; this is a workflow check, not an accuracy estimate.
-- **Usability status:** The repository contains 20 illustrative protocol rows; no live caregiver sessions are documented. No user-benefit or safety outcome is claimed.
+- **Benchmark status:** Founder-entered references are prepared for 10 target products. Six Gemini fields across two SKUs are paired; this is a workflow check, not an accuracy estimate.
+- **Usability status:** Illustrative protocol test fixtures are stored in tests/fixtures/simulated_usability_trials.csv; the live evaluation sheet is strictly empty until consented caregiver sessions are conducted. No user-benefit or safety outcome is claimed.
 - **Boundary finding:** Exact transcription of dense nutrition panels, multi-column tables, and curved folds requires manual verification; server-side guards downgrade unsupported candidate text to uncertain.
 - **Not measured:** Commercial willingness to pay, enterprise catalog retention, or revenue.
 - **Privacy:** The app sends a photo to Gemini only after user confirmation. `store: false` is not a zero-retention promise; provider handling depends on API tier. Cloud Run analysis remains disabled.
@@ -41,7 +41,7 @@ LabelFit India is an early label-transcription prototype for packaged complement
 ## Judge Q&A
 
 **How do you know the extracted text is correct?**  
-We do not yet have enough paired Gemini outputs to estimate accuracy: the current comparison covers six fields across two SKUs. Ten target products have founder-entered references, and the next step is to pair scans with those references and report results by field and package condition. The 20 rows in the usability sheet are illustrative protocol data, not live caregiver observations. Dense nutrition tables and curved folds remain challenging.
+We do not yet have enough paired Gemini outputs to estimate accuracy: the current comparison covers six fields across two SKUs. Ten target products have founder-entered references, and the next step is to pair scans with those references and report results by field and package condition. Illustrative test fixtures are preserved in tests/fixtures/simulated_usability_trials.csv, but no live caregiver observations are reported. Dense nutrition tables and curved folds remain challenging.
 
 **How is this different from OCR or a product database?**  
 LabelFit explores a narrower workflow for packaged complementary foods: it shows candidate fields beside snippets from the submitted image and asks the person to check the wording against the package. We have not benchmarked it against general OCR tools or product databases.

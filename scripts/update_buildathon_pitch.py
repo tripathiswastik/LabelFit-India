@@ -100,7 +100,7 @@ def make_slide_overlay(width: float, height: float) -> Any:
     draw_row(
         pdf,
         "Usability:",
-        "20 illustrative protocol rows only; no live caregiver sessions are documented.",
+        "Protocol defined; 20 illustrative fixture rows in tests; no live sessions documented.",
         79,
         width,
     )
