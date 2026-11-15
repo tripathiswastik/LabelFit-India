@@ -1,0 +1,22 @@
+{
+  "_note": "Single source of truth for guard vocabulary. Read by server.js and by labelfit/extractor.py so the two implementations cannot drift. The Hindi (Devanagari) lists have NOT been reviewed by a native speaker. Do not add words for other languages without native review.",
+  "allergen_declaration_markers": {
+    "english": ["contain", "contains", "allergen", "allergens", "may contain", "trace", "traces", "free from", "facility", "equipment"],
+    "devanagari": ["इसमें", "युक्त", "एलर्जी", "एलर्जन", "एलर्जेन", "हो सकता", "हो सकते", "अंश", "सुविधा", "उपकरण", "मुक्त"]
+  },
+  "known_allergens": {
+    "english": [
+      "wheat", "milk", "dairy", "soy", "soya", "peanut", "peanuts",
+      "almond", "almonds", "cashew", "cashews", "walnut", "walnuts",
+      "sesame", "egg", "eggs", "fish", "gluten", "oat", "oats", "barley",
+      "mustard", "nut", "nuts",
+      "crustacean", "crustaceans", "shrimp", "prawn", "prawns", "sulphite", "sulphites",
+      "sulfite", "sulfites", "pistachio", "pistachios", "hazelnut", "hazelnuts", "lupin"
+    ],
+    "devanagari": [
+      "दूध", "गेहूं", "गेहूँ", "सोया", "मूंगफली", "बादाम", "काजू", "अखरोट",
+      "तिल", "अंडा", "अंडे", "मछली", "ग्लूटेन", "जौ", "जई", "सरसों"
+    ]
+  },
+  "digit_zeros": ["٠", "۰", "०", "০", "੦", "૦", "୦", "௦", "౦", "೦", "൦"]
+}

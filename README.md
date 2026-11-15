@@ -111,5 +111,6 @@ python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv
 - [Cloud Run guard and local security review](docs/CLOUD_RUN_PRODUCTION_AUDIT.md): Code and local-test notes only; no deployed Cloud Run service has been audited.
 - [B2B discovery plan](docs/B2B_DISCOVERY_PLAN.md): Interview hypotheses only; zero customer interviews or pricing evidence recorded.
 - [Privacy and regulatory review checklist](docs/PRIVACY_AND_COMPLIANCE_GATE.md): Preliminary engineering notes, not legal advice, a compliance audit, or an approval.
+- [Audit checklist](docs/AUDIT_CHECKLIST.md): open and closed issues from the full repository review.
 - [Benchmark runbook](docs/BENCHMARK_RUNBOOK.md): how to scan packages, record runs, and score them with confidence intervals. Tooling only; it contains no results.
 - [Exploratory Validation Plan](docs/VALIDATION_PLAN.md) & [Research & Gaps Review](docs/RESEARCH_AND_GAPS.md): Documented boundaries, non-prescriptive invariants, and uncalibrated read statuses.

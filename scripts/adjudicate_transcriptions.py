@@ -4,7 +4,6 @@ CLI entry point for founder independent transcription adjudication.
 Delegates to labelfit.adjudication.
 """
 
-import os
 import sys
 import argparse
 from pathlib import Path

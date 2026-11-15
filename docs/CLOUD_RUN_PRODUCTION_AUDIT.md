@@ -13,10 +13,16 @@ In this Buildathon prototype, **public Cloud Run multimodal analysis is intentio
 
 ```javascript
 const IS_CLOUD_RUN = Boolean(process.env.K_SERVICE);
-// This prototype has no sign-in or server-side spend limits. Keep Gemini calls
-// disabled on Cloud Run until those controls are implemented and reviewed.
-const ANALYSIS_ENABLED = !IS_CLOUD_RUN;
+// Disabled on Cloud Run unless an operator opts in AND sets an access token.
+function resolveAnalysisEnabled(env = process.env, isCloudRun = IS_CLOUD_RUN) {
+  if (!isCloudRun) return true;
+  const token = String(env.LABELFIT_ACCESS_TOKEN || '');
+  return env.LABELFIT_ENABLE_ANALYSIS === 'true' && token.length >= MIN_ACCESS_TOKEN_LENGTH;
+}
+const ANALYSIS_ENABLED = resolveAnalysisEnabled();
 ```
+
+*Updated after the server-hardening change.* Analysis stays off on Cloud Run by default. A pilot behind authenticated access can opt in with `LABELFIT_ENABLE_ANALYSIS=true` plus a `LABELFIT_ACCESS_TOKEN` of at least 24 characters, which `/api/analyze` then requires in an `X-LabelFit-Token` header (see README, "Server settings"). The opt-in adds no per-user quotas or spend cap, so the gates below still apply.
 
 ### Risk Rationale
 1. **Uncontrolled Spend Exposure:** An unauthenticated public web endpoint making live multimodal Gemini calls can be automated or scraped, leading to rapid API quota depletion or unexpected Google Cloud bills.
@@ -47,7 +53,7 @@ graph TD
 2. **Status Downgrade:** The source returns `{ configured: false, model: null }` when the disabled-analysis flag is active. A local unit test exercises this flag; no deployed Cloud Run instance was tested.
 3. **Immediate Analysis Rejection:** `POST /api/analyze` checks the disabled-analysis flag before parsing the request body and returns HTTP `503 Service Unavailable` with `{ error: 'Analysis is disabled on this Cloud Run prototype.' }`. The API key may exist in the process environment, but this request path makes no Gemini call. The test sets the flag directly rather than launching an actual Cloud Run service.
 4. **Origin Check:** `isAllowedOrigin` verifies same-origin requests, blocking external sites from issuing cross-origin requests (`HTTP 403`).
-5. **Memory and Rate Bounds:** Local development enforces an in-memory sliding window rate limiter (max 10 requests / minute) and a concurrency limiter (max 2 parallel image processing jobs, returning `HTTP 429`).
+5. **Memory and Rate Bounds:** The server enforces an in-memory sliding-window rate limiter (max 10 requests per minute per client key, with expired keys pruned and the table capped), at most 2 concurrent analyses and 8 uploads in progress (`HTTP 429`), and a 45-second limit on receiving an upload. An upload does not hold an analysis slot while it is still arriving.
 6. **Payload Guard:** File uploads are strictly capped at 7 MB with base64 size checks and binary magic-number validation (JPEG `0xFFD8FF`, PNG `\x89PNG`, WebP `RIFF...WEBP`).
 
 ---
@@ -93,5 +99,5 @@ All Step 5 production guards are continuously validated by the automated test su
   - `✔ Step 5: Cloud Run status endpoint reports unconfigured when analysis is disabled`
   - `✔ Step 5: Cloud Run analysis guard hard-disables analysis and returns 503`
   - `✔ Step 5: Strict security headers are attached on all responses`
-  - `✔ 7. Smoke Test: Cloud Run analysis guard is hard-disabled`
-- **Result:** 28/28 Node tests passing; 32/32 Python tests passing.
+  - `✔ 7. Smoke Test: Cloud Run analysis stays disabled unless explicitly opted in with an access token`
+- **Result:** run `npm test` and `python -m pytest tests` for the current count; numbers change as tests are added.

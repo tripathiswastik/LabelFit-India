@@ -4,7 +4,7 @@ Produces normal, blurred, missing-field, and corrupted packaging images.
 """
 
 import os
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "..", "test", "fixtures")
 os.makedirs(FIXTURES_DIR, exist_ok=True)

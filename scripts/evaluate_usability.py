@@ -12,12 +12,15 @@ _SRC_ROOT = str(Path(__file__).resolve().parent.parent / "src")
 if _SRC_ROOT not in sys.path:
     sys.path.insert(0, _SRC_ROOT)
 
+# Names below are re-exported for callers that import from this script.
 from labelfit.usability import (
     is_truthy,
     parse_float,
     UsabilityEvaluator,
     main,
 )
+
+__all__ = ['is_truthy', 'parse_float', 'UsabilityEvaluator', 'main']
 
 if __name__ == "__main__":
     main()

@@ -7,14 +7,13 @@ Features real-time task stopwatch timing, zero-tolerance safety checks, CLI flag
 and direct export into docs/usability-evaluation-sheet.csv.
 """
 
-import os
 import sys
 import csv
 import json
 import time
 import argparse
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 _SRC_ROOT = str(Path(__file__).resolve().parent.parent / "src")
 if _SRC_ROOT not in sys.path:

@@ -13,7 +13,7 @@ import csv
 import io
 import json
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 FIELD_NAMES = (
     "productName", "ageMarking", "ingredients",

@@ -2,6 +2,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const GUARD_TERMS = require('./src/labelfit/guard_terms.json');
 
 const ROOT = __dirname;
 const PORT = Number(process.env.PORT || 4173);
@@ -206,11 +207,13 @@ function parseImagePayload(payload) {
   return { bytes, mimeType: image.mimeType };
 }
 
-// English markers use \b. Devanagari markers cannot (JS \b only knows ASCII word characters),
-// so they sit in a separate alternative. Hindi list: needs review by a native speaker.
+// Word lists live in src/labelfit/guard_terms.json (shared with the Python guards).
+// English markers use \b; Devanagari markers cannot (JS \b only knows ASCII word
+// characters), so they sit in a separate alternative. The Hindi list needs native review.
+const markerPattern = words => words.map(word => word.replace(/\s+/g, '\\s+')).join('|');
 const ALLERGEN_DECLARATION_PATTERN = new RegExp(
-  '\\b(?:contains?|allergen|allergens?|may\\s+contain|traces?|free\\s+from|facility|equipment)\\b' +
-  '|(?:इसमें|युक्त|एलर्जी|एलर्जन|एलर्जेन|हो\\s+सकता|हो\\s+सकते|अंश|सुविधा|उपकरण|मुक्त)',
+  `\\b(?:${markerPattern(GUARD_TERMS.allergen_declaration_markers.english)})\\b` +
+  `|(?:${markerPattern(GUARD_TERMS.allergen_declaration_markers.devanagari)})`,
   'i'
 );
 const TRUNCATION_SUFFIX_PATTERN = /(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$/i;
@@ -224,29 +227,22 @@ function isInvalidAgeMarking(value, evidence) {
          DOSAGE_OR_ADMINISTRATION_PATTERN.test(evidence);
 }
 
-const DEVANAGARI_DIGITS = {
-  '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
-  '५': '5', '६': '6', '७': '7', '८': '8', '९': '9'
-};
+// Zero code points of each supported numeral system (shared list). Each system is ten
+// consecutive code points, so a digit's value is its offset from the zero.
+const DIGIT_ZEROS = GUARD_TERMS.digit_zeros.map(zero => zero.codePointAt(0));
 
-const KNOWN_ALLERGENS = [
-  'wheat', 'milk', 'dairy', 'soy', 'soya', 'peanut', 'peanuts',
-  'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
-  'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley',
-  'mustard', 'nut', 'nuts',
-  'crustacean', 'crustaceans', 'shrimp', 'prawn', 'prawns', 'sulphite', 'sulphites',
-  'sulfite', 'sulfites', 'pistachio', 'pistachios', 'hazelnut', 'hazelnuts', 'lupin'
-];
+const KNOWN_ALLERGENS = GUARD_TERMS.known_allergens.english;
 
 // Devanagari terms are matched as plain substrings (no \b). Needs native-speaker review.
-const KNOWN_ALLERGENS_DEVANAGARI = [
-  'दूध', 'गेहूं', 'गेहूँ', 'सोया', 'मूंगफली', 'बादाम', 'काजू', 'अखरोट',
-  'तिल', 'अंडा', 'अंडे', 'मछली', 'ग्लूटेन', 'जौ', 'जई', 'सरसों'
-];
+const KNOWN_ALLERGENS_DEVANAGARI = GUARD_TERMS.known_allergens.devanagari;
 
 function normalizeDigits(text) {
   if (!text) return '';
-  return text.replace(/[०-९]/g, ch => DEVANAGARI_DIGITS[ch] || ch);
+  return text.replace(/\p{Nd}/gu, ch => {
+    const code = ch.codePointAt(0);
+    const zero = DIGIT_ZEROS.find(start => code >= start && code <= start + 9);
+    return zero === undefined ? ch : String(code - zero);
+  });
 }
 
 function extractNumericTokens(text) {

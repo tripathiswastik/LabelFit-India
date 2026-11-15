@@ -2,6 +2,10 @@
  * Batch Scan Runner for LabelFit India (prod1_tst SKUs)
  * Iterates through real packaging panels in prod1_tst, executes live extraction
  * via Gemini API, and normalizes through server.js defensive guards.
+ *
+ * LEGACY: this script keeps its own copy of the prompt and does not record image hashes,
+ * prompt fingerprints or raw responses. For benchmark work use scripts/scan_benchmark.js,
+ * which calls the same code path as the web app and writes an audit record per image.
  */
 
 const fs = require('node:fs');
@@ -10,18 +14,12 @@ const { normalizeExtraction, resolveApiKey } = require('../server');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const PROD_DIR = path.join(REPO_ROOT, 'prod1_tst');
-const ENV_FILE = 'D:/ag-ai/.omniroute-data/.env';
 
 function loadApiKey() {
   const resolved = resolveApiKey();
   if (resolved) return resolved;
   if (process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY.trim();
-  if (fs.existsSync(ENV_FILE)) {
-    const content = fs.readFileSync(ENV_FILE, 'utf8');
-    const match = content.match(/^GEMINI_API_KEY=(.+)$/m);
-    if (match) return match[1].trim();
-  }
-  throw new Error('GEMINI_API_KEY not found in environment, .env, or .omniroute-data/.env');
+  throw new Error('GEMINI_API_KEY not found. Set it in the environment or in this project\'s .env file.');
 }
 
 const SKU_PANELS = [

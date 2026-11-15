@@ -12,7 +12,6 @@ import json
 import csv
 import argparse
 from pathlib import Path
-from typing import Dict, Any, List
 
 _SRC_ROOT = str(Path(__file__).resolve().parent.parent / "src")
 if _SRC_ROOT not in sys.path:

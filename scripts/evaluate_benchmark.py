@@ -12,6 +12,7 @@ _SRC_ROOT = str(Path(__file__).resolve().parent.parent / "src")
 if _SRC_ROOT not in sys.path:
     sys.path.insert(0, _SRC_ROOT)
 
+# Names below are re-exported for callers that import from this script.
 from labelfit.benchmark import (
     normalize_text,
     levenshtein_distance,
@@ -19,6 +20,8 @@ from labelfit.benchmark import (
     BenchmarkEvaluator,
     main
 )
+
+__all__ = ['normalize_text', 'levenshtein_distance', 'compute_cer', 'BenchmarkEvaluator', 'main']
 
 if __name__ == "__main__":
     main()

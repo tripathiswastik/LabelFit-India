@@ -6,12 +6,11 @@ unsupported text rates, and review latency broken down by field and script.
 """
 
 import os
-import sys
 import csv
 import re
 import json
 import argparse
-from typing import List, Dict, Any, Tuple, Optional
+from typing import List, Dict, Any, Optional
 from collections import defaultdict
 
 

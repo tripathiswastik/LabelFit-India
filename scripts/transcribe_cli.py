@@ -6,7 +6,6 @@ transcriptions for the 50 target baby food products directly into
 docs/founder-independent-transcriptions.csv via interactive mode, CLI flags, or JSON import.
 """
 
-import os
 import sys
 import csv
 import json

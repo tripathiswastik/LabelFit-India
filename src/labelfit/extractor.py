@@ -3,10 +3,18 @@
 import json
 import os
 import re
+import unicodedata
 from typing import Dict, Optional
 
 import requests  # type: ignore
 
+from labelfit.guard_terms import (
+    ALLERGEN_MARKERS_DEVANAGARI,
+    ALLERGEN_MARKERS_ENGLISH,
+    KNOWN_ALLERGENS_DEVANAGARI,
+    KNOWN_ALLERGENS_ENGLISH,
+    normalize_digits,
+)
 from labelfit.models import FIELD_NAMES, ExtractedField, LabelInspectionReport
 from labelfit.prompts import (
     GEMINI_EXTRACTION_SYSTEM_PROMPT,
@@ -23,9 +31,15 @@ MAX_EVIDENCE_CHARS = 600
 VALID_STATUSES = {"clear", "uncertain", "not_visible"}
 
 
+def _marker_pattern(words):
+    return "|".join(re.sub(r"\s+", r"\\s+", re.escape(w).replace("\\ ", " ")) for w in words)
+
+
+# Word lists live in guard_terms.json, shared with server.js. The Devanagari list needs
+# native-speaker review; \b only works for the English markers.
 ALLERGEN_DECLARATION_PATTERN = re.compile(
-    r'\b(contains?|allergen|allergens?|may\s+contain|traces?|free\s+from|facility|equipment)\b',
-    re.IGNORECASE
+    rf"\b(?:{_marker_pattern(ALLERGEN_MARKERS_ENGLISH)})\b|(?:{_marker_pattern(ALLERGEN_MARKERS_DEVANAGARI)})",
+    re.IGNORECASE,
 )
 TRUNCATION_SUFFIX_PATTERN = re.compile(r'(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$', re.IGNORECASE)
 CALORIC_OR_GUIDELINE_PATTERN = re.compile(
@@ -53,32 +67,15 @@ def is_invalid_age_marking(value: str, evidence: str) -> bool:
     )
 STOP_WORDS = {'the', 'and', 'for', 'with', 'from', 'this', 'that', 'per', 'net', 'pkg'}
 
-DEVANAGARI_DIGITS = {
-    '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
-    '५': '5', '६': '6', '७': '7', '८': '8', '९': '9'
-}
 
-KNOWN_ALLERGENS = [
-    'wheat', 'milk', 'dairy', 'soy', 'soya', 'peanut', 'peanuts',
-    'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
-    'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley',
-    'mustard', 'nut', 'nuts',
-]
-
-
-def normalize_digits(text: str) -> str:
-    if not text:
-        return ""
-    for dev, asc in DEVANAGARI_DIGITS.items():
-        text = text.replace(dev, asc)
-    return text
+KNOWN_ALLERGENS = KNOWN_ALLERGENS_ENGLISH
 
 
 def extract_numeric_tokens(text: str) -> list:
     if not text:
         return []
     normalized = normalize_digits(text)
-    return re.findall(r'\b\d+(?:\.\d+)?\b', normalized)
+    return re.findall(r'[0-9]+(?:\.[0-9]+)?', normalized)
 
 
 def has_unbalanced_delimiters(text: str) -> bool:
@@ -110,6 +107,9 @@ def has_hallucinated_allergen(value: str, evidence: str) -> bool:
     for allergen in KNOWN_ALLERGENS:
         pattern = re.compile(rf'\b{allergen}\b', re.IGNORECASE)
         if pattern.search(val_lower) and not pattern.search(ev_lower):
+            return True
+    for term in KNOWN_ALLERGENS_DEVANAGARI:
+        if term in value and term not in evidence:
             return True
     return False
 
@@ -149,10 +149,42 @@ def has_impossible_nutrient_value(text: str) -> bool:
     return False
 
 
+def _token_kind(ch: str) -> Optional[str]:
+    category = unicodedata.category(ch)
+    if category[0] in ("L", "M"):  # letters and combining marks (Devanagari vowel signs are marks)
+        return "word"
+    if category[0] == "N":
+        return "num"
+    return None
+
+
 def extract_significant_tokens(text: str) -> set:
+    """Words and numbers, matching server.js: marks stay inside words, "12.5" is one token."""
     if not text:
         return set()
-    tokens = re.findall(r'\b\w+\b', text.lower())
+    text = normalize_digits(text).lower()
+    tokens = []
+    i, n = 0, len(text)
+    while i < n:
+        kind = _token_kind(text[i])
+        if kind == "word":
+            j = i + 1
+            while j < n and _token_kind(text[j]) == "word":
+                j += 1
+            tokens.append(text[i:j])
+            i = j
+        elif kind == "num":
+            j = i + 1
+            while j < n and _token_kind(text[j]) == "num":
+                j += 1
+            if j + 1 < n and text[j] == "." and _token_kind(text[j + 1]) == "num":
+                j += 2
+                while j < n and _token_kind(text[j]) == "num":
+                    j += 1
+            tokens.append(text[i:j])
+            i = j
+        else:
+            i += 1
     return {t for t in tokens if len(t) >= 2 and t not in STOP_WORDS}
 
 
@@ -161,8 +193,10 @@ def has_token_support(value: str, evidence: str) -> bool:
         return False
     val_tokens = extract_significant_tokens(value)
     ev_tokens = extract_significant_tokens(evidence)
-    if not val_tokens or not ev_tokens:
-        return True
+    if not val_tokens:
+        return True  # nothing checkable in the value (e.g. only symbols)
+    if not ev_tokens:
+        return False  # evidence has no usable text to support it
     return val_tokens.issubset(ev_tokens)
 
 

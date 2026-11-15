@@ -64,6 +64,28 @@ function showError(message) {
   loading.hidden = true;
 }
 
+// Tags results written in an Indian script so screen readers pick the right voice.
+// One language per script; Devanagari is also used for Marathi and Nepali, and Bengali for
+// Assamese, so this is a best guess for the common case. Mixed text is tagged only when the
+// Indian script has more letters than Latin; otherwise it is left untagged (page language).
+const SCRIPT_LANGUAGES = [
+  [/[\u0900-\u097F]/g, 'hi'], [/[\u0980-\u09FF]/g, 'bn'], [/[\u0A00-\u0A7F]/g, 'pa'],
+  [/[\u0A80-\u0AFF]/g, 'gu'], [/[\u0B00-\u0B7F]/g, 'or'], [/[\u0B80-\u0BFF]/g, 'ta'],
+  [/[\u0C00-\u0C7F]/g, 'te'], [/[\u0C80-\u0CFF]/g, 'kn'], [/[\u0D00-\u0D7F]/g, 'ml'],
+];
+
+function languageOf(text) {
+  if (!text) return null;
+  const latin = (text.match(/[A-Za-z]/g) || []).length;
+  let best = null;
+  let bestCount = 0;
+  for (const [pattern, language] of SCRIPT_LANGUAGES) {
+    const count = (text.match(pattern) || []).length;
+    if (count > bestCount) { best = language; bestCount = count; }
+  }
+  return best && bestCount > latin ? best : null;
+}
+
 function renderResult(result, model) {
   const fields = [
     ['Product name', result.productName],
@@ -107,6 +129,8 @@ function renderResult(result, model) {
     const value = document.createElement('div');
     value.className = 'field-value';
     value.textContent = data.value || 'No text found in the photo.';
+    const valueLanguage = languageOf(data.value);
+    if (valueLanguage) value.lang = valueLanguage;
     row.append(top, value);
 
     if (data.evidence) {
@@ -114,7 +138,11 @@ function renderResult(result, model) {
       evidence.className = 'field-evidence';
       const evidenceLabel = document.createElement('b');
       evidenceLabel.textContent = 'Model-provided snippet: ';
-      evidence.append(evidenceLabel, document.createTextNode(data.evidence));
+      const snippet = document.createElement('span');
+      snippet.textContent = data.evidence;
+      const snippetLanguage = languageOf(data.evidence);
+      if (snippetLanguage) snippet.lang = snippetLanguage;
+      evidence.append(evidenceLabel, snippet);
       row.append(evidence);
     }
     resultsContent.append(row);

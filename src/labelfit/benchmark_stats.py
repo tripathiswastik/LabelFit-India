@@ -24,11 +24,11 @@ from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
 from labelfit.benchmark import BenchmarkEvaluator, compute_cer, is_truthy, normalize_text
+from labelfit.guard_terms import normalize_digits
 
 Z_95 = 1.959963984540054
 CER_THRESHOLD = 0.15
 UNREVIEWED_CATEGORIES = {"", "unreviewed", "pending_model_scan"}
-DEVANAGARI_DIGITS = str.maketrans("०१२३४५६७८९", "0123456789")
 NUMBER_PATTERN = re.compile(r"\d+(?:\.\d+)?")
 
 
@@ -46,7 +46,7 @@ def wilson_interval(successes: int, total: int, z: float = Z_95) -> Optional[Tup
 def extract_numbers(text: Optional[str]) -> List[str]:
     if not text:
         return []
-    return sorted(NUMBER_PATTERN.findall(text.translate(DEVANAGARI_DIGITS)))
+    return sorted(NUMBER_PATTERN.findall(normalize_digits(text)))
 
 
 def numbers_match(ground_truth: Optional[str], prediction: Optional[str]) -> bool:

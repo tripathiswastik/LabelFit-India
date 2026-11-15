@@ -1,0 +1,277 @@
+{
+ "_note": "Shared by test/guard_parity.test.js and tests/test_guard_parity.py. Expected statuses are what the guards SHOULD return; add a case here whenever a guard changes.",
+ "cases": [
+  {
+   "name": "faithful English ingredients",
+   "field": "ingredients",
+   "value": "Rice flour, sugar",
+   "evidence": "Rice flour, sugar",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "faithful Hindi words, snippet adds detail",
+   "field": "productName",
+   "value": "रागी आटा",
+   "evidence": "रागी आटा 25%",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "faithful Bengali ingredients",
+   "field": "ingredients",
+   "value": "জাফরান, কাজু বাদাম, আখরোট",
+   "evidence": "জাফরান, কাজু বাদাম, আখরোট",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "unit spacing is not a mismatch (mg)",
+   "field": "nutritionPanel",
+   "value": "Iron 12.5 mg",
+   "evidence": "Iron 12.5mg",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "unit spacing is not a mismatch (g)",
+   "field": "nutritionPanel",
+   "value": "Protein 8.2g",
+   "evidence": "Protein 8.2 g",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "changed decimal is caught",
+   "field": "nutritionPanel",
+   "value": "Iron 12.5 mg",
+   "evidence": "Iron 1.25mg",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "changed age number is caught",
+   "field": "ageMarking",
+   "value": "Suitable 8 months+",
+   "evidence": "Suitable 6 months+",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "Devanagari digits equal ASCII",
+   "field": "nutritionPanel",
+   "value": "Iron १२.५ mg",
+   "evidence": "Iron 12.5 mg",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "Bengali digits equal ASCII",
+   "field": "nutritionPanel",
+   "value": "Iron ১২.৫ mg",
+   "evidence": "Iron 12.5 mg",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "Tamil digits equal ASCII",
+   "field": "productName",
+   "value": "Net ௫௦௦ g",
+   "evidence": "Net 500 g",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "changed Bengali digit is caught",
+   "field": "productName",
+   "value": "নিট ৮০০ গ্রাম",
+   "evidence": "নিট ৫০০ গ্রাম",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "different Hindi names are not supported",
+   "field": "productName",
+   "value": "रागी आटा",
+   "evidence": "गेहूं आटा",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "value longer than snippet is not supported",
+   "field": "nutritionPanel",
+   "value": "NUTRITION INFORMATION If a serve is 72.5g Per 100g Energy 420 kcal",
+   "evidence": "NUTRITION INFORMATION",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "evidence with no usable text",
+   "field": "productName",
+   "value": "Ragi cereal",
+   "evidence": "---",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "value without evidence",
+   "field": "ingredients",
+   "value": "Rice flour",
+   "evidence": "",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "stated uncertain stays uncertain",
+   "field": "ingredients",
+   "value": "Rice flour",
+   "evidence": "Rice flour",
+   "readStatus": "uncertain",
+   "expected": "uncertain"
+  },
+  {
+   "name": "absent field stays not visible",
+   "field": "allergenDeclaration",
+   "value": "",
+   "evidence": "",
+   "readStatus": "not_visible",
+   "expected": "not_visible"
+  },
+  {
+   "name": "English declaration with traces",
+   "field": "allergenDeclaration",
+   "value": "May contain traces of peanut",
+   "evidence": "May contain traces of peanut",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "Hindi declaration",
+   "field": "allergenDeclaration",
+   "value": "इसमें दूध है",
+   "evidence": "इसमें दूध है",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "Hindi allergen added to the value",
+   "field": "allergenDeclaration",
+   "value": "इसमें दूध और सोया है",
+   "evidence": "इसमें दूध है",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "ingredient list is not a declaration",
+   "field": "allergenDeclaration",
+   "value": "Wheat, milk, sugar",
+   "evidence": "Wheat, milk, sugar",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "allergen not in evidence (shrimp)",
+   "field": "allergenDeclaration",
+   "value": "Contains shrimp",
+   "evidence": "Contains: crustacean",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "allergen not in evidence (mustard)",
+   "field": "allergenDeclaration",
+   "value": "Contains mustard",
+   "evidence": "Contains soy",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "sulphites faithful",
+   "field": "allergenDeclaration",
+   "value": "Contains sulphites",
+   "evidence": "Contains sulphites",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "Bengali declaration has no marker words",
+   "field": "allergenDeclaration",
+   "value": "দুধ আছে",
+   "evidence": "দুধ আছে",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "age marking ok",
+   "field": "ageMarking",
+   "value": "6+ months",
+   "evidence": "Suitable 6+ months",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "age footnote about adults",
+   "field": "ageMarking",
+   "value": "6 months+",
+   "evidence": "6 months+ (adult 4 years old)",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "dosage wording is not an age",
+   "field": "ageMarking",
+   "value": "6 months",
+   "evidence": "Dose: 6 months",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "truncated ingredients (trailing comma)",
+   "field": "ingredients",
+   "value": "Rice flour, sugar,",
+   "evidence": "Rice flour, sugar,",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "unclosed bracket",
+   "field": "ingredients",
+   "value": "Rice flour (organic",
+   "evidence": "Rice flour (organic",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "truncated preparation (trailing and)",
+   "field": "preparationAndStorage",
+   "value": "Mix with water and",
+   "evidence": "Mix with water and",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "macro over 100 g is impossible",
+   "field": "nutritionPanel",
+   "value": "Protein 150 g",
+   "evidence": "Protein 150 g",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  },
+  {
+   "name": "plausible nutrition",
+   "field": "nutritionPanel",
+   "value": "Protein 8 g",
+   "evidence": "Protein 8 g",
+   "readStatus": "clear",
+   "expected": "clear"
+  },
+  {
+   "name": "iron over 30 mg (Hindi word)",
+   "field": "nutritionPanel",
+   "value": "आयरन 45 mg",
+   "evidence": "आयरन 45 mg",
+   "readStatus": "clear",
+   "expected": "uncertain"
+  }
+ ]
+}

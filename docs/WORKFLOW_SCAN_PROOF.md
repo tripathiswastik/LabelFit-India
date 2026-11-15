@@ -13,7 +13,7 @@
 - **API Endpoint:** `https://generativelanguage.googleapis.com/v1beta/interactions`
 - **API Revision Header:** `2026-05-20`
 - **Interaction Storage:** `store: false` (verified in outbound request payload)
-- **Cloud Run Spend Lock:** Source inspection found `ANALYSIS_ENABLED = !IS_CLOUD_RUN`; HTTP 503 branch is covered by a local unit test, not a deployed service test.
+- **Cloud Run Spend Lock:** Source inspection at the time found `ANALYSIS_ENABLED = !IS_CLOUD_RUN`; HTTP 503 branch is covered by a local unit test, not a deployed service test. (Since changed to `resolveAnalysisEnabled`: still off on Cloud Run unless explicitly opted in with an access token; see `docs/CLOUD_RUN_PRODUCTION_AUDIT.md`.)
 - **Input Test Fixture:** `test/fixtures/synthetic_normal.png` (8999 bytes, PNG magic bytes validated)
 
 ## 2. Model Instruction & Prompt Specification

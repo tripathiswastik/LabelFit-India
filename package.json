@@ -2,7 +2,7 @@
   "name": "labelfit-india",
   "version": "0.1.0",
   "private": true,
-  "description": "A prototype for explaining visible label information on packaged complementary foods.",
+  "description": "A prototype for transcribing visible label text on packaged complementary foods.",
   "scripts": {
     "start": "node server.js",
     "test": "node --test",

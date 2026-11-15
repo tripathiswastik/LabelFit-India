@@ -6,11 +6,10 @@ re-inspection, and compiles verified ground-truth records for model evaluation.
 """
 
 import os
-import sys
 import csv
 import re
 from dataclasses import dataclass
-from typing import List, Dict, Any, Tuple, Optional
+from typing import List, Dict, Any, Optional
 
 
 FIELD_NAMES = (
