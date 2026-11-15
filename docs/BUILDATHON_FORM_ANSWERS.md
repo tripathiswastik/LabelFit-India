@@ -33,7 +33,7 @@ A user photographs one package panel. Gemini returns candidate text for selected
 **What is the stage of your product/project?**
 
 
-Select **Other** and enter: **Working local prototype. We completed dual-founder ground-truth adjudication for 10 Stratum-1 infant-food SKUs and a 20-trial caregiver usability study across 5 adult participants, demonstrating a 76.6% reduction in label inspection time with 0.0% safety misinterpretation incidents and 100% physical pack reliance. Pre-commercial exploratory stage; zero revenue or commercial traction claimed.**
+Select **Other** and enter: **Working local prototype; the website is deployed on Cloud Run, with Gemini analysis disabled there. Founder-entered label references cover 10 target products; Gemini output is recorded for 4 fields from 1 SKU, which is not an accuracy estimate. The 20 usability rows in the repository are illustrative protocol data, not caregiver study results. Pre-commercial exploratory stage; no revenue or traction.**
 
 **What is the potential business model?**
 
@@ -68,17 +68,17 @@ Select **Gemini API**.
 **How will you use the selected Google AI model?**
 
 
-We use Gemini multimodal input and structured output to extract candidate label fields from package photos. We have established dual-adjudicated ground-truth references across 10 Stratum-1 complementary-food products and completed a 20-trial usability evaluation across 5 adult caregivers (demonstrating 76.6% faster inspection, 100% status comprehension, and zero safety misinterpretation incidents under physical-pack verification). Model scans and server-side normalizers operate strictly as literal transcription aids without offering clinical or feeding advice.
+The local prototype uses the Gemini API with Gemini 3.8 Flash as the default model to extract six candidate label fields from one package-panel photo. The Node.js server validates and normalizes the response; the review page shows candidate wording, a model-provided photo snippet, and a read status such as Readable, Check text, or Not visible. When online analysis is enabled after access, quota, spend, and privacy controls are ready, this is the experience we intend users to see: candidate text alongside its photo evidence, for them to compare with the package. The Cloud Run website is live through GitHub Actions, but Gemini analysis is disabled in that deployment today. Next, we plan to pair scans with the 10 prepared product references, expand toward 50 products, and then run a consented caregiver usability study. These are future milestones, not measured results.
 
 **Which development platforms will you use?**
 
 
-Select **Google AI Studio** and **Others**. Google AI Studio is planned for prompt and response-schema iteration. The prototype uses Node.js, HTML, CSS, and JavaScript.
+Select **Google AI Studio** and **Others**. Google AI Studio is planned for prompt and response-schema iteration; the current prototype uses the Gemini API. The website is deployed to Google Cloud Run by a GitHub Actions workflow. The app uses Node.js, HTML, CSS, and JavaScript.
 
 **How will you deploy and scale on Google Cloud?**
 
 
-Cloud Run is a possible later deployment target after authentication, server-side quotas, billing alerts, and privacy controls are in place. Public analysis is currently disabled on Cloud Run. The local prototype has no persistent scan history or product catalog.
+The website is deployed on Cloud Run from GitHub Actions. The public site serves the interface, but Gemini analysis is disabled. Before enabling analysis, we plan to add authenticated access, durable quotas and spend controls, and complete a privacy review. The near-term product target is a paired benchmark on packaged complementary foods, expanding toward 50 products; after that, we will evaluate the review flow with consented adult caregivers. No accuracy or user-benefit target is claimed yet.
 
 **How did you hear about the Buildathon?**
 
@@ -110,7 +110,7 @@ Choose **FoodTech** or **Food & Beverage** if listed. If the form uses technolog
 **Brief founder/team bio, background, experience, and complementary skills**
 
 
-Swastik Tripathi is an Oracle Specialist and AI Systems Engineer with 3+ years of enterprise experience in supply-chain planning, Oracle ERP systems, PL/SQL and ETL automation, and applied AI projects. He leads LabelFit India's product and prototype development. Saumya Tripathi is an IT Operations Engineer at Pitney Bowes with 4+ years of experience supporting business-critical applications in 24/7 environments. Her work includes AWS, Unix, Wintel, MySQL and MS SQL, production support, vulnerability remediation, deployments, AWS migration, and Sumo Logic monitoring. Saumya brings hands-on operations and troubleshooting experience, complementing Swastik's product and prototype work. The team is at an exploratory prototype stage with an initial 20-trial caregiver usability study and 10-SKU Stratum-1 ground truth completed, but no commercial traction or revenue claimed.
+Swastik Tripathi is an Oracle Specialist and AI Systems Engineer with 3+ years of enterprise experience in supply-chain planning, Oracle ERP systems, PL/SQL and ETL automation, and applied AI projects. He leads LabelFit India's product and prototype development. Saumya Tripathi is an IT Operations Engineer at Pitney Bowes with 4+ years of experience supporting business-critical applications in 24/7 environments. Her work includes AWS, Unix, Wintel, MySQL and MS SQL, production support, vulnerability remediation, deployments, AWS migration, and Sumo Logic monitoring. Saumya brings hands-on operations and troubleshooting experience, complementing Swastik's product and prototype work. The team has a working local prototype and a Cloud Run website with analysis disabled; benchmark coverage and caregiver usability remain to be evaluated. There is no commercial traction or revenue.
 
 **How long have you been working as a team?**
 
@@ -119,4 +119,4 @@ Select **< 12 months** if that matches when LABEL CHECK formed. Confirm the star
 
 ## Evidence limits to keep consistent
 
-The project maintains strict evidence boundaries: 10 Stratum-1 complementary-food products have dual-founder adjudicated ground truth, and 5 adult caregivers completed 20 protocol trials (76.6% inspection time reduction, 0 safety misinterpretation incidents, 100% physical pack reliance). These usability and transcription checks do not establish clinical health outcomes, product safety endorsements, commercial willingness to pay, or automated model accuracy across unverified Indian retail packaging. Software unit tests verify runtime behavior and pipeline integrity rather than generalized multimodal accuracy.
+The project maintains strict evidence boundaries: founder-entered text references are prepared for 10 target products, while the current comparison records Gemini output for 4 fields from 1 SKU. The usability sheet contains 20 illustrative protocol rows; no live caregiver sessions are documented. These materials do not establish model accuracy across Indian retail packaging, user benefit, clinical outcomes, product safety, or willingness to pay. The next technical target is to pair model scans with product references and expand the benchmark toward 50 SKUs; a caregiver study would require real, consented adult participants and separate reporting.

@@ -45,7 +45,7 @@ def make_slide_overlay(width: float, height: float) -> PdfReader:
     packet = BytesIO()
     pdf = canvas.Canvas(packet, pagesize=(width, height), pageCompression=1)
 
-    # Slide 3 has a white footer area; cover only its old two footer rows.
+    # Slide 3 has a white footer area; cover only its old evidence and roadmap rows.
     pdf.setFillColor(white)
     pdf.setStrokeColor(white)
     pdf.rect(35, 39, width - 70, 80, fill=1, stroke=0)
@@ -54,30 +54,82 @@ def make_slide_overlay(width: float, height: float) -> PdfReader:
         pdf,
         "Team & stage:",
         "Two-member LABEL CHECK; working local prototype; live Gemini scans demonstrated.",
-        107,
+        109,
         width,
     )
     draw_row(
         pdf,
         "Pilot evidence:",
-        "10 Stratum-1 infant-food SKUs adjudicated; 5-caregiver study completed (20 trials, 76.6% faster, 0 safety errors).",
-        90,
+        "10 target products have founder-entered text; Gemini comparison covers 4 fields from 1 SKU.",
+        94,
+        width,
+    )
+    draw_row(
+        pdf,
+        "Usability:",
+        "20 illustrative protocol rows only; no live caregiver sessions are documented.",
+        79,
         width,
     )
     draw_row(
         pdf,
         "Scope:",
         "Transcription only; no health, safety, allergy or feeding decisions.",
-        73,
+        64,
         width,
     )
     draw_row(
         pdf,
         "Next:",
-        "B2B discovery interviews on catalog operations, then expand evaluation toward 50 SKUs.",
-        56,
+        "Pair scans with references; then run a consented caregiver study and expand toward 50 SKUs.",
+        49,
         width,
     )
+
+    pdf.save()
+    packet.seek(0)
+    return PdfReader(packet)
+
+
+def make_ai_tools_overlay(width: float, height: float) -> PdfReader:
+    packet = BytesIO()
+    pdf = canvas.Canvas(packet, pagesize=(width, height), pageCompression=1)
+    pdf.setFillColor(white)
+    pdf.setStrokeColor(white)
+    pdf.rect(35, 62, width - 70, 196, fill=1, stroke=0)
+
+    rows = [
+        ("AI API:", "The local prototype sends a confirmed package photo to Gemini for candidate text.", 249),
+        ("Model:", "Gemini 3.8 Flash is the server default; the model ID can be configured.", 218),
+        ("AI Studio:", "Planned for prompt and schema iteration; not used in the live deployment.", 187),
+        ("Deployment:", "GitHub Actions deploys this website to Cloud Run; Gemini analysis is disabled there.", 156),
+        ("Next:", "Add gated analysis only after access, quotas, billing, and privacy controls are reviewed.", 125),
+    ]
+    for label, text, y in rows:
+        draw_row(pdf, label, text, y, width)
+
+    pdf.save()
+    packet.seek(0)
+    return PdfReader(packet)
+
+
+def make_ai_model_overlay(width: float, height: float) -> PdfReader:
+    packet = BytesIO()
+    pdf = canvas.Canvas(packet, pagesize=(width, height), pageCompression=1)
+    pdf.setFillColor(white)
+    pdf.setStrokeColor(white)
+    pdf.rect(35, 61, width - 70, 209, fill=1, stroke=0)
+
+    rows = [
+        ("Model role:", "Gemini 3.8 Flash (default) returns six candidate fields as structured output.", 246),
+        ("Server checks:", "Schema and evidence checks can downgrade unsupported candidates; status is uncalibrated.", 216),
+        ("Expected screen:", "Each field shows candidate text, a photo snippet, and Readable / Check text / Not visible.", 186),
+        ("User review:", "The caregiver compares the candidate wording with the package; no product verdict is given.", 156),
+        ("Live status:", "Cloud Run page is live; Gemini analysis stays disabled there until controls are ready.", 126),
+        ("Next target:", "Pair scans across 10 prepared references, expand toward 50 SKUs, then test with consented adults.", 96),
+    ]
+    for label, text, y in rows:
+        draw_row(pdf, label, text, y, width)
 
     pdf.save()
     packet.seek(0)
@@ -92,10 +144,15 @@ def main() -> None:
     if len(reader.pages) != 7:
         raise ValueError(f"Expected a seven-slide PDF, found {len(reader.pages)} pages")
 
-    page = reader.pages[2]
-    width = float(page.mediabox.width)
-    height = float(page.mediabox.height)
-    page.merge_page(make_slide_overlay(width, height).pages[0])
+    for page_index, overlay_factory in (
+        (2, make_slide_overlay),
+        (4, make_ai_tools_overlay),
+        (5, make_ai_model_overlay),
+    ):
+        page = reader.pages[page_index]
+        width = float(page.mediabox.width)
+        height = float(page.mediabox.height)
+        page.merge_page(overlay_factory(width, height).pages[0])
 
     writer = PdfWriter()
     for source_page in reader.pages:
