@@ -38,7 +38,9 @@ const {
 const REPO_ROOT = path.resolve(__dirname, '..');
 const MIME_BY_EXTENSION = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' };
 const REQUIRED_MANIFEST_COLUMNS = ['image_id', 'sku_id', 'image_file'];
-const SAFE_ID = /^[A-Za-z0-9._-]+$/;
+// IDs are path segments and must not be dot segments. Start with an alphanumeric
+// character so a run ID can never escape its output directory (for example `..`).
+const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 
 // Minimal RFC 4180 parser: quoted fields, escaped quotes, embedded newlines, BOM.
 function parseCsv(text) {
@@ -85,7 +87,9 @@ function loadManifest(manifestPath) {
   }
   const seen = new Set();
   for (const entry of entries) {
-    if (!SAFE_ID.test(entry.image_id)) throw new Error(`Invalid image_id "${entry.image_id}": use letters, digits, dot, dash, underscore.`);
+    if (!SAFE_ID.test(entry.image_id)) throw new Error(`Invalid image_id "${entry.image_id}": use letters, digits, dot, dash, underscore, and start with a letter or digit.`);
+    // Each record is named <image_id>.json; reserve run.json for the run metadata.
+    if (entry.image_id.toLowerCase() === 'run') throw new Error('Invalid image_id "run": this name is reserved for run metadata.');
     if (seen.has(entry.image_id)) throw new Error(`Duplicate image_id "${entry.image_id}" in manifest.`);
     seen.add(entry.image_id);
   }
@@ -118,7 +122,14 @@ function loadImage(imagesDir, entry) {
   if (!entry.image_file) throw new Error('image_file is blank in the manifest.');
   const mimeType = MIME_BY_EXTENSION[path.extname(entry.image_file).toLowerCase()];
   if (!mimeType) throw new Error('Unsupported image type. Convert to JPEG, PNG or WebP first.');
-  const bytes = fs.readFileSync(resolveImagePath(imagesDir, entry.image_file));
+  const imagePath = resolveImagePath(imagesDir, entry.image_file);
+  const realImagesDir = fs.realpathSync(imagesDir);
+  const realImagePath = fs.realpathSync(imagePath);
+  const relativeRealPath = path.relative(realImagesDir, realImagePath);
+  if (relativeRealPath === '..' || relativeRealPath.startsWith(`..${path.sep}`) || path.isAbsolute(relativeRealPath)) {
+    throw new Error(`image_file "${entry.image_file}" resolves outside the images folder.`);
+  }
+  const bytes = fs.readFileSync(realImagePath);
   if (bytes.length > MAX_IMAGE_BYTES) throw new Error(`Image is ${(bytes.length / 1048576).toFixed(1)} MB; the app limit is 7 MB. Resize it first.`);
   const image = parseImagePayload({ image: { data: bytes.toString('base64'), mimeType } });
   return { image, sha256: sha256(bytes), bytes: bytes.length, mimeType };
@@ -171,7 +182,7 @@ async function runScan(options) {
     apiKey = dryRun ? '' : resolveApiKey(), fetchImpl = globalThis.fetch, log = console.log,
     now = () => new Date(),
   } = options;
-  if (!SAFE_ID.test(runId || '')) throw new Error('Provide --run-id using letters, digits, dot, dash, underscore.');
+  if (!SAFE_ID.test(runId || '')) throw new Error('Provide --run-id as one path-safe name starting with a letter or digit.');
   if (!dryRun && !apiKey) throw new Error('No Gemini API key found. Set GEMINI_API_KEY or add it to this project\'s .env file.');
 
   let entries = loadManifest(manifestPath);

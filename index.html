@@ -38,12 +38,12 @@
       <div class="section-heading"><div><p class="eyebrow" data-i18n="scanEyebrow">TRY THE PROTOTYPE</p><h2 id="scan-title" data-i18n="scanTitle">Read a package label</h2></div><span class="step-pill">01 <span data-i18n="stepUpload">Upload</span> → 02 <span data-i18n="stepReview">Review</span></span></div>
       <div class="scan-grid">
         <div class="upload-panel">
-          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a label photo" data-i18n-aria-label="dropAria">
+          <div id="dropzone" class="dropzone" role="group" aria-label="Choose a label photo" data-i18n-aria-label="dropAria">
             <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp" hidden>
-            <div id="upload-empty" class="upload-empty"><div class="upload-icon">↑</div><h3 data-i18n="dropTitle">Choose a label photo</h3><p><span data-i18n="dropOr">Drag a clear photo here, or</span> <button type="button" id="browse" class="text-button" data-i18n="browse">browse files</button></p><small data-i18n="dropSmall">JPG, PNG or WebP · large photos are resized automatically</small></div>
-            <div id="preview-wrap" class="preview-wrap" hidden><img id="preview" alt="Selected package label" data-i18n-alt="previewAlt"><button type="button" id="remove-photo" class="remove-photo" aria-label="Remove selected photo" data-i18n-aria-label="removePhotoAria">×</button></div>
+            <div id="upload-empty" class="upload-empty"><div class="upload-icon">↑</div><h3 data-i18n="dropTitle">Choose a label photo</h3><p><span data-i18n="dropOr">Drag a clear photo here, or</span> <button type="button" id="browse" class="text-button" data-i18n="browse">browse files</button></p><small data-i18n="dropSmall">JPG, PNG or WebP · crop a panel for a closer read</small></div>
+            <div id="preview-wrap" class="preview-wrap" hidden><img id="preview" alt="Selected package label" data-i18n-alt="previewAlt"><button type="button" id="crop-photo" class="crop-photo" data-i18n="cropButton">Crop label</button><button type="button" id="remove-photo" class="remove-photo" aria-label="Remove selected photo" data-i18n-aria-label="removePhotoAria">×</button></div>
           </div>
-          <div class="photo-tip"><span>✦</span><p><b data-i18n="tipTitle">For a clearer read</b><br><span data-i18n="tipBody">Use good light, keep the text in focus, and photograph one panel at a time.</span></p></div>
+          <div class="photo-tip"><span>✦</span><p><b data-i18n="tipTitle">For a clearer read</b><br><span data-i18n="tipBody">Use good light and keep text in focus. Crop to one panel if the label is small in the photo.</span></p></div>
           <div id="api-state" class="api-state"><span class="status-dot"></span><span id="api-state-text" data-i18n="apiChecking">Checking local Gemini setup…</span></div>
           <label class="photo-confirm"><input id="photo-confirm" type="checkbox"><span data-i18n="consent">I understand the photo is sent to Gemini. I checked it shows only the package, with no people or personal details.</span></label>
           <button id="analyze" class="primary-button" disabled><span data-i18n="analyzeButton">Read this label</span><span>→</span></button>
@@ -74,6 +74,14 @@
   </main>
   <footer lang="en"><span>LabelFit India</span><span>Local prototype · exploratory 10-package check only; no accuracy claim</span></footer>
   <script src="i18n.js"></script>
+  <dialog id="crop-dialog" class="crop-dialog" aria-labelledby="crop-title">
+    <form method="dialog" class="crop-card">
+      <div class="crop-heading"><div><p class="eyebrow" data-i18n="cropEyebrow">FOCUS THE LABEL</p><h2 id="crop-title" data-i18n="cropTitle">Crop to the text panel</h2></div><button type="button" id="close-crop" class="crop-close" aria-label="Close crop tool" data-i18n-aria-label="cropCloseAria">×</button></div>
+      <p class="crop-help" data-i18n="cropHelp">Drag over the label area. The selected crop keeps the source photo’s detail.</p>
+      <div class="crop-canvas-wrap"><canvas id="crop-canvas" aria-label="Photo crop area" data-i18n-aria-label="cropCanvasAria"></canvas></div>
+      <div class="crop-actions"><button type="button" id="cancel-crop" class="secondary-button" data-i18n="cropCancel">Cancel</button><button type="button" id="use-crop" class="primary-button" disabled><span data-i18n="cropUse">Use this crop</span><span>→</span></button></div>
+    </form>
+  </dialog>
   <script src="app.js"></script>
 </body>
 </html>

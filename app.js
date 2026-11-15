@@ -10,6 +10,11 @@ const apiStateText = document.querySelector('#api-state-text');
 const resultsEmpty = document.querySelector('#results-empty');
 const resultsContent = document.querySelector('#results-content');
 const loading = document.querySelector('#loading');
+const cropDialog = document.querySelector('#crop-dialog');
+const cropCanvas = document.querySelector('#crop-canvas');
+const cropContext = cropCanvas.getContext('2d');
+const cropPhotoButton = document.querySelector('#crop-photo');
+const useCropButton = document.querySelector('#use-crop');
 
 const MAX_IMAGE_BYTES = 7 * 1024 * 1024; // what the server accepts (after resizing)
 const MAX_SOURCE_BYTES = 30 * 1024 * 1024; // what we will try to resize in the browser
@@ -19,6 +24,10 @@ let selectedFile = null;
 let previewUrl = null;
 let analysisReady = false;
 let analysisInProgress = false;
+let cropBitmap = null;
+let cropPreviewCanvas = null;
+let cropSelection = null;
+let cropPointerStart = null;
 
 // Interface language. Only the interface is translated, never the label text itself.
 const I18n = window.LabelFitI18n;
@@ -209,6 +218,122 @@ function canvasToBlob(canvas, type, quality) {
   return new Promise(resolve => canvas.toBlob(resolve, type, quality));
 }
 
+function drawCropSelection() {
+  if (!cropBitmap) return;
+  const width = cropCanvas.width;
+  const height = cropCanvas.height;
+  cropContext.clearRect(0, 0, width, height);
+  cropContext.drawImage(cropPreviewCanvas, 0, 0, width, height);
+  if (!cropSelection) return;
+  cropContext.fillStyle = 'rgba(20, 32, 24, .48)';
+  cropContext.fillRect(0, 0, width, height);
+  cropContext.clearRect(cropSelection.x, cropSelection.y, cropSelection.width, cropSelection.height);
+  cropContext.drawImage(cropBitmap,
+    cropSelection.x * cropBitmap.width / width,
+    cropSelection.y * cropBitmap.height / height,
+    cropSelection.width * cropBitmap.width / width,
+    cropSelection.height * cropBitmap.height / height,
+    cropSelection.x, cropSelection.y, cropSelection.width, cropSelection.height);
+  cropContext.strokeStyle = '#fff';
+  cropContext.lineWidth = Math.max(2, width / 500);
+  cropContext.strokeRect(cropSelection.x, cropSelection.y, cropSelection.width, cropSelection.height);
+}
+
+function cropPoint(event) {
+  const bounds = cropCanvas.getBoundingClientRect();
+  return {
+    x: Math.max(0, Math.min(cropCanvas.width, (event.clientX - bounds.left) * cropCanvas.width / bounds.width)),
+    y: Math.max(0, Math.min(cropCanvas.height, (event.clientY - bounds.top) * cropCanvas.height / bounds.height)),
+  };
+}
+
+async function openCropTool() {
+  if (!selectedFile) return;
+  try {
+    cropBitmap = await loadBitmap(selectedFile);
+    const scale = Math.min(1, 1400 / Math.max(cropBitmap.width, cropBitmap.height));
+    cropCanvas.width = Math.max(1, Math.round(cropBitmap.width * scale));
+    cropCanvas.height = Math.max(1, Math.round(cropBitmap.height * scale));
+    cropPreviewCanvas = document.createElement('canvas');
+    cropPreviewCanvas.width = cropCanvas.width;
+    cropPreviewCanvas.height = cropCanvas.height;
+    cropPreviewCanvas.getContext('2d').drawImage(cropBitmap, 0, 0, cropCanvas.width, cropCanvas.height);
+    cropSelection = null;
+    useCropButton.disabled = true;
+    drawCropSelection();
+    cropDialog.showModal();
+  } catch (error) {
+    showError(error instanceof LocalizedError
+      ? { key: error.key, vars: error.vars }
+      : { text: error.message || 'Could not open the photo crop tool.' });
+  }
+}
+
+function closeCropTool() {
+  if (cropDialog.open) cropDialog.close();
+  if (cropBitmap?.close) cropBitmap.close();
+  cropBitmap = null;
+  cropPreviewCanvas = null;
+  cropSelection = null;
+}
+cropDialog.addEventListener('close', () => {
+  if (cropBitmap?.close) cropBitmap.close();
+  cropBitmap = null;
+  cropPreviewCanvas = null;
+  cropSelection = null;
+});
+
+cropCanvas.addEventListener('pointerdown', event => {
+  if (!cropBitmap) return;
+  cropPointerStart = cropPoint(event);
+  cropSelection = { x: cropPointerStart.x, y: cropPointerStart.y, width: 0, height: 0 };
+  cropCanvas.setPointerCapture(event.pointerId);
+  drawCropSelection();
+});
+cropCanvas.addEventListener('pointermove', event => {
+  if (!cropPointerStart) return;
+  const point = cropPoint(event);
+  cropSelection = {
+    x: Math.min(cropPointerStart.x, point.x),
+    y: Math.min(cropPointerStart.y, point.y),
+    width: Math.abs(point.x - cropPointerStart.x),
+    height: Math.abs(point.y - cropPointerStart.y),
+  };
+  useCropButton.disabled = cropSelection.width < 24 || cropSelection.height < 24;
+  drawCropSelection();
+});
+cropCanvas.addEventListener('pointerup', () => { cropPointerStart = null; });
+cropCanvas.addEventListener('pointercancel', () => { cropPointerStart = null; });
+cropPhotoButton.addEventListener('click', event => { event.stopPropagation(); openCropTool(); });
+document.querySelector('#close-crop').addEventListener('click', closeCropTool);
+document.querySelector('#cancel-crop').addEventListener('click', closeCropTool);
+useCropButton.addEventListener('click', async () => {
+  if (!cropBitmap || !cropSelection) return;
+  const sourceScaleX = cropBitmap.width / cropCanvas.width;
+  const sourceScaleY = cropBitmap.height / cropCanvas.height;
+  const sourceX = cropSelection.x * sourceScaleX;
+  const sourceY = cropSelection.y * sourceScaleY;
+  const sourceWidth = cropSelection.width * sourceScaleX;
+  const sourceHeight = cropSelection.height * sourceScaleY;
+  const outputScale = Math.min(1, MAX_EDGE_PX / Math.max(sourceWidth, sourceHeight));
+  const output = document.createElement('canvas');
+  output.width = Math.max(1, Math.round(sourceWidth * outputScale));
+  output.height = Math.max(1, Math.round(sourceHeight * outputScale));
+  const context = output.getContext('2d');
+  context.fillStyle = '#fff';
+  context.fillRect(0, 0, output.width, output.height);
+  context.drawImage(cropBitmap, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, output.width, output.height);
+  const blob = await canvasToBlob(output, 'image/jpeg', 0.94);
+  if (!blob) {
+    closeCropTool();
+    showError({ text: 'Could not prepare that crop. Please choose the photo again.' });
+    return;
+  }
+  const croppedFile = new File([blob], selectedFile.name.replace(/\.[^.]+$/, '') + '-crop.jpg', { type: 'image/jpeg' });
+  closeCropTool();
+  chooseFile(croppedFile);
+});
+
 async function prepareImage(file) {
   if (file.size <= MAX_IMAGE_BYTES) return { blob: file, mimeType: file.type };
   const bitmap = await loadBitmap(file);
@@ -278,12 +403,6 @@ photoConfirmation.addEventListener('change', updateAnalyzeButton);
 dropzone.addEventListener('click', event => {
   if (!event.target.closest('button')) fileInput.click();
 });
-dropzone.addEventListener('keydown', event => {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    fileInput.click();
-  }
-});
 dropzone.addEventListener('dragover', event => {
   event.preventDefault();
   dropzone.classList.add('dragging');
@@ -304,7 +423,7 @@ analyzeButton.addEventListener('click', async () => {
   resultsContent.hidden = true;
   loading.hidden = false;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 65_000);
+  let timeout;
 
   try {
     const prepared = await prepareImage(analyzingFile);
@@ -314,6 +433,7 @@ analyzeButton.addEventListener('click', async () => {
       reader.onerror = () => reject(new LocalizedError('errRead'));
       reader.readAsDataURL(prepared.blob);
     });
+    timeout = setTimeout(() => controller.abort(), 65_000);
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -337,7 +457,7 @@ analyzeButton.addEventListener('click', async () => {
       showError(failure);
     }
   } finally {
-    clearTimeout(timeout);
+    if (timeout) clearTimeout(timeout);
     loading.hidden = true;
     analysisInProgress = false;
     updateAnalyzeButton();

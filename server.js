@@ -457,7 +457,7 @@ async function analyzeImage({ apiKey, model = MODEL, image, fetchImpl = globalTh
     });
   } catch (error) {
     const timedOut = error?.name === 'TimeoutError' || error?.name === 'AbortError';
-    throw new HttpError(504, timedOut ? 'Label reading took too long. Try a smaller, clearer photo.' : 'Could not reach Gemini. Check the server connection and try again.');
+    throw new HttpError(504, timedOut ? 'Label reading took too long. Crop to one panel or retake the photo with the text in focus, then try again.' : 'Could not reach Gemini. Check the server connection and try again.');
   }
 
   let interaction;

@@ -15,6 +15,23 @@ npm start
 
 Open <http://127.0.0.1:4173>. The API key remains in the local server process. Do not put it in browser code, commit it, or share it. Without a key the page loads, but analysis is unavailable. Set `GEMINI_MODEL` to a supported Gemini model ID to change the default `gemini-3.8-flash`.
 
+## Deploy through GitHub Actions
+
+This app needs its Node server for the `/api` routes, so GitHub Pages alone cannot run the scanner. `.github/workflows/deploy-cloud-run.yml` deploys the full app to Cloud Run from the `main` branch using GitHub Actions and Workload Identity Federation. No service-account key is stored in GitHub.
+
+Before running it:
+
+1. Configure Google Cloud Workload Identity Federation to trust this GitHub repository and allow its deploy service account to impersonate. Grant the roles required for Cloud Run source deployments and Cloud Build; see [Google's source deployment guide](https://docs.cloud.google.com/run/docs/deploying-source-code) and the [GitHub Actions authentication guide](https://github.com/google-github-actions/auth#setting-up-workload-identity-federation).
+2. Enable the Cloud Run, Cloud Build, and Artifact Registry APIs in the project.
+3. Add these repository-level **Actions variables** under Settings → Secrets and variables → Actions → Variables:
+   - `GCP_PROJECT_ID`
+   - `GCP_REGION` (for example, `asia-south1`)
+   - `GCP_WORKLOAD_IDENTITY_PROVIDER` (full provider resource name)
+   - `GCP_SERVICE_ACCOUNT` (deployer service-account email)
+4. In Actions, select **Deploy to Cloud Run**, choose the `main` branch, and run the workflow. The service URL appears in the workflow summary.
+
+The workflow makes the website publicly reachable and explicitly sets `LABELFIT_ENABLE_ANALYSIS=false`; the photo-analysis endpoint remains disabled. Do not enable it for public use: authentication, durable quotas, spend controls, and privacy review are still required.
+
 ## Experimental Python text scratchpad
 
 This optional tool accepts pasted label text only; it does not read package photos and is not part of the main web flow. It defaults to local heading-based extraction. The Streamlit screen sends text to Gemini only after the user selects that option and confirms the data notice. Unpaid Gemini API content may be used to improve Google services and may be reviewed by people; `store: false` is not a zero-retention promise. Do not paste child, personal, confidential, or sensitive information. Its fictional samples are not real products or labels.
@@ -37,8 +54,6 @@ The Python `source_match` indicator only checks whether candidate text appears i
 - The prototype applies a small in-memory per-IP rate limit (expired entries are pruned and the table is capped), allows at most two concurrent analyses and eight uploads in progress, and cuts off uploads that take longer than 45 seconds. Uploads do not hold an analysis slot while they are still arriving. Those limits reset when the process restarts and are not a production spend-control system.
 
 ## Server settings
-
-[#server-settings](#server-settings)
 
 All optional. Defaults are safe for local use.
 
