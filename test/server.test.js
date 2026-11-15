@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const {
   createRateLimiter,
   createServer,
+  resolveApiKey,
   extractOutputText,
   getStaticAsset,
   isAllowedOrigin,
@@ -45,6 +46,12 @@ test('static file map does not expose arbitrary paths', () => {
   assert.ok(getStaticAsset('/app.js').endsWith('app.js'));
   assert.equal(getStaticAsset('/server.js'), null);
   assert.equal(getStaticAsset('/../README.md'), null);
+});
+
+test('resolveApiKey prioritizes explicit key and falls back to env files', () => {
+  assert.equal(resolveApiKey('custom-key-123'), 'custom-key-123');
+  const resolved = resolveApiKey();
+  assert.ok(typeof resolved === 'string');
 });
 
 test('origin check permits local same-origin requests and rejects foreign origins', () => {

@@ -356,13 +356,42 @@ function createRateLimiter({ limit = 10, intervalMs = 60_000, now = Date.now } =
   };
 }
 
+function resolveApiKey(key) {
+  if (typeof key === 'string' && key.trim()) return key.trim();
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim()) {
+    return process.env.GEMINI_API_KEY.trim();
+  }
+
+  const candidatePaths = [
+    path.join(__dirname, '.env'),
+    path.join(__dirname, '..', '.env'),
+    path.join(__dirname, '..', '.omniroute-data', '.env'),
+  ];
+
+  for (const envPath of candidatePaths) {
+    try {
+      if (fs.existsSync(envPath)) {
+        const content = fs.readFileSync(envPath, 'utf8');
+        const match = content.match(/^GEMINI_API_KEY=(.+)$/m);
+        if (match && match[1].trim()) {
+          return match[1].trim().replace(/^["']|["']$/g, '');
+        }
+      }
+    } catch {
+      // Continue to next path
+    }
+  }
+  return '';
+}
+
 function createServer({
-  apiKey = process.env.GEMINI_API_KEY,
+  apiKey,
   model = MODEL,
   fetchImpl = globalThis.fetch,
   now = Date.now,
   analysisEnabled = ANALYSIS_ENABLED,
 } = {}) {
+  const resolvedApiKey = apiKey !== undefined ? apiKey : resolveApiKey();
   const allowRequest = createRateLimiter({ limit: 10, intervalMs: 60_000, now });
   let activeAnalyses = 0;
 
@@ -374,15 +403,23 @@ function createServer({
       return send(res, 400, { error: 'Invalid request URL.' });
     }
 
+    if (url.pathname === '/favicon.ico') {
+      res.writeHead(204, {
+        'Content-Type': 'image/x-icon',
+        'Cache-Control': 'public, max-age=86400',
+      });
+      return res.end();
+    }
+
     if (req.method === 'GET' && url.pathname === '/api/status') {
-      const configured = Boolean(apiKey) && analysisEnabled;
+      const configured = Boolean(resolvedApiKey) && analysisEnabled;
       return send(res, 200, { configured, model: configured ? model : null });
     }
 
     if (req.method === 'POST' && url.pathname === '/api/analyze') {
       if (!isAllowedOrigin(req)) return send(res, 403, { error: 'This request did not come from the LabelFit page.' });
       if (!analysisEnabled) return send(res, 503, { error: 'Analysis is disabled on this Cloud Run prototype.' });
-      if (!apiKey) return send(res, 503, { error: 'Gemini is not configured. Set GEMINI_API_KEY on the server.' });
+      if (!resolvedApiKey) return send(res, 503, { error: 'Gemini is not configured. Set GEMINI_API_KEY on the server.' });
 
       const clientAddress = req.socket.remoteAddress || 'local';
       if (!allowRequest(clientAddress)) return send(res, 429, { error: 'Too many scans in a short time. Please wait a minute and try again.' });
@@ -398,7 +435,7 @@ function createServer({
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'x-goog-api-key': apiKey,
+              'x-goog-api-key': resolvedApiKey,
               'Api-Revision': '2026-05-20',
             },
             signal: AbortSignal.timeout(60_000),
@@ -485,6 +522,8 @@ function start() {
   server.headersTimeout = 15_000;
   server.listen(PORT, IS_CLOUD_RUN ? '0.0.0.0' : '127.0.0.1', () => {
     console.log(`LabelFit India prototype listening on port ${PORT}.`);
+    const configured = Boolean(resolveApiKey()) && ANALYSIS_ENABLED;
+    console.log(`Gemini status: ${configured ? 'configured (' + MODEL + ')' : 'unconfigured'}`);
     if (IS_CLOUD_RUN && !ANALYSIS_ENABLED) console.warn('Image analysis is disabled; this prototype has no authentication or server-side spend controls.');
   });
 }
@@ -503,6 +542,7 @@ module.exports = {
   hasConflictingNumbers,
   createRateLimiter,
   createServer,
+  resolveApiKey,
   extractOutputText,
   getStaticAsset,
   imageSignatureMatches,
