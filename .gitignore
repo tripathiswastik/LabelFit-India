@@ -26,6 +26,7 @@ env/
 *.log
 /output/
 /tmp/
+scratch/
 .DS_Store
 Thumbs.db
 .vscode/
