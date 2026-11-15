@@ -11,6 +11,7 @@
     "benchmark:off": "python scripts/fetch_openfoodfacts_benchmark.py",
     "benchmark:build": "python scripts/build_10sku_benchmark.py",
     "benchmark:eval": "python scripts/evaluate_benchmark.py --csv docs/benchmark-10sku-results.csv --export-markdown docs/BENCHMARK_EVALUATION_REPORT.md",
+    "transcription:adjudicate": "python scripts/adjudicate_transcriptions.py --csv docs/founder-independent-transcriptions.csv",
     "usability:eval": "python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv --export-markdown docs/USABILITY_EVALUATION_REPORT.md"
   },
   "engines": { "node": ">=20" }
