@@ -11,9 +11,11 @@
     "benchmark:off": "python scripts/fetch_openfoodfacts_benchmark.py",
     "benchmark:build": "python scripts/build_10sku_benchmark.py",
     "benchmark:build:50": "python scripts/build_50sku_benchmark.py",
+    "benchmark:strata": "python scripts/build_50sku_benchmark.py --strata",
     "benchmark:eval": "python scripts/evaluate_benchmark.py --csv docs/benchmark-10sku-results.csv --export-markdown docs/BENCHMARK_EVALUATION_REPORT.md",
     "benchmark:eval:50": "python scripts/evaluate_benchmark.py --csv docs/benchmark-50sku-results.csv --export-markdown docs/BENCHMARK_50_SKU_REPORT.md",
     "transcription:input": "python scripts/transcribe_cli.py",
+    "transcription:pending": "python scripts/transcribe_cli.py --list-pending",
     "transcription:adjudicate": "python scripts/adjudicate_transcriptions.py --csv docs/founder-independent-transcriptions.csv",
     "usability:session": "python scripts/record_caregiver_session.py",
     "usability:eval": "python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv --export-markdown docs/USABILITY_EVALUATION_REPORT.md"

@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """
-LabelFit India: 50-SKU Target Complementary Food Benchmark Builder.
-Constructs docs/benchmark-50sku-results.csv by combining verified adjudicated ground truth
-from docs/founder-independent-transcriptions.csv with recorded model outputs.
-Spans 50 SKUs across 5 product strata (clean staple cereals, sweetened cereals, tasty snacks,
-fruit purees, and dense high-micronutrient formulations).
+LabelFit India: 50-SKU Evidence-Backed Benchmark Builder.
+Constructs docs/benchmark-50sku-results.csv by pairing actual Gemini model outputs
+from prod1_tst/batch_scan_results.json with physical package ground truth
+independently transcribed and adjudicated by Swastik Tripathi & Saumya Tripathi.
+Filters pending fields to prevent false 100% blank matches, with options for strata analysis.
 """
 
 import sys
 import json
 import csv
+import argparse
 from pathlib import Path
+from typing import Dict, Any, List
 
 _SRC_ROOT = str(Path(__file__).resolve().parent.parent / "src")
 if _SRC_ROOT not in sys.path:
@@ -41,21 +43,76 @@ FIELDNAMES = [
     "reviewer_notes",
 ]
 
+STRATA_DEFINITIONS = [
+    (1, 10, "Stratum 1: Clean Single/Multi-Grain Staple Cereals"),
+    (11, 20, "Stratum 2: Sweetened & Fortified Commercial Baby Cereals"),
+    (21, 30, "Stratum 3: Finger Foods, Teething Biscuits & Snacks"),
+    (31, 40, "Stratum 4: Single & Blended Fruit/Vegetable Purees"),
+    (41, 50, "Stratum 5: Dense Growth Formulations & Toddler Cereals"),
+]
+
+
+def get_stratum_name(sku_id: str) -> str:
+    if not sku_id.startswith("SKU-BF-"):
+        return "Other / Uncategorized"
+    try:
+        num = int(sku_id.split("-")[-1])
+        for start, end, label in STRATA_DEFINITIONS:
+            if start <= num <= end:
+                return label
+    except (ValueError, IndexError):
+        pass
+    return "Other / Uncategorized"
+
+
+def print_strata_breakdown(records) -> None:
+    print("\n" + "=" * 65)
+    print("  50-SKU COMPLEMENTARY FOOD BENCHMARK: STRATA PROGRESS AUDIT")
+    print("=" * 65)
+    print(f"{'Stratum':<45} | {'Total':<5} | {'Done':<5} | {'Pending':<7} | {'Concurrence'}")
+    print("-" * 78)
+
+    for start, end, label in STRATA_DEFINITIONS:
+        sku_set = {f"SKU-BF-{i:03d}" for i in range(start, end + 1)}
+        stratum_records = [r for r in records if r.sku_id in sku_set]
+        tot = len(stratum_records)
+        comp = sum(1 for r in stratum_records if not r.is_pending)
+        pend = sum(1 for r in stratum_records if r.is_pending)
+        conc = sum(1 for r in stratum_records if r.is_concurrence)
+        conc_rate = f"{(conc / comp * 100):.1f}%" if comp > 0 else "N/A"
+        print(f"{label:<45} | {tot:<5} | {comp:<5} | {pend:<7} | {conc_rate}")
+    print("=" * 65 + "\n")
+
 
 def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="LabelFit India 50-SKU Benchmark Builder"
+    )
+    parser.add_argument("--csv", default=str(TRANSCRIPTION_CSV), help="Path to input transcription CSV")
+    parser.add_argument("--out", default=str(OUTPUT_50SKU_CSV), help="Path to export benchmark CSV")
+    parser.add_argument("--batch-json", default=str(BATCH_SCAN_JSON), help="Path to Gemini batch scan JSON")
+    parser.add_argument("--include-pending", action="store_true", help="Include pending rows in output CSV")
+    parser.add_argument("--strata", action="store_true", help="Display strata progress audit breakdown")
+
+    args = parser.parse_args()
+
     print("== LabelFit India: 50-SKU Benchmark Builder ==")
 
-    engine = AdjudicationEngine(str(TRANSCRIPTION_CSV))
+    engine = AdjudicationEngine(args.csv)
     records = engine.load()
     eval_results = engine.evaluate()
 
     print(f"Total target records: {eval_results['total_records']} (Completed: {eval_results['completed_count']}, Pending: {eval_results['pending_count']})")
     print(f"Inter-rater concurrence on completed: {eval_results['concurrence_rate']}%")
 
+    if args.strata:
+        print_strata_breakdown(records)
+
     # Load recorded Gemini outputs if present
     batch_map = {}
-    if BATCH_SCAN_JSON.exists():
-        with open(BATCH_SCAN_JSON, "r", encoding="utf-8") as f:
+    batch_path = Path(args.batch_json)
+    if batch_path.exists():
+        with open(batch_path, "r", encoding="utf-8") as f:
             for item in json.load(f):
                 batch_map[item.get("sku_id")] = item
 
@@ -81,7 +138,11 @@ def main() -> None:
         field_data = norm_fields.get(r.field) or raw_fields.get(r.field) or {}
 
         model_text = field_data.get("value", "")
-        read_status = field_data.get("readStatus", "uncertain") if (model_text or field_data.get("evidence")) else "not_visible"
+        if r.is_pending and not model_text:
+            read_status = "pending_intake"
+        else:
+            read_status = field_data.get("readStatus", "uncertain") if (model_text or field_data.get("evidence")) else "not_visible"
+
         evidence_located = "yes" if field_data.get("evidence") else "no"
 
         unsupported = "no"
@@ -110,18 +171,22 @@ def main() -> None:
             "reviewer_notes": notes,
         })
 
-    # Filter to only records where either physical ground truth or model output has been collected.
-    # Prevents pending/untranscribed rows from skewing accuracy with false 100% blank matches.
-    evaluated_rows = [r for r in rows if r["ground_truth"].strip() or r["model_output"].strip()]
+    # Filter to only records where physical ground truth or model output exists,
+    # unless --include-pending is explicitly requested.
+    if args.include_pending:
+        evaluated_rows = rows
+    else:
+        evaluated_rows = [r for r in rows if r["ground_truth"].strip() or r["model_output"].strip()]
 
-    with open(OUTPUT_50SKU_CSV, "w", newline="", encoding="utf-8-sig") as f:
+    out_path = Path(args.out)
+    with open(out_path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
         writer.writeheader()
         writer.writerows(evaluated_rows)
 
-    print(f"Exported benchmark results: {OUTPUT_50SKU_CSV} ({len(evaluated_rows)} evaluated field rows).")
+    print(f"Exported benchmark results: {out_path} ({len(evaluated_rows)} rows).")
     if eval_results["pending_count"] > 0:
-        print(f"Note: {eval_results['pending_count']} fields remain pending independent founder entry in {TRANSCRIPTION_CSV.name}.")
+        print(f"Note: {eval_results['pending_count']} fields remain pending independent founder entry in {Path(args.csv).name}.")
 
 
 if __name__ == "__main__":
