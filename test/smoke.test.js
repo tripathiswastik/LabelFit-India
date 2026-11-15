@@ -16,7 +16,7 @@ let baseUrl = '';
 before((_, done) => {
   // Run server without GEMINI_API_KEY to test unconfigured baseline
   delete process.env.GEMINI_API_KEY;
-  server = createServer();
+  server = createServer({ apiKey: '' });
   server.listen(0, '127.0.0.1', () => {
     baseUrl = `http://127.0.0.1:${server.address().port}`;
     done();
