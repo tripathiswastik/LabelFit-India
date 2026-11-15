@@ -1,6 +1,6 @@
 """
 LabelFit India: Benchmark Evaluation Module.
-Evaluates exploratory label transcription benchmarks from docs/benchmark-template.csv.
+Evaluates exploratory label transcription benchmarks from docs/benchmark-10sku-results.csv.
 Computes Exact Field Match (EFM), Character Error Rate (CER), evidence support ratios,
 unsupported text rates, and review latency broken down by field and script.
 """
@@ -92,7 +92,7 @@ class BenchmarkEvaluator:
 
         fields_agg = defaultdict(lambda: {
             "total": 0, "exact_matches": 0, "total_cer": 0.0,
-            "evidence_supported": 0, "unsupported_text": 0,
+            "snippet_present": 0, "worksheet_flagged": 0,
             "false_clear": 0, "false_not_visible": 0, "hallucinated_absent": 0,
             "review_seconds": []
         })
@@ -135,8 +135,8 @@ class BenchmarkEvaluator:
             f_stats["total"] += 1
             if is_exact: f_stats["exact_matches"] += 1
             f_stats["total_cer"] += cer
-            if ev_loc: f_stats["evidence_supported"] += 1
-            if unsupp: f_stats["unsupported_text"] += 1
+            if ev_loc: f_stats["snippet_present"] += 1
+            if unsupp: f_stats["worksheet_flagged"] += 1
 
             if read_status == "clear" and (unsupp or cer > 0.15):
                 f_stats["false_clear"] += 1
@@ -160,8 +160,8 @@ class BenchmarkEvaluator:
             tot = data["total"]
             efm_pct = round((data["exact_matches"] / tot) * 100, 1) if tot else 0.0
             avg_cer = round(data["total_cer"] / tot, 3) if tot else 0.0
-            ev_pct = round((data["evidence_supported"] / tot) * 100, 1) if tot else 0.0
-            unsupp_pct = round((data["unsupported_text"] / tot) * 100, 1) if tot else 0.0
+            snippet_pct = round((data["snippet_present"] / tot) * 100, 1) if tot else 0.0
+            flagged_pct = round((data["worksheet_flagged"] / tot) * 100, 1) if tot else 0.0
             avg_sec = round(sum(data["review_seconds"]) / len(data["review_seconds"]), 1) if data["review_seconds"] else None
 
             field_summary[f] = {
@@ -169,8 +169,8 @@ class BenchmarkEvaluator:
                 "exact_match_ratio": f"{data['exact_matches']}/{tot}",
                 "exact_match_pct": efm_pct,
                 "mean_cer": avg_cer,
-                "evidence_support_pct": ev_pct,
-                "unsupported_text_pct": unsupp_pct,
+                "snippet_present_pct": snippet_pct,
+                "worksheet_flagged_pct": flagged_pct,
                 "false_clear_count": data["false_clear"],
                 "false_not_visible_count": data["false_not_visible"],
                 "hallucinated_absent_count": data["hallucinated_absent"],
@@ -210,23 +210,23 @@ class BenchmarkEvaluator:
 
         lines = []
         lines.append("\n" + "=" * 80)
-        lines.append("  LABELFIT INDIA - 10-SKU EVIDENCE-BACKED BENCHMARK AUDIT REPORT")
+        lines.append("  LABELFIT INDIA - EXPLORATORY 10-PACKAGE BENCHMARK")
         lines.append("=" * 80)
         lines.append(f"Total Evaluated Fields: {results['total_rows']}")
         lines.append(f"Unique Retail SKUs:     {results['unique_skus_count']}")
         lines.append(f"Unique Label Panels:    {results['unique_images_count']}")
         lines.append("-" * 80)
 
-        lines.append("\n[1] FIELD-BY-FIELD ACCURACY & EVIDENCE AUDIT:")
-        lines.append(f"{'Field':<24} | {'Exact Match':<12} | {'CER':<6} | {'Evidence%':<10} | {'Unsupp%':<8} | {'False Clear':<11}")
+        lines.append("\n[1] FIELD-BY-FIELD TEXT COMPARISON:")
+        lines.append(f"{'Field':<24} | {'Exact Match':<12} | {'CER':<6} | {'Snippet %':<10} | {'Flagged %':<10} | {'Clear CER>.15':<13}")
         lines.append("-" * 80)
         for f, data in results["by_field"].items():
             efm = f"{data['exact_match_pct']}% ({data['exact_match_ratio']})"
             cer = f"{data['mean_cer']:.3f}"
-            ev = f"{data['evidence_support_pct']}%"
-            un = f"{data['unsupported_text_pct']}%"
+            ev = f"{data['snippet_present_pct']}%"
+            un = f"{data['worksheet_flagged_pct']}%"
             fc = str(data["false_clear_count"])
-            lines.append(f"{f:<24} | {efm:<12} | {cer:<6} | {ev:<10} | {un:<8} | {fc:<11}")
+            lines.append(f"{f:<24} | {efm:<12} | {cer:<6} | {ev:<10} | {un:<10} | {fc:<13}")
 
         lines.append("\n[2] STRATA BREAKDOWN BY SCRIPT:")
         lines.append(f"{'Script / Language':<24} | {'Samples':<8} | {'Exact Match %':<14} | {'Mean CER':<8}")
@@ -241,18 +241,20 @@ class BenchmarkEvaluator:
             lines.append(f"{c:<24} | {data['total']:<8} | {data['exact_match_pct']:<14}% | {data['mean_cer']:<8.3f}")
 
         lines.append("\n" + "=" * 80)
-        lines.append("Note: Empirical 10-SKU retail package benchmark (60 evaluated fields).")
-        lines.append("      Evaluates recorded Gemini model outputs against physical packaging ground truth")
-        lines.append("      independently transcribed & adjudicated by Swastik Tripathi & Saumya Tripathi.")
-        lines.append("      Not a clinical study, certified accuracy guarantee, or feeding recommendation.")
+        lines.append("Note: Exploratory comparison of recorded Gemini output with founder-entered package text.")
+        lines.append("      Sample: 10 mixed-category products; only one complementary-food package.")
+        lines.append("      Snippet% means a snippet was present, not verified against the image.")
+        lines.append("      Flagged% reflects worksheet labels, not an independent token audit.")
+        lines.append("      Clear CER>.15 is a heuristic mismatch count, not human error adjudication.")
+        lines.append("      Review time is not measured. Not an infant-food accuracy or clinical study.")
         lines.append("=" * 80 + "\n")
-        return "\n".join(lines)
+        return "\n".join(line.rstrip() for line in lines)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate LabelFit India benchmark dataset.")
-    parser.add_argument("--csv", default=os.path.join("docs", "benchmark-template.csv"),
-                        help="Path to benchmark CSV (defaults to docs/benchmark-template.csv)")
+    parser.add_argument("--csv", default=os.path.join("docs", "benchmark-10sku-results.csv"),
+                        help="Path to benchmark CSV (defaults to docs/benchmark-10sku-results.csv)")
     parser.add_argument("--json", action="store_true", help="Output raw JSON metrics to stdout")
     parser.add_argument("--export-markdown", type=str, default=None,
                         help="Optional file path to write Markdown summary report")

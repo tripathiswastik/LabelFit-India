@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 LabelFit India: 10-SKU Evidence-Backed Benchmark Generator.
-Constructs docs/benchmark-template.csv using actual Gemini model outputs
+Constructs docs/benchmark-10sku-results.csv using actual Gemini model outputs
 from prod1_tst/batch_scan_results.json paired with physical package ground truth
 independently transcribed and adjudicated by Swastik Tripathi & Saumya Tripathi.
 """
@@ -12,7 +12,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BATCH_RESULTS_PATH = REPO_ROOT / "prod1_tst" / "batch_scan_results.json"
-BENCHMARK_CSV_PATH = REPO_ROOT / "docs" / "benchmark-template.csv"
+BENCHMARK_CSV_PATH = REPO_ROOT / "docs" / "benchmark-10sku-results.csv"
 
 FIELDNAMES = [
     "image_id",
@@ -413,9 +413,12 @@ def main():
             read_status = model_field.get("readStatus", "not_visible")
             evidence = model_field.get("evidence", "")
 
+            # This records snippet presence only; it does not verify the snippet
+            # against the original image or prove full source support.
             evidence_located = "yes" if bool(evidence.strip()) else "no"
 
-            # Check if model text has unsupported tokens compared to ground truth
+            # Narrow worksheet flag: predicted text where founder-entered
+            # reference is blank. This does not audit every unsupported token.
             unsupported = "no"
             if model_text.strip() and not gt_text.strip():
                 unsupported = "yes"
@@ -431,13 +434,9 @@ def main():
                 else:
                     error_category = "formatting_discrepancy"
 
-            review_time = "12.0"
-            if field_name == "nutritionPanel":
-                review_time = "25.0"
-            elif field_name == "ingredients":
-                review_time = "18.0"
-            elif field_name in ("ageMarking", "productName"):
-                review_time = "8.0"
+            # No timed reviewer study was run; keep this blank rather than
+            # inventing field-specific review durations.
+            review_time = ""
 
             rows.append({
                 "image_id": sku_meta["image_id"],

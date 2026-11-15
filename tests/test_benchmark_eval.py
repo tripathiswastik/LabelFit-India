@@ -58,19 +58,19 @@ def test_benchmark_evaluator_metrics():
         writer.writerow([
             "IMG_01", "SKU_01", "LittleNourish", "Bengaluru", "English-Latin",
             "clear_flat", "ageMarking", "Stage 1: From 6 Months", "Stage 1: From 6 Months",
-            "clear", "yes", "no", "", "15", "Clean read"
+            "clear", "yes", "no", "", "", "Clean read"
         ])
         # Row 2: Partial mismatch, unsupported hallucinated word
         writer.writerow([
             "IMG_01", "SKU_01", "LittleNourish", "Bengaluru", "English-Latin",
             "clear_flat", "allergenDeclaration", "Contains Milk", "Contains Milk and Peanuts",
-            "clear", "yes", "yes", "invented_allergen", "25", "Hallucinated peanuts"
+            "clear", "yes", "yes", "invented_allergen", "", "Hallucinated peanuts"
         ])
         # Row 3: Absent field correctly identified as not_visible
         writer.writerow([
             "IMG_02", "SKU_02", "PureBite", "Pune", "Hindi-Devanagari",
             "glare_curved", "preparationAndStorage", "", "",
-            "not_visible", "no", "no", "", "8", "No prep text on pouch"
+            "not_visible", "no", "no", "", "", "No prep text on pouch"
         ])
         temp_csv = f.name
 
@@ -86,13 +86,13 @@ def test_benchmark_evaluator_metrics():
         age_metrics = results["by_field"]["ageMarking"]
         assert age_metrics["exact_match_pct"] == 100.0
         assert age_metrics["mean_cer"] == 0.0
-        assert age_metrics["evidence_support_pct"] == 100.0
-        assert age_metrics["unsupported_text_pct"] == 0.0
+        assert age_metrics["snippet_present_pct"] == 100.0
+        assert age_metrics["worksheet_flagged_pct"] == 0.0
 
         # Check allergenDeclaration (has unsupported text + false clear)
         allergen_metrics = results["by_field"]["allergenDeclaration"]
         assert allergen_metrics["exact_match_pct"] == 0.0
-        assert allergen_metrics["unsupported_text_pct"] == 100.0
+        assert allergen_metrics["worksheet_flagged_pct"] == 100.0
         assert allergen_metrics["false_clear_count"] == 1
 
         # Check script breakdown
@@ -105,8 +105,8 @@ def test_benchmark_evaluator_metrics():
             os.remove(temp_csv)
 
 
-def test_50_sku_benchmark_template_integrity():
-    """Verifies that docs/benchmark-template.csv exists with valid schema columns."""
+def test_blank_benchmark_template_integrity():
+    """Verifies that the reusable benchmark template is blank and has a valid schema."""
     benchmark_csv = Path(__file__).resolve().parent.parent / "docs" / "benchmark-template.csv"
     assert benchmark_csv.exists(), "benchmark-template.csv should exist"
 
@@ -126,10 +126,19 @@ def test_50_sku_benchmark_template_integrity():
 
     evaluator = BenchmarkEvaluator(str(benchmark_csv))
     results = evaluator.evaluate()
-    assert results is not None
-    if results["total_rows"] > 0:
-        expected_fields = {
-            "productName", "ageMarking", "ingredients",
-            "allergenDeclaration", "nutritionPanel", "preparationAndStorage"
-        }
-        assert set(results["by_field"].keys()) == expected_fields
+    assert results["total_rows"] == 0
+
+
+def test_recorded_10_package_benchmark_integrity():
+    """Checks that recorded audit rows remain separate from the blank template."""
+    benchmark_csv = Path(__file__).resolve().parent.parent / "docs" / "benchmark-10sku-results.csv"
+    evaluator = BenchmarkEvaluator(str(benchmark_csv))
+    results = evaluator.evaluate()
+    assert results["total_rows"] == 60
+    assert results["unique_skus_count"] == 10
+    expected_fields = {
+        "productName", "ageMarking", "ingredients",
+        "allergenDeclaration", "nutritionPanel", "preparationAndStorage"
+    }
+    assert set(results["by_field"].keys()) == expected_fields
+    assert all(data["mean_review_seconds"] is None for data in results["by_field"].values())

@@ -48,7 +48,7 @@ The Python `source_match` indicator only checks whether candidate text appears i
 
 ## Buildathon materials
 
-The repository PDF is the current seven-slide pitch deck (under 5 MB). It describes the local prototype, the planned exploratory 50-SKU validation milestone, and the unvalidated B2B label-digitization hypothesis. [Spoken pitch and judge Q&A notes](docs/PITCH_NOTES.md) are in the docs folder.
+The revised seven-slide pitch deck is `output/pdf/LABEL_CHECK_Startup_Buildathon_2026.pdf`. It describes the local prototype and its current evidence limits. The internal 10-package check covers mixed grocery categories and only one complementary-food package; the next evaluation is focused on the 6+ month target category. [Spoken pitch and judge Q&A notes](docs/PITCH_NOTES.md) and [validation plan](docs/VALIDATION_PLAN.md) are in the docs folder.
 
 ## Development checks
 
@@ -64,7 +64,7 @@ node --check app.js
 python -m pytest tests/
 
 # Evaluate benchmark worksheet
-python scripts/evaluate_benchmark.py --csv docs/benchmark-template.csv
+python scripts/evaluate_benchmark.py --csv docs/benchmark-10sku-results.csv
 
 # Evaluate a caregiver usability dataset only after verified rows are collected
 python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv

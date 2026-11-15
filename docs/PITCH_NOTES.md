@@ -2,67 +2,61 @@
 
 ## Current project status
 
-LabelFit India is an early-stage prototype by the two-member LABEL CHECK team (Swastik Tripathi and Saumya Tripathi). The project provides a photo-first packaging transcription workflow with automated defensive normalization and token-subset evidence checking.
+LabelFit India is an early working prototype from LABEL CHECK, a two-member team: Swastik Tripathi and Saumya Tripathi. It turns a photo of a package panel into candidate text fields with snippets from the same image and a read status. A local Gemini workflow and server-side checks have been demonstrated.
 
-The repository includes:
-- **Live Gemini Multimodal Scans:** 18 retail packaging panels across 12 distinct brands (`gemini-3.6-flash` / `gemini-3.5-flash-lite`), audited in `docs/REAL_PACKAGING_MULTI_SKU_REPORT.md`.
-- **10-SKU Empirical Benchmark:** 60 evaluated field records across 10 authentic retail packages, evaluated against physical package ground truth independently transcribed and adjudicated by Swastik and Saumya (`docs/BENCHMARK_EVALUATION_REPORT.md`).
-- **Defensive Normalizer Guards:** Automated token-subset checks, FSSAI caloric/RDA guideline footnote downgrades, and medicine/supplement dosage filters in both Node.js (`server.js`) and Python (`src/labelfit/extractor.py`).
-- **Caregiver Study Protocol:** Documented testing methodology in `docs/USABILITY_STUDY_PROTOCOL.md`; usability worksheet (`docs/usability-evaluation-sheet.csv`) remains blank pending consented adult caregiver sessions.
-- **B2B Discovery Plan:** Neutral interview guide in `docs/B2B_DISCOVERY_PLAN.md`; zero commercial revenue or paid traction claimed.
+The repository records 18 live scans of retail package panels and a 10-package, 60-field comparison against founder-transcribed package text. That sample covers general grocery products and includes only one complementary-food package. It is an engineering check of the workflow, not an infant-food accuracy benchmark or a representative study. It surfaced weak extraction of dense nutrition and preparation/storage text, and cases where the server downgraded under-supported fields. Review time and caregiver usability have not been measured.
 
-## 60-90 second pitch
+## 60–90 second pitch
 
-Packaged complementary-food labels spread details across multiple panels, where small print and dense tables make exact wording hard to find. We are the two-member LABEL CHECK team exploring a photo-first way to locate printed label details on packaged complementary foods labelled for babies 6 months and older.
+Packaged food labels put important details in small print across different panels. LabelFit India is our early prototype for helping caregivers find the wording printed on packaged complementary foods labelled for babies 6 months and older.
 
-A caregiver photographs one package panel. The Gemini API extracts candidate text for six fields: product name, printed age marking, ingredients, explicit allergen declaration, nutrition information, and preparation or storage wording. Each candidate is paired with a source snippet and an uncalibrated read status (`clear`, `uncertain`, `not_visible`). Our server-side defenses verify that evidence tokens support every clear read, downgrading unverified text.
+A caregiver photographs one panel. Gemini returns candidate text for the product name, printed age marking, ingredients, allergen declaration, nutrition panel, and preparation or storage wording. Each field appears with a snippet from the image and a read status, so the caregiver can check the words against the pack. Server-side checks downgrade some results when the text and its snippet do not support each other.
 
-In our empirical 10-SKU benchmark across 60 evaluated field records on authentic packages, product names and allergen declarations achieved 100% exact match, ingredients reached 80%, and our defensive normalizer successfully caught edge cases—such as FSSAI 8-year-old caloric guidelines misattributed as infant age markings and evidence truncation on complex nutrition tables. 
-
-Our next steps are to conduct small, consented adult caregiver usability sessions under our protocol and interview brand and retailer catalog teams to test the commercial demand for structured label ingestion. As we move to the Thank You slide, we welcome feedback on our evaluation design and packaging coverage. Thank you.
+We have demonstrated the local photo-to-text workflow and reviewed a small mixed-category sample of 10 packages. That sample included only one complementary-food package, so it does not tell us how well LabelFit works on baby-food labels. Dense nutrition panels were a particular weak spot. Our next step is a focused set of locally available 6+ month complementary-food packages, transcribed independently by both founders and checked field by field. We will then run consented adult caregiver sessions to see whether the review flow is understandable. If the core workflow holds up, we will explore whether brands or retailers need structured label exports. We welcome feedback on representative products and the evaluation plan.
 
 ## Current evidence and demo status
 
-- **Built:** Local photo-upload interface, server-side Gemini request path, token-subset response normalizer, and text extraction engine.
-- **Automated checks:** 30 Node.js unit/smoke tests and 34 Python pytest tests passing.
-- **Empirical benchmark:** 10 SKUs / 60 fields audited (`docs/BENCHMARK_EVALUATION_REPORT.md`): 100% EFM on product name and allergen declaration; 90% on age marking; 80% on ingredients; 50% on prep/storage; 30% on nutrition tables.
-- **Not measured:** Adult caregiver task completion timings, commercial willingness to pay, active user retention, and revenue.
-- **Demo guidance:** Use live scan proofs from `prod1_tst/` (e.g. Slurrp Farm Supergrain Cereal or Cadbury Dairy Milk) to demonstrate literal transcription and normalizer defensive downgrades.
+- **Built:** Local photo upload, Gemini API request path, candidate-field review page, and server-side normalization checks.
+- **Demonstrated:** Live scans across 18 retail package panels; one small benchmark of 10 mixed-category packages and 60 field comparisons.
+- **Scope limitation:** The benchmark includes only one complementary-food package. It is not evidence of performance on the intended baby-food category.
+- **Benchmark finding:** Exact transcription of nutrition panels and preparation/storage wording needs work; the server downgraded some results when snippets did not support all candidate text.
+- **Not measured:** Infant-food accuracy across a meaningful sample, adult caregiver task completion, commercial willingness to pay, retention, or revenue.
+- **Privacy:** The app sends a photo to Gemini only after user confirmation. `store: false` is not a zero-retention promise; provider handling depends on API tier. Cloud Run analysis remains disabled.
 
 ## Short version
 
-LabelFit India is a photo-based label transcription prototype for packaged complementary foods (6+ months). It pairs candidate label fields with source snippets and an uncalibrated read status, backed by an empirical 10-SKU benchmark and automated server defenses against hallucinated text and guideline footnotes.
+LabelFit India is a local prototype that turns a package-panel photo into candidate label text with image snippets and visible read status. It is designed around packaged complementary foods labelled 6+ months, but its current 10-package engineering sample contains only one such product, so target-category accuracy remains untested.
 
 ## Slide-by-slide speaker notes
 
-1. **Title:** LABEL CHECK is a two-member team building LabelFit India, a photo-first label transcription prototype. The team members are Swastik Tripathi and Saumya Tripathi.
-2. **Problem:** Caregivers can struggle to quickly locate exact wording across dense package panels. The scale and importance of the problem in India still need caregiver validation.
-3. **Solution:** Photograph one panel, extract candidate fields, review the snippet and status, then compare against the physical package. The product displays package text; it does not interpret health or allergy risk or direct feeding decisions.
-4. **Architecture:** Package photo, Gemini API, Node server defensive guards, review page. A snippet match does not prove the text is correct; token-subset checks enforce evidence backing.
-5. **AI tools:** Gemini API is the current integration (`gemini-3.6-flash` and `gemini-3.5-flash-lite`); Google AI Studio is planned for prompt and schema iteration. Cloud Run analysis is disabled until spend and privacy controls exist.
-6. **Model:** Gemini returns six candidate fields. Read status is a model output and is not a calibrated confidence score.
-7. **Thank You / spoken close:** As this slide appears, say: “Our next step is to expand the benchmark to 50 local products, run consented caregiver usability sessions, and test the B2B catalog digitization case. We welcome your feedback. Thank you.”
+1. **Title:** LABEL CHECK is a two-member team building LabelFit India. Team members are Swastik Tripathi and Saumya Tripathi.
+2. **Problem:** Small print and varied package layouts can make exact label wording hard to locate. Caregiver need and severity in India still need validation.
+3. **Solution:** Photograph one panel, extract candidate fields, review the image snippet and status, then compare the wording with the package. The product transcribes package text; it does not assess health or allergy risk or direct feeding decisions.
+4. **Architecture:** Package photo, Gemini API, Node server checks, review page. A matching snippet is not proof that a transcription is complete or correct.
+5. **AI tools:** Gemini API is the current integration. Google AI Studio is planned for prompt and response-schema iteration. Cloud Run analysis is disabled.
+6. **Model:** Gemini returns six candidate fields. Read status is not a calibrated confidence score.
+7. **Thank You / spoken close:** “We have a working local flow and an early mixed-category package check. Our next step is to evaluate it on a focused set of 6+ month complementary-food labels, then test the review experience with adult caregivers. We will explore structured label exports with brands or retailers only after the core workflow is better understood. We welcome feedback on the sample and evaluation design. Thank you.”
 
 ## Judge Q&A
 
 **How do you know the extracted text is correct?**  
-We benchmarked 10 local retail products across 60 field evaluations against dual-transcribed ground truth by both founders. Product name and allergen statements achieved 100% exact match, while complex nutrition tables revealed evidence truncation that our server normalizer actively caught and downgraded. Software tests are separate from model accuracy evaluations.
+We do not yet know how well it performs on its intended category. We compared 10 mixed-category package labels across 60 fields with founder-transcribed text. Only one package was complementary food, so those results are a workflow check, not an infant-food accuracy claim. Dense nutrition tables and preparation/storage text showed weaknesses.
 
 **How is this different from OCR or a product database?**  
-The project explores a narrower workflow for packaged complementary foods: candidate fields are shown beside snippets from the submitted image with strict token-subset defensive guards. General OCR and product catalogs are useful comparison points; we have not yet benchmarked LabelFit against them.
+LabelFit explores a narrower workflow for packaged complementary foods: it shows candidate fields beside snippets from the submitted image and asks the person to check the wording against the package. We have not benchmarked it against general OCR tools or product databases.
 
 **Does it tell a caregiver whether a food is safe or suitable?**  
-No. It presents candidate transcriptions of visible package wording. It does not rate safety, diagnose, interpret allergy risk, or recommend what to feed. Read status describes the model's read, not the product.
+No. It displays candidate transcriptions of visible package wording and does not interpret a health condition or allergy risk, rate safety, or recommend what to feed. A read status describes the text extraction, not the product.
 
 **What happens to an uploaded image?**  
-The local app does not write the image to disk or a database, and sends it to Gemini only after the user confirms. `store: false` is not a zero-retention promise. Provider handling depends on the API tier. Any external pilot needs a reviewed privacy notice, access and spend controls, and a documented retention plan.
+The local app does not write the image to disk or a database and sends it to Gemini only after the user confirms. `store: false` is not a zero-retention promise. Provider handling depends on the API tier. Any external pilot needs a reviewed privacy notice, access and spend controls, and a documented retention plan.
 
 **What is the business model?**  
-There is no validated business model or revenue. After transcription and privacy checks, I plan to interview brand and retailer catalog teams about their current workflow and willingness to pay for structured label digitization. No interviews or pricing signals should be claimed until they are documented.
+There is no revenue or validated business model. After improving and evaluating the transcription flow, we plan to interview brand and retailer catalog teams about their current label-digitization workflow and willingness to pay for structured exports.
 
 **Why start with labels for 6+ months?**  
-It is a defined first category for the prototype. The tool copies the printed age marking and does not decide whether a product is suitable for a particular child. Starter formula (0-6 months) and foods for special medical purposes are strictly outside the current scope.
+It is a defined first product category for the prototype. The tool copies the printed age marking and does not decide whether a product is suitable for a particular child. Starter formula (0–6 months) and foods for special medical purposes are outside the current scope.
 
 ## Feedback sought
 
-We are looking for feedback on representative packaging, scripts and languages for expanding the benchmark, evaluation design, and how to test the workflow responsibly with adult caregivers before any external pilot.
+We are looking for suggestions on representative Indian 6+ month products and package conditions for the next evaluation, as well as feedback on how to test the review flow responsibly with adult caregivers.
