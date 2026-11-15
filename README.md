@@ -32,7 +32,7 @@ The Python `source_match` indicator only checks whether candidate text appears i
 ## Image and provider handling
 
 - The browser creates a temporary preview and sends the selected image to this server only after the user selects **Read this label** and checks the package-only confirmation.
-- The server validates the file type and size, forwards the image to Gemini using `store: false`, and does not write it to disk or a database. This is not a zero-retention guarantee: provider handling still depends on the API service and billing tier, and paid API use may still have abuse-monitoring logs. Unpaid Gemini API content may be used to improve Google products and may be reviewed by people. Do not use unpaid service for confidential or personal information.
+- The browser resizes large photos (long edge 2560 px, re-encoded as JPEG) before upload so phone photos fit the 7 MB server limit. The server validates the file type and size, forwards the image to Gemini using `store: false`, and does not write it to disk or a database. This is not a zero-retention guarantee: provider handling still depends on the API service and billing tier, and paid API use may still have abuse-monitoring logs. Unpaid Gemini API content may be used to improve Google products and may be reviewed by people. Do not use unpaid service for confidential or personal information.
 - Do not upload images containing people, child faces, names, phone numbers, addresses, or other personal details. There are no child profiles or saved scan history.
 - The prototype applies a small in-memory per-IP rate limit and allows at most two concurrent analyses. Those limits reset when the process restarts and are not a production spend-control system.
 
@@ -41,10 +41,27 @@ The Python `source_match` indicator only checks whether candidate text appears i
 - First category: packaged complementary foods labelled for 6+ months. The printed age phrase is transcribed as printed; it is not converted into feeding guidance.
 - Candidate fields: product name, printed age marking, ingredients, printed allergen declaration, nutrition panel, and preparation/storage text.
 - Read status (`Readable`, `Check text`, `Not visible`) is a model output, not a calibrated confidence score. A matching-looking snippet does not prove the full field is correct.
-- The model can omit, alter, or invent text, especially for small, curved, reflective, multilingual, or low-resolution print. The prototype has not yet been benchmarked; do not claim accuracy.
+- The model can omit, alter, or invent text, especially for small, curved, reflective, multilingual, or low-resolution print. The prototype has only had a small exploratory check (see below); do not claim accuracy.
 - Allergen wording is copied only from an explicit declaration. The model is instructed not to infer it from ingredients; this behavior still needs testing.
 - No barcode lookup, Open Food Facts integration, local OCR comparison, translation, product explanation, safety scoring, or persistent storage is implemented.
 - Cloud Run serves the page with analysis disabled. Do not enable public analysis: there is no account system, durable abuse prevention, or spend cap. A real pilot needs authenticated access, server-side quotas/billing alerts, a privacy review, and a documented deletion/retention approach first.
+
+## Exploratory results (not an accuracy claim)
+
+[#exploratory-results-not-an-accuracy-claim](#exploratory-results-not-an-accuracy-claim)
+
+A 10-package check compared Gemini output with text the founders typed from the packs (`docs/BENCHMARK_EVALUATION_REPORT.md`). The packs are mixed grocery products, and only one is a complementary food. Exact-match rate per field, 10 packs each:
+
+| Field | Exact match |
+| --- | --- |
+| Product name | 10/10 |
+| Allergen declaration | 10/10 |
+| Age marking | 9/10 |
+| Ingredients | 8/10 |
+| Preparation and storage | 5/10 |
+| Nutrition panel | 3/10 |
+
+Nutrition panels and preparation text were the weak fields. With n=10, one baby-food pack, founder-entered ground truth, and no measure yet of how often a field marked `Readable` is wrong, these figures show only that the pipeline runs and where it struggles. A source-backed benchmark on 6+ month complementary foods is the next step.
 
 ## Buildathon materials
 

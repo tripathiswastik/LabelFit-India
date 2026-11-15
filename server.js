@@ -152,7 +152,13 @@ function parseImagePayload(payload) {
   return { bytes, mimeType: image.mimeType };
 }
 
-const ALLERGEN_DECLARATION_PATTERN = /\b(contains?|allergen|allergens?|may\s+contain|traces?|free\s+from|facility|equipment)\b/i;
+// English markers use \b. Devanagari markers cannot (JS \b only knows ASCII word characters),
+// so they sit in a separate alternative. Hindi list: needs review by a native speaker.
+const ALLERGEN_DECLARATION_PATTERN = new RegExp(
+  '\\b(?:contains?|allergen|allergens?|may\\s+contain|traces?|free\\s+from|facility|equipment)\\b' +
+  '|(?:इसमें|युक्त|एलर्जी|एलर्जन|एलर्जेन|हो\\s+सकता|हो\\s+सकते|अंश|सुविधा|उपकरण|मुक्त)',
+  'i'
+);
 const TRUNCATION_SUFFIX_PATTERN = /(?:,|\.\.\.|…|—|-|;|&|\band\b)\s*$/i;
 const CALORIC_OR_GUIDELINE_PATTERN = /(?:guideline\s*daily\s*amounts?|gda|rda|kcal|calorie|कैलोरी|energy\s*requirement|daily\s*allowance|adult\s*diet|\b(?:[4-9]|\d{2,})\s*years?\s*old\b)/i;
 const DOSAGE_OR_ADMINISTRATION_PATTERN = /\b(?:tablets?|capsules?|drops?|dosage|dose|pills?)\b/i;
@@ -173,7 +179,15 @@ const KNOWN_ALLERGENS = [
   'wheat', 'milk', 'dairy', 'soy', 'soya', 'peanut', 'peanuts',
   'almond', 'almonds', 'cashew', 'cashews', 'walnut', 'walnuts',
   'sesame', 'egg', 'eggs', 'fish', 'gluten', 'oat', 'oats', 'barley',
-  'mustard', 'nut', 'nuts'
+  'mustard', 'nut', 'nuts',
+  'crustacean', 'crustaceans', 'shrimp', 'prawn', 'prawns', 'sulphite', 'sulphites',
+  'sulfite', 'sulfites', 'pistachio', 'pistachios', 'hazelnut', 'hazelnuts', 'lupin'
+];
+
+// Devanagari terms are matched as plain substrings (no \b). Needs native-speaker review.
+const KNOWN_ALLERGENS_DEVANAGARI = [
+  'दूध', 'गेहूं', 'गेहूँ', 'सोया', 'मूंगफली', 'बादाम', 'काजू', 'अखरोट',
+  'तिल', 'अंडा', 'अंडे', 'मछली', 'ग्लूटेन', 'जौ', 'जई', 'सरसों'
 ];
 
 function normalizeDigits(text) {
@@ -184,7 +198,7 @@ function normalizeDigits(text) {
 function extractNumericTokens(text) {
   if (!text) return [];
   const normalized = normalizeDigits(text);
-  return normalized.match(/\b\d+(?:\.\d+)?\b/g) || [];
+  return normalized.match(/\d+(?:\.\d+)?/g) || [];
 }
 
 function hasUnbalancedDelimiters(text) {
@@ -217,6 +231,9 @@ function hasHallucinatedAllergen(value, evidence) {
       return true;
     }
   }
+  for (const term of KNOWN_ALLERGENS_DEVANAGARI) {
+    if (value.includes(term) && !evidence.includes(term)) return true;
+  }
   return false;
 }
 
@@ -244,7 +261,9 @@ function cleanText(value, maxLength = MAX_FIELD_CHARS) {
 
 function extractSignificantTokens(text) {
   if (!text) return new Set();
-  const tokens = text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+  // \p{M} keeps Devanagari vowel signs inside words; digits+decimals stay one token,
+  // so "12.5 mg" and "12.5mg" both become ["12.5", "mg"].
+  const tokens = normalizeDigits(text).toLowerCase().match(/\p{N}+(?:\.\p{N}+)?|[\p{L}\p{M}]+/gu) || [];
   const stopWords = new Set(['the', 'and', 'for', 'with', 'from', 'this', 'that', 'per', 'net', 'pkg']);
   return new Set(tokens.filter(t => t.length >= 2 && !stopWords.has(t)));
 }
@@ -253,7 +272,8 @@ function hasTokenSupport(value, evidence) {
   if (!value || !evidence) return false;
   const valTokens = extractSignificantTokens(value);
   const evTokens = extractSignificantTokens(evidence);
-  if (valTokens.size === 0 || evTokens.size === 0) return true;
+  if (valTokens.size === 0) return true; // nothing checkable in the value (e.g. only symbols)
+  if (evTokens.size === 0) return false; // evidence has no usable text to support it
   for (const token of valTokens) {
     if (!evTokens.has(token)) return false;
   }

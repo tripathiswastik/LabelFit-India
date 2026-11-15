@@ -11,7 +11,10 @@ const resultsEmpty = document.querySelector('#results-empty');
 const resultsContent = document.querySelector('#results-content');
 const loading = document.querySelector('#loading');
 
-const MAX_IMAGE_BYTES = 7 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 7 * 1024 * 1024; // what the server accepts (after resizing)
+const MAX_SOURCE_BYTES = 30 * 1024 * 1024; // what we will try to resize in the browser
+const MAX_EDGE_PX = 2560; // long edge after resizing; small print needs resolution
+const JPEG_QUALITIES = [0.9, 0.82, 0.74, 0.66];
 let selectedFile = null;
 let previewUrl = null;
 let analysisReady = false;
@@ -125,11 +128,51 @@ function renderResult(result, model) {
   resultsEmpty.hidden = true;
 }
 
+// Phone photos are often 8-12 MB. Resize and re-encode in the browser so they fit
+// the server limit. Files already small enough are sent unchanged.
+async function loadBitmap(file) {
+  if (window.createImageBitmap) {
+    try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch { /* fall through */ }
+  }
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read that photo. Try a JPG, PNG or WebP image.')); };
+    img.src = url;
+  });
+}
+
+function canvasToBlob(canvas, type, quality) {
+  return new Promise(resolve => canvas.toBlob(resolve, type, quality));
+}
+
+async function prepareImage(file) {
+  if (file.size <= MAX_IMAGE_BYTES) return { blob: file, mimeType: file.type };
+  const bitmap = await loadBitmap(file);
+  const width = bitmap.width || bitmap.naturalWidth;
+  const height = bitmap.height || bitmap.naturalHeight;
+  const scale = Math.min(1, MAX_EDGE_PX / Math.max(width, height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(width * scale));
+  canvas.height = Math.max(1, Math.round(height * scale));
+  const context = canvas.getContext('2d');
+  context.fillStyle = '#fff'; // PNG/WebP transparency becomes white, not black
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  if (bitmap.close) bitmap.close();
+  for (const quality of JPEG_QUALITIES) {
+    const blob = await canvasToBlob(canvas, 'image/jpeg', quality);
+    if (blob && blob.size <= MAX_IMAGE_BYTES) return { blob, mimeType: 'image/jpeg' };
+  }
+  throw new Error('This photo is still too large after resizing. Try a closer photo of one label panel.');
+}
+
 function chooseFile(file) {
   if (!file) return;
-  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > MAX_IMAGE_BYTES) {
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > MAX_SOURCE_BYTES) {
     resetPhoto();
-    showError('Choose a JPG, PNG or WebP label photo smaller than 7 MB.');
+    showError('Choose a JPG, PNG or WebP label photo under 30 MB. Large photos are resized automatically.');
     return;
   }
 
@@ -202,25 +245,34 @@ analyzeButton.addEventListener('click', async () => {
   const timeout = setTimeout(() => controller.abort(), 65_000);
 
   try {
+    const prepared = await prepareImage(analyzingFile);
     const imageData = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(',')[1]);
       reader.onerror = () => reject(new Error('Could not read that file. Choose the photo again.'));
-      reader.readAsDataURL(analyzingFile);
+      reader.readAsDataURL(prepared.blob);
     });
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: { data: imageData, mimeType: analyzingFile.type } }),
+      body: JSON.stringify({ image: { data: imageData, mimeType: prepared.mimeType } }),
       signal: controller.signal,
     });
-    const payload = await response.json();
+    // A proxy or crash can return HTML instead of JSON; never show a raw parse error.
+    const payload = await response.json().catch(() => null);
     if (selectedFile !== analyzingFile) return;
-    if (!response.ok) throw new Error(payload.error || 'Could not read this photo.');
+    if (!response.ok || !payload) {
+      throw new Error(payload?.error || `The LabelFit server could not read this photo (error ${response.status}). Please try again.`);
+    }
     renderResult(payload.result, payload.model);
   } catch (error) {
     if (selectedFile === analyzingFile) {
-      showError(error.name === 'AbortError' ? 'This scan timed out. Try a smaller, clearer photo.' : (error.message || 'Could not process this photo.'));
+      const message = error.name === 'AbortError'
+        ? 'This scan timed out. Try a smaller, clearer photo.'
+        : error instanceof TypeError
+          ? 'Could not reach the LabelFit server. Check that it is running and try again.'
+          : (error.message || 'Could not process this photo.');
+      showError(message);
     }
   } finally {
     clearTimeout(timeout);
