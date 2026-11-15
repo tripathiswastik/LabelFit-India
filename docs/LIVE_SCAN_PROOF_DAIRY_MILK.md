@@ -9,10 +9,11 @@
 
 ## 1. Execution Parameters
 
-- **Input Image:** [dairy milk/27b6e6f6-7bd0-4080-bb40-fc99ceae8d2a_15251_2.avif](file:///d:/ag-ai/LabelFit%20India/dairy%20milk/27b6e6f6-7bd0-4080-bb40-fc99ceae8d2a_15251_2.avif)
+- **Reproducibility note:** the image files named below are local-only (the `dairy milk/` folder is gitignored) and are not in this repository, so this scan cannot be re-run from the repo alone.
+- **Input Image:** `dairy milk/27b6e6f6-7bd0-4080-bb40-fc99ceae8d2a_15251_2.avif`
   - Content: Back-of-pack information panel of *Cadbury Dairy Milk Silk Mini Treats* (135g pouch).
   - Privacy Check: Verified package-only photograph. Contains zero people, faces, hands, or personal information.
-  - Conversion: Decoded via Windows WIC and rendered to PNG ([dairy milk/dairymilk.png](file:///d:/ag-ai/LabelFit%20India/dairy%20milk/dairymilk.png), 1200 × 1286 px, 593 KB) to satisfy image MIME type boundaries.
+  - Conversion: Decoded via Windows WIC and rendered to PNG (`dairy milk/dairymilk.png`, 1200 × 1286 px, 593 KB) to satisfy image MIME type boundaries.
 - **Model ID Requested:** `gemini-3.5-flash`
 - **Model ID Responded:** `gemini-3.6-flash` (Google API server-side routing)
 - **API Endpoint:** `https://generativelanguage.googleapis.com/v1beta/interactions`
