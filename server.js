@@ -20,6 +20,7 @@ const MIN_ACCESS_TOKEN_LENGTH = 24;
 const MAX_CONCURRENT_ANALYSES = 2;
 const MAX_CONCURRENT_UPLOADS = 8; // requests still sending their body
 const BODY_TIMEOUT_MS = Number(process.env.LABELFIT_BODY_TIMEOUT_MS) > 0 ? Number(process.env.LABELFIT_BODY_TIMEOUT_MS) : 45_000;
+const UPSTREAM_TIMEOUT_MS = Number(process.env.LABELFIT_UPSTREAM_TIMEOUT_MS) > 0 ? Number(process.env.LABELFIT_UPSTREAM_TIMEOUT_MS) : 180_000;
 const RATE_LIMIT_MAX_KEYS = 10_000;
 
 function resolveAnalysisEnabled(env = process.env, isCloudRun = IS_CLOUD_RUN) {
@@ -442,7 +443,7 @@ async function analyzeImage({ apiKey, model = MODEL, image, fetchImpl = globalTh
         'x-goog-api-key': apiKey,
         'Api-Revision': API_REVISION,
       },
-      signal: AbortSignal.timeout(60_000),
+      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
       body: JSON.stringify({
         model,
         store: false,
