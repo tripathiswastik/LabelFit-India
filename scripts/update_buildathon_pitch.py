@@ -5,9 +5,18 @@ from __future__ import annotations
 from io import BytesIO
 from pathlib import Path
 import shutil
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-try:
+class _Stub:
+    """Type-safe fallback stub for optional PDF compilation dependencies."""
+    def __getattr__(self, name: str) -> Any:
+        return _Stub()
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        return _Stub()
+
+
+if TYPE_CHECKING:
     from pypdf import PdfReader, PdfWriter  # type: ignore
     from reportlab.lib.colors import HexColor, white  # type: ignore
     from reportlab.pdfbase import pdfmetrics  # type: ignore
@@ -15,10 +24,19 @@ try:
     from reportlab.pdfgen import canvas  # type: ignore
     from reportlab.lib.utils import simpleSplit  # type: ignore
     HAS_PDF_DEPS = True
-except (ImportError, Exception):
-    HAS_PDF_DEPS = False
-    PdfReader = PdfWriter = None  # type: ignore
-    HexColor = white = pdfmetrics = TTFont = canvas = simpleSplit = None  # type: ignore
+else:
+    try:
+        from pypdf import PdfReader, PdfWriter
+        from reportlab.lib.colors import HexColor, white
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.utils import simpleSplit
+        HAS_PDF_DEPS = True
+    except (ImportError, Exception):
+        HAS_PDF_DEPS = False
+        PdfReader = PdfWriter = _Stub()
+        HexColor = white = pdfmetrics = TTFont = canvas = simpleSplit = _Stub()
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,11 +49,15 @@ OUTPUTS = [
 FONT = Path(r"C:\Windows\Fonts\arial.ttf")
 FONT_BOLD = Path(r"C:\Windows\Fonts\arialbd.ttf")
 
-if HAS_PDF_DEPS and pdfmetrics and TTFont and HexColor:
-    pdfmetrics.registerFont(TTFont("PitchArial", str(FONT)))
-    pdfmetrics.registerFont(TTFont("PitchArialBold", str(FONT_BOLD)))
-    INK = HexColor("#53626E")
-    BLUE = HexColor("#4285F4")
+if not TYPE_CHECKING and HAS_PDF_DEPS:
+    try:
+        pdfmetrics.registerFont(TTFont("PitchArial", str(FONT)))
+        pdfmetrics.registerFont(TTFont("PitchArialBold", str(FONT_BOLD)))
+        INK = HexColor("#53626E")
+        BLUE = HexColor("#4285F4")
+    except Exception:
+        INK = "#53626E"
+        BLUE = "#4285F4"
 else:
     INK = "#53626E"
     BLUE = "#4285F4"
@@ -148,7 +170,7 @@ def make_ai_model_overlay(width: float, height: float) -> Any:
 
 
 def main() -> None:
-    if not HAS_PDF_DEPS or PdfReader is None or PdfWriter is None:
+    if not HAS_PDF_DEPS or isinstance(PdfReader, _Stub) or isinstance(PdfWriter, _Stub):
         print("Notice: 'pypdf' and 'reportlab' are required to compile pitch deck overlays.")
         print("Install optional PDF compilation dependencies with: pip install pypdf reportlab")
         return
