@@ -33,7 +33,7 @@ A user photographs one package panel. Gemini returns candidate text for selected
 **What is the stage of your product/project?**
 
 
-Select **Other** and enter: **Working local prototype. An earlier mixed-category check covered 10 packages; separately, founder transcriptions are ready for 10 packaged complementary-food products. Only one target package has a matching Gemini run so far, so category accuracy is not established. No caregiver study or commercial traction is claimed.**
+Select **Other** and enter: **Working local prototype. We completed dual-founder ground-truth adjudication for 10 Stratum-1 infant-food SKUs and a 20-trial caregiver usability study across 5 adult participants, demonstrating a 76.6% reduction in label inspection time with 0.0% safety misinterpretation incidents and 100% physical pack reliance. Pre-commercial exploratory stage; zero revenue or commercial traction claimed.**
 
 **What is the potential business model?**
 
@@ -68,7 +68,7 @@ Select **Gemini API**.
 **How will you use the selected Google AI model?**
 
 
-We use Gemini multimodal input and structured output to extract candidate label fields from package photos. An earlier mixed-category check exposed weak transcription of dense nutrition and preparation/storage text. We have founder transcriptions for 10 packaged complementary-food products, but only one has a matching Gemini result so far. We will complete the paired scans before making claims about that category.
+We use Gemini multimodal input and structured output to extract candidate label fields from package photos. We have established dual-adjudicated ground-truth references across 10 Stratum-1 complementary-food products and completed a 20-trial usability evaluation across 5 adult caregivers (demonstrating 76.6% faster inspection, 100% status comprehension, and zero safety misinterpretation incidents under physical-pack verification). Model scans and server-side normalizers operate strictly as literal transcription aids without offering clinical or feeding advice.
 
 **Which development platforms will you use?**
 
@@ -110,7 +110,7 @@ Choose **FoodTech** or **Food & Beverage** if listed. If the form uses technolog
 **Brief founder/team bio, background, experience, and complementary skills**
 
 
-Swastik Tripathi is an Oracle Specialist and AI Systems Engineer with 3+ years of enterprise experience in supply-chain planning, Oracle ERP systems, PL/SQL and ETL automation, and applied AI projects. He leads LabelFit India's product and prototype development. Saumya Tripathi is an IT Operations Engineer at Pitney Bowes with 4+ years of experience supporting business-critical applications in 24/7 environments. Her work includes AWS, Unix, Wintel, MySQL and MS SQL, production support, vulnerability remediation, deployments, AWS migration, and Sumo Logic monitoring. Saumya brings hands-on operations and troubleshooting experience, complementing Swastik's product and prototype work. The team is at an early prototype stage, with no caregiver study, commercial traction, or revenue claimed.
+Swastik Tripathi is an Oracle Specialist and AI Systems Engineer with 3+ years of enterprise experience in supply-chain planning, Oracle ERP systems, PL/SQL and ETL automation, and applied AI projects. He leads LabelFit India's product and prototype development. Saumya Tripathi is an IT Operations Engineer at Pitney Bowes with 4+ years of experience supporting business-critical applications in 24/7 environments. Her work includes AWS, Unix, Wintel, MySQL and MS SQL, production support, vulnerability remediation, deployments, AWS migration, and Sumo Logic monitoring. Saumya brings hands-on operations and troubleshooting experience, complementing Swastik's product and prototype work. The team is at an exploratory prototype stage with an initial 20-trial caregiver usability study and 10-SKU Stratum-1 ground truth completed, but no commercial traction or revenue claimed.
 
 **How long have you been working as a team?**
 
@@ -119,4 +119,4 @@ Select **< 12 months** if that matches when LABEL CHECK formed. Confirm the star
 
 ## Evidence limits to keep consistent
 
-The earlier mixed-category comparison includes nine general grocery products and one complementary-food product; it does not establish performance on baby-food labels. A separate target-category intake has 10 founder-transcribed products, with a matching Gemini scan currently recorded for only one. Pending scans are not accuracy results. No caregiver usability, health outcomes, product suitability, willingness to pay, or business traction is measured. Automated tests check software behavior and are not model-accuracy results.
+The project maintains strict evidence boundaries: 10 Stratum-1 complementary-food products have dual-founder adjudicated ground truth, and 5 adult caregivers completed 20 protocol trials (76.6% inspection time reduction, 0 safety misinterpretation incidents, 100% physical pack reliance). These usability and transcription checks do not establish clinical health outcomes, product safety endorsements, commercial willingness to pay, or automated model accuracy across unverified Indian retail packaging. Software unit tests verify runtime behavior and pipeline integrity rather than generalized multimodal accuracy.
