@@ -4,57 +4,61 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f7f2">
-  <title>LabelFit India — read the label, your way</title>
+  <title data-i18n="pageTitle">LabelFit India — read the label, your way</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="LabelFit India home"><span class="brand-mark">L</span><span>LabelFit <b>India</b></span></a>
-    <span class="prototype-tag"><i></i> Early prototype</span>
+    <a class="brand" href="#top" aria-label="LabelFit India home" data-i18n-aria-label="brandAria"><span class="brand-mark">L</span><span>LabelFit <b>India</b></span></a>
+    <div class="topbar-right">
+      <label class="language-picker" id="language-picker" hidden><span data-i18n="languageLabel">Language</span><select id="language-select"></select></label>
+      <span class="prototype-tag"><i></i> <span data-i18n="prototypeTag">Early prototype</span></span>
+    </div>
   </header>
+  <div id="draft-banner" class="draft-banner" role="status" hidden></div>
 
   <main id="top">
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">PACKAGED FOOD LABELS, MADE EASIER TO READ</p>
-        <h1>Understand what’s <em>on the pack.</em></h1>
-        <p class="lede">Photograph a package to see its stated age range, ingredients, allergen statement, nutrition, and preparation or storage text. Each readout comes with a snippet from the photo; unclear text is flagged.</p>
-        <div class="boundary-note"><span class="note-icon">↗</span><span><b>Photo evidence stays close.</b> Review the package wording beside every extracted detail.</span></div>
+        <p class="eyebrow" data-i18n="heroEyebrow">PACKAGED FOOD LABELS, MADE EASIER TO READ</p>
+        <h1><span data-i18n="heroTitleA">Understand what’s</span> <em data-i18n="heroTitleB">on the pack.</em></h1>
+        <p class="lede" data-i18n="heroLede">Photograph a package to see its stated age range, ingredients, allergen statement, nutrition, and preparation or storage text. Each readout comes with a snippet from the photo; unclear text is flagged.</p>
+        <div class="boundary-note"><span class="note-icon">↗</span><span><b data-i18n="boundaryBold">Photo evidence stays close.</b> <span data-i18n="boundaryText">Review the package wording beside every extracted detail.</span></span></div>
       </div>
       <aside class="focus-card">
         <div class="card-icon">⌕</div>
-        <p class="card-label">THE FIRST STEP</p>
-        <h2>One label.<br>Clearer details.</h2>
-        <p>Start with one clear photo of the ingredients or information panel.</p>
-        <div class="card-footer"><span class="tiny-dot"></span> For packaged complementary foods · 6+ months</div>
+        <p class="card-label" data-i18n="cardLabel">THE FIRST STEP</p>
+        <h2><span data-i18n="cardTitleA">One label.</span><br><span data-i18n="cardTitleB">Clearer details.</span></h2>
+        <p data-i18n="cardBody">Start with one clear photo of the ingredients or information panel.</p>
+        <div class="card-footer"><span class="tiny-dot"></span> <span data-i18n="cardFooter">For packaged complementary foods · 6+ months</span></div>
       </aside>
     </section>
 
     <section class="workspace" aria-labelledby="scan-title">
-      <div class="section-heading"><div><p class="eyebrow">TRY THE PROTOTYPE</p><h2 id="scan-title">Read a package label</h2></div><span class="step-pill">01 <span>Upload</span> → 02 <span>Review</span></span></div>
+      <div class="section-heading"><div><p class="eyebrow" data-i18n="scanEyebrow">TRY THE PROTOTYPE</p><h2 id="scan-title" data-i18n="scanTitle">Read a package label</h2></div><span class="step-pill">01 <span data-i18n="stepUpload">Upload</span> → 02 <span data-i18n="stepReview">Review</span></span></div>
       <div class="scan-grid">
         <div class="upload-panel">
-          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a label photo">
+          <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose a label photo" data-i18n-aria-label="dropAria">
             <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp" hidden>
-            <div id="upload-empty" class="upload-empty"><div class="upload-icon">↑</div><h3>Choose a label photo</h3><p>Drag a clear photo here, or <button type="button" id="browse" class="text-button">browse files</button></p><small>JPG, PNG or WebP · large photos are resized automatically</small></div>
-            <div id="preview-wrap" class="preview-wrap" hidden><img id="preview" alt="Selected package label"><button type="button" id="remove-photo" class="remove-photo" aria-label="Remove selected photo">×</button></div>
+            <div id="upload-empty" class="upload-empty"><div class="upload-icon">↑</div><h3 data-i18n="dropTitle">Choose a label photo</h3><p><span data-i18n="dropOr">Drag a clear photo here, or</span> <button type="button" id="browse" class="text-button" data-i18n="browse">browse files</button></p><small data-i18n="dropSmall">JPG, PNG or WebP · large photos are resized automatically</small></div>
+            <div id="preview-wrap" class="preview-wrap" hidden><img id="preview" alt="Selected package label" data-i18n-alt="previewAlt"><button type="button" id="remove-photo" class="remove-photo" aria-label="Remove selected photo" data-i18n-aria-label="removePhotoAria">×</button></div>
           </div>
-          <div class="photo-tip"><span>✦</span><p><b>For a clearer read</b><br>Use good light, keep the text in focus, and photograph one panel at a time.</p></div>
-          <div id="api-state" class="api-state"><span class="status-dot"></span><span id="api-state-text">Checking local Gemini setup…</span></div>
-          <label class="photo-confirm"><input id="photo-confirm" type="checkbox"><span>I understand the photo is sent to Gemini. I checked it shows only the package, with no people or personal details.</span></label>
-          <button id="analyze" class="primary-button" disabled><span>Read this label</span><span>→</span></button>
-          <p class="privacy-copy">Unpaid Gemini API content may be used to improve Google services and may be reviewed by people. Do not send personal or confidential information. The app does not save the photo; store:false is not a zero-retention promise.</p>
+          <div class="photo-tip"><span>✦</span><p><b data-i18n="tipTitle">For a clearer read</b><br><span data-i18n="tipBody">Use good light, keep the text in focus, and photograph one panel at a time.</span></p></div>
+          <div id="api-state" class="api-state"><span class="status-dot"></span><span id="api-state-text" data-i18n="apiChecking">Checking local Gemini setup…</span></div>
+          <label class="photo-confirm"><input id="photo-confirm" type="checkbox"><span data-i18n="consent">I understand the photo is sent to Gemini. I checked it shows only the package, with no people or personal details.</span></label>
+          <button id="analyze" class="primary-button" disabled><span data-i18n="analyzeButton">Read this label</span><span>→</span></button>
+          <p class="privacy-copy" data-i18n="privacyCopy">Unpaid Gemini API content may be used to improve Google services and may be reviewed by people. Do not send personal or confidential information. The app does not save the photo; store:false is not a zero-retention promise.</p>
         </div>
         <div class="results-panel" id="results" aria-live="polite">
-          <div class="results-empty" id="results-empty"><div class="result-illustration"><span>Aa</span><span>⌕</span></div><p class="eyebrow">YOUR LABEL NOTES</p><h3>Review the readout beside the package photo.</h3><p>Missing or uncertain wording is marked so you can check the package.</p><div class="fields-preview"><span>Age marking</span><span>Ingredients</span><span>Allergen statement</span><span>Nutrition panel</span></div></div>
+          <div class="results-empty" id="results-empty"><div class="result-illustration"><span>Aa</span><span>⌕</span></div><p class="eyebrow" data-i18n="resultsEmptyEyebrow">YOUR LABEL NOTES</p><h3 data-i18n="resultsEmptyTitle">Review the readout beside the package photo.</h3><p data-i18n="resultsEmptyBody">Missing or uncertain wording is marked so you can check the package.</p><div class="fields-preview"><span data-i18n="previewAge">Age marking</span><span data-i18n="previewIngredients">Ingredients</span><span data-i18n="previewAllergen">Allergen statement</span><span data-i18n="previewNutrition">Nutrition panel</span></div></div>
           <div id="results-content" hidden></div>
-          <div id="loading" class="loading" hidden><div class="loader"></div><h3>Reading the label…</h3><p>Checking the visible text in your photo.</p></div>
+          <div id="loading" class="loading" hidden><div class="loader"></div><h3 data-i18n="loadingTitle">Reading the label…</h3><p data-i18n="loadingBody">Checking the visible text in your photo.</p></div>
         </div>
       </div>
-      <div class="bottom-note"><span>ⓘ</span><p><b>Scope and accuracy:</b> LabelFit reports candidate transcriptions with model-provided snippets. It does not issue food-safety verdicts, diagnose, interpret allergy risk, or tell caregivers what to feed. Small, curved, or blurry print can be misread, so compare every readout with the package.</p></div>
+      <div class="bottom-note"><span>ⓘ</span><p><b data-i18n="scopeBold">Scope and accuracy:</b> <span data-i18n="scopeText">LabelFit reports candidate transcriptions with model-provided snippets. It does not issue food-safety verdicts, diagnose, interpret allergy risk, or tell caregivers what to feed. Small, curved, or blurry print can be misread, so compare every readout with the package.</span></p></div>
     </section>
 
-    <section class="focus-section" aria-labelledby="focus-title">
+    <section class="focus-section" aria-labelledby="focus-title" lang="en">
       <div class="focus-copy">
         <p class="eyebrow">WHY THIS FOCUS</p>
         <h2 id="focus-title">One label-reading workflow, built around baby food.</h2>
@@ -68,7 +72,8 @@
       </div>
     </section>
   </main>
-  <footer><span>LabelFit India</span><span>Local prototype · exploratory 10-package check only; no accuracy claim</span></footer>
+  <footer lang="en"><span>LabelFit India</span><span>Local prototype · exploratory 10-package check only; no accuracy claim</span></footer>
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -41,10 +41,14 @@ function resolveTrustProxyHops(env = process.env, isCloudRun = IS_CLOUD_RUN) {
   return isCloudRun ? 1 : 0;
 }
 
+const LOCALES_DIR = path.join(ROOT, 'locales');
+const LOCALE_FILE_NAME = /^[a-z]{2,3}\.json$/;
+
 const STATIC_ASSETS = new Map([
   ['/', 'index.html'],
   ['/index.html', 'index.html'],
   ['/app.js', 'app.js'],
+  ['/i18n.js', 'i18n.js'],
   ['/styles.css', 'styles.css'],
 ]);
 
@@ -558,6 +562,30 @@ function resolveApiKey(key) {
   return '';
 }
 
+// Interface translations. Only files named like "hi.json" with a _meta block and a strings
+// object are served, and only by language code, so no other path can be reached through
+// /locales/. A language is shown in the picker only if its _meta.reviewed is true.
+function readLocaleCatalog(dir = LOCALES_DIR) {
+  const catalog = {};
+  let names = [];
+  try {
+    names = fs.readdirSync(dir).filter(name => LOCALE_FILE_NAME.test(name));
+  } catch {
+    return catalog;
+  }
+  for (const name of names) {
+    try {
+      const data = JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8'));
+      if (data && typeof data._meta === 'object' && data.strings && typeof data.strings === 'object') {
+        catalog[name.slice(0, -'.json'.length)] = data;
+      }
+    } catch {
+      // A malformed locale file is skipped rather than breaking the server.
+    }
+  }
+  return catalog;
+}
+
 function createServer({
   apiKey,
   model = MODEL,
@@ -568,8 +596,10 @@ function createServer({
   trustProxyHops = resolveTrustProxyHops(),
   bodyTimeoutMs = BODY_TIMEOUT_MS,
   rateLimit = 10,
+  localesDir = LOCALES_DIR,
 } = {}) {
   const resolvedApiKey = apiKey !== undefined ? apiKey : resolveApiKey();
+  const localeCatalog = readLocaleCatalog(localesDir);
   const allowRequest = createRateLimiter({ limit: rateLimit, intervalMs: 60_000, now });
   let activeAnalyses = 0;
   let activeUploads = 0;
@@ -590,6 +620,24 @@ function createServer({
     if (req.method === 'GET' && url.pathname === '/api/status') {
       const configured = Boolean(resolvedApiKey) && analysisEnabled;
       return send(res, 200, { configured, model: configured ? model : null });
+    }
+
+    if (req.method === 'GET' && url.pathname === '/locales/index.json') {
+      const summary = {};
+      for (const [code, data] of Object.entries(localeCatalog)) {
+        summary[code] = {
+          nativeName: String(data._meta.nativeName || code),
+          englishName: String(data._meta.englishName || code),
+          reviewed: data._meta.reviewed === true,
+        };
+      }
+      return send(res, 200, summary);
+    }
+
+    const localeMatch = req.method === 'GET' ? url.pathname.match(/^\/locales\/([a-z]{2,3})\.json$/) : null;
+    if (localeMatch) {
+      const locale = Object.prototype.hasOwnProperty.call(localeCatalog, localeMatch[1]) ? localeCatalog[localeMatch[1]] : null;
+      return locale ? send(res, 200, locale) : send(res, 404, { error: 'Not found.' });
     }
 
     if (req.method === 'POST' && url.pathname === '/api/analyze') {
@@ -690,6 +738,7 @@ module.exports = {
   checkAccessToken,
   securityHeaders,
   readJsonBody,
+  readLocaleCatalog,
   analyzeImage,
   PROMPT_FINGERPRINT,
   API_REVISION,

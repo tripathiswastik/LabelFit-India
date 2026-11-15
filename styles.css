@@ -3,3 +3,12 @@
 
 .photo-confirm{display:flex;align-items:flex-start;gap:9px;margin:12px 0;color:#616761;font-size:13px;line-height:1.5}.photo-confirm input{flex:0 0 auto;margin:1px 0 0;accent-color:var(--green)}.photo-confirm:focus-within{outline:2px solid #8fa991;outline-offset:3px;border-radius:3px}.confidence.not_visible{background:#f1f2ef;color:#686e67}
 @media (prefers-reduced-motion:reduce){.loader{animation:none}}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.language-picker{display:flex;align-items:center;gap:8px;font-size:13px;color:#4f5750}
+.language-picker select{font:inherit;color:#202a25;background:#fff;border:1px solid #c9ccc3;border-radius:8px;padding:6px 10px}
+.language-picker select:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.language-picker[hidden],.draft-banner[hidden]{display:none}
+.draft-banner{max-width:1120px;width:calc(100% - 60px);margin:12px auto 0;padding:10px 14px;background:#fbf1df;color:#5f4210;border:1px solid #e3c98f;border-radius:10px;font-size:13px;line-height:1.5}
+html:not(:lang(en)) :not(:lang(en)){letter-spacing:normal}
+html:not(:lang(en)) h1,html:not(:lang(en)) h2,html:not(:lang(en)) h3{line-height:1.35}
+@media (max-width:560px){.language-picker>span{display:none}.topbar-right{gap:8px}}

@@ -48,7 +48,10 @@ Not covered by this review: legal or regulatory questions, a live Gemini run, th
 - [x] 30 text colours below the 4.5:1 AA contrast ratio were darkened, including the badges and the privacy notice (2.5:1 before).
 - [x] The loading spinner respects `prefers-reduced-motion`.
 - [x] Results in an Indian script are tagged with a `lang` attribute so screen readers pick a voice (one language per script; Devanagari is also used for Marathi and Nepali).
-- [ ] **Med, review.** Hindi interface. Status wording must mean "text was read clearly" and never sound like "safe". Needs a Hindi reviewer and a comprehension check with caregivers.
+- [x] Interface can be shown in other languages: strings live in `locales/`, a language is offered only when marked reviewed, and tests keep translations complete and the status wording free of approval words. Hindi draft added.
+- [ ] **High, review.** The Hindi draft is unreviewed (not offered in the picker). Needs a native-speaker review and a comprehension check with Hindi-reading caregivers; see `docs/TRANSLATION_REVIEW.md`.
+- [ ] **Decision.** Which other languages come next, and who reviews each. Right-to-left languages (Urdu) need layout work.
+- [ ] **Low.** Messages that come from the server stay in English.
 - [ ] **Low.** The dropzone is a button that contains another button. No dark mode. No camera-capture shortcut on phones.
 
 ## Engineering and process

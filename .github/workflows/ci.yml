@@ -19,7 +19,7 @@ jobs:
           node-version: 22
       - name: Syntax check
         run: |
-          for f in server.js app.js scripts/*.js test/*.js; do node --check "$f"; done
+          for f in server.js app.js i18n.js scripts/*.js test/*.js; do node --check "$f"; done
       - run: node --test
 
   python:

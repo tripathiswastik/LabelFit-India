@@ -53,6 +53,10 @@ All optional. Defaults are safe for local use.
 
 The Cloud Run opt-in exists for a controlled pilot behind authenticated access. It adds no per-user quotas, spend cap, or privacy review, which are still required before any public use.
 
+## Languages
+
+The interface can be shown in more than one Indian language; the label text is never translated. Hindi exists as a draft that has **not been reviewed**, so it is not offered in the picker. A reviewer previews it at `/?lang=hi` (a draft banner is shown). A language is switched on only when its file in `locales/` is marked `"reviewed": true` with a reviewer and date. See [docs/TRANSLATION_REVIEW.md](docs/TRANSLATION_REVIEW.md) for the review steps and how to add a language.
+
 ## Scope and known limits
 
 - First category: packaged complementary foods labelled for 6+ months. The printed age phrase is transcribed as printed; it is not converted into feeding guidance.

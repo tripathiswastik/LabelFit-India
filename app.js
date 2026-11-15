@@ -20,16 +20,45 @@ let previewUrl = null;
 let analysisReady = false;
 let analysisInProgress = false;
 
+// Interface language. Only the interface is translated, never the label text itself.
+const I18n = window.LabelFitI18n;
+let englishStrings = {};
+let strings = {};
+let availableLanguages = {};
+let currentLanguage = I18n.DEFAULT_LANGUAGE;
+let draftPreview = false;
+let serviceState = { configured: false, model: '', key: 'apiChecking' };
+let lastView = null; // what the results panel last showed, so it can be redrawn in another language
+
+// Falls back to English, then to the key itself, so a missing string is never blank.
+function t(key, vars) {
+  return I18n.format(strings[key] ?? englishStrings[key] ?? key, vars);
+}
+
+// An error whose message is a translatable string key. Messages sent by the server stay in English.
+class LocalizedError extends Error {
+  constructor(key, vars) {
+    super(key);
+    this.key = key;
+    this.vars = vars;
+  }
+}
+
 function updateAnalyzeButton() {
   analyzeButton.disabled = !selectedFile || !analysisReady || !photoConfirmation.checked || analysisInProgress;
 }
 
-function setServiceState(configured, model, message) {
+function setServiceState(configured, model, key) {
   analysisReady = configured;
+  serviceState = { configured, model, key: key || (configured ? 'apiReady' : 'apiNotConfigured') };
   apiState.classList.toggle('ready', configured);
   apiState.classList.toggle('error', !configured);
-  apiStateText.textContent = message || (configured ? `Gemini ready · ${model}` : 'Gemini is not configured on this server yet.');
+  renderServiceState();
   updateAnalyzeButton();
+}
+
+function renderServiceState() {
+  apiStateText.textContent = t(serviceState.key, { model: serviceState.model });
 }
 
 async function loadServiceState() {
@@ -37,13 +66,15 @@ async function loadServiceState() {
     const response = await fetch('/api/status', { cache: 'no-store' });
     if (!response.ok) throw new Error('status');
     const status = await response.json();
-    setServiceState(Boolean(status.configured), status.model, status.configured ? '' : 'Gemini is not configured on this server yet.');
+    setServiceState(Boolean(status.configured), status.model, status.configured ? 'apiReady' : 'apiNotConfigured');
   } catch {
-    setServiceState(false, '', 'LabelFit server is unavailable. Start it with npm start.');
+    setServiceState(false, '', 'apiUnavailable');
   }
 }
 
-function showError(message) {
+// error is { key, vars } for an interface string, or { text } for a message from the server.
+function showError(error) {
+  lastView = { type: 'error', error };
   resultsEmpty.hidden = true;
   resultsContent.replaceChildren();
   const header = document.createElement('div');
@@ -51,14 +82,14 @@ function showError(message) {
   const heading = document.createElement('div');
   const eyebrow = document.createElement('p');
   eyebrow.className = 'eyebrow';
-  eyebrow.textContent = 'LABEL NOT READ';
+  eyebrow.textContent = t('errorEyebrow');
   const title = document.createElement('h3');
-  title.textContent = 'Let’s try once more';
+  title.textContent = t('errorTitle');
   heading.append(eyebrow, title);
   header.append(heading);
   const errorText = document.createElement('p');
   errorText.className = 'field-value';
-  errorText.textContent = message;
+  errorText.textContent = error.text ?? t(error.key, error.vars);
   resultsContent.append(header, errorText);
   resultsContent.hidden = false;
   loading.hidden = true;
@@ -66,8 +97,9 @@ function showError(message) {
 
 // Tags results written in an Indian script so screen readers pick the right voice.
 // One language per script; Devanagari is also used for Marathi and Nepali, and Bengali for
-// Assamese, so this is a best guess for the common case. Mixed text is tagged only when the
-// Indian script has more letters than Latin; otherwise it is left untagged (page language).
+// Assamese, so this is a best guess for the common case. Mixed text takes the language of
+// whichever has more letters; text with no letters is left untagged (page language). English
+// text is tagged too, so it is not read with a Hindi voice when the interface is in Hindi.
 const SCRIPT_LANGUAGES = [
   [/[\u0900-\u097F]/g, 'hi'], [/[\u0980-\u09FF]/g, 'bn'], [/[\u0A00-\u0A7F]/g, 'pa'],
   [/[\u0A80-\u0AFF]/g, 'gu'], [/[\u0B00-\u0B7F]/g, 'or'], [/[\u0B80-\u0BFF]/g, 'ta'],
@@ -83,17 +115,19 @@ function languageOf(text) {
     const count = (text.match(pattern) || []).length;
     if (count > bestCount) { best = language; bestCount = count; }
   }
-  return best && bestCount > latin ? best : null;
+  if (best && bestCount > latin) return best;
+  return latin > 0 ? 'en' : null;
 }
 
 function renderResult(result, model) {
+  lastView = { type: 'result', result, model };
   const fields = [
-    ['Product name', result.productName],
-    ['Age marking', result.ageMarking],
-    ['Ingredients', result.ingredients],
-    ['Allergen declaration', result.allergenDeclaration],
-    ['Nutrition panel', result.nutritionPanel],
-    ['Preparation & storage', result.preparationAndStorage],
+    [t('fieldProductName'), result.productName],
+    [t('fieldAgeMarking'), result.ageMarking],
+    [t('fieldIngredients'), result.ingredients],
+    [t('fieldAllergen'), result.allergenDeclaration],
+    [t('fieldNutrition'), result.nutritionPanel],
+    [t('fieldPreparation'), result.preparationAndStorage],
   ];
 
   resultsContent.replaceChildren();
@@ -102,9 +136,9 @@ function renderResult(result, model) {
   const heading = document.createElement('div');
   const eyebrow = document.createElement('p');
   eyebrow.className = 'eyebrow';
-  eyebrow.textContent = 'LABEL PHOTO READOUT';
+  eyebrow.textContent = t('resultsEyebrow');
   const title = document.createElement('h3');
-  title.textContent = 'Review the printed details';
+  title.textContent = t('resultsTitle');
   heading.append(eyebrow, title);
   const badge = document.createElement('span');
   badge.className = 'model-tag';
@@ -123,12 +157,12 @@ function renderResult(result, model) {
     const readStatus = ['clear', 'uncertain', 'not_visible'].includes(data.readStatus) ? data.readStatus : 'uncertain';
     const status = document.createElement('span');
     status.className = `confidence ${readStatus}`;
-    status.textContent = readStatus === 'not_visible' ? 'Not visible' : readStatus === 'clear' ? 'Readable' : 'Check text';
+    status.textContent = readStatus === 'not_visible' ? t('statusNotVisible') : readStatus === 'clear' ? t('statusReadable') : t('statusCheck');
     top.append(name, status);
 
     const value = document.createElement('div');
     value.className = 'field-value';
-    value.textContent = data.value || 'No text found in the photo.';
+    value.textContent = data.value || t('noText');
     const valueLanguage = languageOf(data.value);
     if (valueLanguage) value.lang = valueLanguage;
     row.append(top, value);
@@ -137,7 +171,7 @@ function renderResult(result, model) {
       const evidence = document.createElement('div');
       evidence.className = 'field-evidence';
       const evidenceLabel = document.createElement('b');
-      evidenceLabel.textContent = 'Model-provided snippet: ';
+      evidenceLabel.textContent = t('snippetLabel');
       const snippet = document.createElement('span');
       snippet.textContent = data.evidence;
       const snippetLanguage = languageOf(data.evidence);
@@ -150,7 +184,7 @@ function renderResult(result, model) {
 
   const reminder = document.createElement('div');
   reminder.className = 'note-list';
-  reminder.textContent = 'Compare the readout with the package. The status is a model read, not an accuracy score.';
+  reminder.textContent = t('reminder');
   resultsContent.append(reminder);
   resultsContent.hidden = false;
   resultsEmpty.hidden = true;
@@ -166,7 +200,7 @@ async function loadBitmap(file) {
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read that photo. Try a JPG, PNG or WebP image.')); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new LocalizedError('errLoad')); };
     img.src = url;
   });
 }
@@ -193,14 +227,14 @@ async function prepareImage(file) {
     const blob = await canvasToBlob(canvas, 'image/jpeg', quality);
     if (blob && blob.size <= MAX_IMAGE_BYTES) return { blob, mimeType: 'image/jpeg' };
   }
-  throw new Error('This photo is still too large after resizing. Try a closer photo of one label panel.');
+  throw new LocalizedError('errTooLarge');
 }
 
 function chooseFile(file) {
   if (!file) return;
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > MAX_SOURCE_BYTES) {
     resetPhoto();
-    showError('Choose a JPG, PNG or WebP label photo under 30 MB. Large photos are resized automatically.');
+    showError({ key: 'errChoose' });
     return;
   }
 
@@ -209,7 +243,7 @@ function chooseFile(file) {
   selectedFile = file;
   previewUrl = URL.createObjectURL(file);
   preview.src = previewUrl;
-  preview.alt = `Selected label photo: ${file.name}`;
+  preview.alt = t('selectedPhotoAlt', { name: file.name });
   previewWrap.hidden = false;
   uploadEmpty.hidden = true;
   updateAnalyzeButton();
@@ -277,7 +311,7 @@ analyzeButton.addEventListener('click', async () => {
     const imageData = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(',')[1]);
-      reader.onerror = () => reject(new Error('Could not read that file. Choose the photo again.'));
+      reader.onerror = () => reject(new LocalizedError('errRead'));
       reader.readAsDataURL(prepared.blob);
     });
     const response = await fetch('/api/analyze', {
@@ -290,17 +324,17 @@ analyzeButton.addEventListener('click', async () => {
     const payload = await response.json().catch(() => null);
     if (selectedFile !== analyzingFile) return;
     if (!response.ok || !payload) {
-      throw new Error(payload?.error || `The LabelFit server could not read this photo (error ${response.status}). Please try again.`);
+      throw payload?.error ? new Error(payload.error) : new LocalizedError('errServer', { status: response.status });
     }
     renderResult(payload.result, payload.model);
   } catch (error) {
     if (selectedFile === analyzingFile) {
-      const message = error.name === 'AbortError'
-        ? 'This scan timed out. Try a smaller, clearer photo.'
-        : error instanceof TypeError
-          ? 'Could not reach the LabelFit server. Check that it is running and try again.'
-          : (error.message || 'Could not process this photo.');
-      showError(message);
+      let failure;
+      if (error instanceof LocalizedError) failure = { key: error.key, vars: error.vars };
+      else if (error.name === 'AbortError') failure = { key: 'errTimeout' };
+      else if (error instanceof TypeError) failure = { key: 'errNetwork' };
+      else failure = error.message ? { text: error.message } : { key: 'errGeneric' };
+      showError(failure);
     }
   } finally {
     clearTimeout(timeout);
@@ -310,4 +344,105 @@ analyzeButton.addEventListener('click', async () => {
   }
 });
 
-loadServiceState();
+// ---- Interface language -----------------------------------------------------------------
+
+function storedLanguage() {
+  try { return localStorage.getItem('labelfit-language'); } catch { return null; }
+}
+
+function rememberLanguage(code) {
+  try { localStorage.setItem('labelfit-language', code); } catch { /* storage can be unavailable */ }
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) throw new Error(url);
+  return response.json();
+}
+
+function renderDraftBanner() {
+  const banner = document.querySelector('#draft-banner');
+  banner.replaceChildren();
+  banner.hidden = !draftPreview;
+  if (!draftPreview) return;
+  const english = document.createElement('span');
+  english.lang = 'en';
+  english.textContent = englishStrings['draftBanner'] || '';
+  const translated = document.createElement('span');
+  translated.lang = currentLanguage;
+  translated.textContent = strings['draftBanner'] || '';
+  banner.append(english, ' / ', translated);
+}
+
+function applyStrings() {
+  document.documentElement.lang = currentLanguage;
+  for (const element of document.querySelectorAll('[data-i18n]')) {
+    element.textContent = t(element.dataset.i18n);
+  }
+  for (const attribute of ['aria-label', 'alt', 'title']) {
+    for (const element of document.querySelectorAll(`[data-i18n-${attribute}]`)) {
+      element.setAttribute(attribute, t(element.getAttribute(`data-i18n-${attribute}`)));
+    }
+  }
+  if (selectedFile) preview.alt = t('selectedPhotoAlt', { name: selectedFile.name });
+  renderServiceState();
+  renderDraftBanner();
+  if (!resultsContent.hidden && lastView) {
+    if (lastView.type === 'result') renderResult(lastView.result, lastView.model);
+    else showError(lastView.error);
+  }
+}
+
+function buildLanguagePicker() {
+  const picker = document.querySelector('#language-picker');
+  const select = document.querySelector('#language-select');
+  const codes = I18n.pickerCodes({ available: availableLanguages, previewCode: draftPreview ? currentLanguage : null });
+  select.replaceChildren();
+  for (const code of codes) {
+    const meta = availableLanguages[code];
+    const option = document.createElement('option');
+    option.value = code;
+    option.lang = code;
+    option.textContent = meta.reviewed ? meta.nativeName : `${meta.nativeName} (draft)`;
+    select.append(option);
+  }
+  select.value = currentLanguage;
+  picker.hidden = codes.length < 2;
+}
+
+async function setLanguage(code) {
+  try {
+    const data = await fetchJson(`/locales/${code}.json`);
+    strings = data.strings;
+  } catch {
+    return;
+  }
+  currentLanguage = code;
+  draftPreview = !I18n.isSelectable(availableLanguages[code]);
+  if (!draftPreview) rememberLanguage(code);
+  applyStrings();
+}
+
+async function initLanguage() {
+  try {
+    availableLanguages = await fetchJson('/locales/index.json');
+    englishStrings = (await fetchJson('/locales/en.json')).strings;
+    strings = englishStrings;
+    const choice = I18n.pickLanguage({
+      requested: new URLSearchParams(window.location.search).get('lang'),
+      stored: storedLanguage(),
+      available: availableLanguages,
+    });
+    if (choice.language !== I18n.DEFAULT_LANGUAGE) strings = (await fetchJson(`/locales/${choice.language}.json`)).strings;
+    currentLanguage = choice.language;
+    draftPreview = choice.preview;
+    buildLanguagePicker();
+    applyStrings();
+  } catch {
+    // The page already contains its English text; keep it if the locale files cannot load.
+  }
+}
+
+document.querySelector('#language-select').addEventListener('change', event => setLanguage(event.target.value));
+
+initLanguage().finally(loadServiceState);
