@@ -33,7 +33,7 @@ A user photographs one package panel. Gemini returns candidate text for selected
 **What is the stage of your product/project?**
 
 
-Select **Other** and enter: **Working local prototype; the website is deployed on Cloud Run, with Gemini analysis disabled there. Founder-entered label references cover 10 target products; Gemini output is recorded for 6 fields from 2 SKUs, which is not an accuracy estimate. The 20 usability rows in the repository are illustrative protocol data, not caregiver study results. Pre-commercial exploratory stage; no revenue or traction.**
+Select **Other** and enter: **Working local prototype; the website is deployed on Cloud Run, with Gemini analysis disabled there. Founder-entered label references cover 10 target products; Gemini output is recorded for 12 fields from 3 SKUs, which is not an accuracy estimate. The 20 usability rows in the repository are illustrative protocol data, not caregiver study results. Pre-commercial exploratory stage; no revenue or traction.**
 
 **What is the potential business model?**
 

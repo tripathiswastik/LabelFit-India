@@ -197,6 +197,6 @@ def test_50sku_status_csv_scores_only_recorded_pairs():
     """Pending scans must be visible in progress counts but absent from score denominators."""
     benchmark_csv = Path(__file__).resolve().parent.parent / "docs" / "benchmark-50sku-results.csv"
     results = BenchmarkEvaluator(str(benchmark_csv)).evaluate()
-    assert results["total_rows"] == 6
-    assert results["pending_rows_count"] == 48
-    assert results["unique_skus_count"] == 2
+    assert results["total_rows"] == 12
+    assert results["pending_rows_count"] == 42
+    assert results["unique_skus_count"] == 3
