@@ -28,6 +28,10 @@
 | `SKU-PROD-012` | **Conscious Food** | Conscious Food Millet Noodles (162g Pouch) | `millet_noodles_bop.webp` | ✅ Transcribed |
 | `SKU-PROD-013-BACK` | **Slurrp Farm** | Slurrp Farm Ragi & Jowar Cereal Stars & Moons (Back Panel) | `shopping.webp` | ✅ Transcribed |
 | `SKU-PROD-013-NUTRITION` | **Slurrp Farm** | Slurrp Farm Supergrain Cereal (Side Nutrition & Ingredients Panel) | `shopping (1).webp` | ✅ Transcribed |
+| `SKU-PROD-014` | **Nestle Maggi** | Maggi 2-Minute Masala Noodles (70g Pouch Back Panel) | `maggi-2-minute-noodles-1000x1000.webp` | ✅ Transcribed |
+| `SKU-PROD-015` | **Nestle Maggi** | Maggi Nutri-Licious Masala Atta Noodles (Back Panel) | `MaggiAttaNoodlesIngredients.jpg` | ✅ Transcribed |
+| `SKU-PROD-016` | **McCain** | McCain Veggie Burger Patty (360g Pack Back Panel) | `mccain-popular-vege-burger-patty-1000x1000.webp` | ✅ Transcribed |
+| `SKU-PROD-017` | **Nestle Maggi** | Maggi 2-Minute Masala Noodles (70g Pack Back & Recipe Panel) | `s-l400.jpg` | ✅ Transcribed |
 
 ---
 
@@ -98,7 +102,7 @@
 
 | Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
 |---|---|---|---|---|---|
-| **productName** | `clear` | `clear` | नमस्ते इंडिया देसी घी | `नमस्ते इंडिया` | ✅ Clear Match |
+| **productName** | `clear` | `uncertain` | नमस्ते इंडिया देसी घी | `नमस्ते इंडिया` | ⚠️ Downgraded by Normalizer |
 | **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
 | **ingredients** | `clear` | `clear` | Ingredient: Milk Fat | `Ingredient: Milk Fat` | ✅ Clear Match |
 | **allergenDeclaration** | `clear` | `clear` | Allergen Information : Contains Milk Fat | `Allergen Information : Contains Milk Fat` | ✅ Clear Match |
@@ -248,3 +252,51 @@
 | **allergenDeclaration** | `clear` | `clear` | Allergen Note: Contains Milk. Made in a facility that proces... | `Allergen Note: Contains Milk. Made in a ...` | ✅ Clear Match |
 | **nutritionPanel** | `clear` | `clear` | Nutritional Information Serving Size: Approx 20 g Servings P... | `Nutritional Information Serving Size: Ap...` | ✅ Clear Match |
 | **preparationAndStorage** | `clear` | `clear` | JUST ADD MILK | `JUST ADD MILK` | ✅ Clear Match |
+
+### SKU-PROD-014: Nestle Maggi — Maggi 2-Minute Masala Noodles (70g Pouch Back Panel)
+- **Image**: `maggi-2-minute-noodles-1000x1000.webp` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | MAGGI Masala Noodles | `MAGGI® Masala Noodles` | ✅ Clear Match |
+| **ageMarking** | `clear` | `uncertain` | 14-17 year old teenagers | `14-17 year old teenagers` | ⚠️ Downgraded by Normalizer |
+| **ingredients** | `clear` | `uncertain` | Noodles: Refined wheat flour (Maida), Palm oil, Iodized salt... | `INGREDIENTS Noodles: Refined wheat flour...` | ⚠️ Downgraded by Normalizer |
+| **allergenDeclaration** | `clear` | `clear` | Contains Wheat & Nut. May contains Milk, Mustard, Oats And S... | `Contains Wheat & Nut. May contains Milk,...` | ✅ Clear Match |
+| **nutritionPanel** | `clear` | `uncertain` | NUTRITIONAL INFORMATION If a serve is 70 g Per 100g Per serv... | `NUTRITIONAL INFORMATION If a serve is 70...` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `clear` | `clear` | STORAGE ADVICE STORE IN A COOL, DRY & HYGIENIC PLACE TO PROT... | `STORAGE ADVICE STORE IN A COOL, DRY & HY...` | ✅ Clear Match |
+
+### SKU-PROD-015: Nestle Maggi — Maggi Nutri-Licious Masala Atta Noodles (Back Panel)
+- **Image**: `MaggiAttaNoodlesIngredients.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `uncertain` | INGREDIENTS: Noodles: Wheat flour (atta) (85.3%), Palm oil, ... | `INGREDIENTS: Noodles: Wheat flour (atta)...` | ⚠️ Downgraded by Normalizer |
+| **allergenDeclaration** | `clear` | `clear` | MAY CONTAIN MILK AND SOYA. | `MAY CONTAIN MILK AND SOYA.` | ✅ Clear Match |
+| **nutritionPanel** | `clear` | `uncertain` | If a serve is 72.5g NUTRITION INFORMATION Per 100g Per Serve... | `NUTRITION INFORMATION` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `clear` | `uncertain` | STORE IN A COOL, DRY & HYGIENIC PLACE TO PROTECT FROM INSECT... | `STORE IN A COOL, DRY & HYGIENIC PLACE` | ⚠️ Downgraded by Normalizer |
+
+### SKU-PROD-016: McCain — McCain Veggie Burger Patty (360g Pack Back Panel)
+- **Image**: `mccain-popular-vege-burger-patty-1000x1000.webp` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | McCain Veggie Burger Patty : Vegetable Product (Frozen) | `McCain Veggie Burger Patty : Vegetable P...` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `clear` | Vegetables (70%) [Potato, Carrot, Peas], Bread Crumb (Refine... | `INGREDIENTS : Vegetables (70%) [Potato, ...` | ✅ Clear Match |
+| **allergenDeclaration** | `clear` | `clear` | Contains Wheat. May contain Barley, Milk & Soy. | `Contains Wheat May contain Barley, Milk ...` | ✅ Clear Match |
+| **nutritionPanel** | `clear` | `clear` | Nutritional Information* (Frozen Product). 360 g Pack contai... | `Nutritional Information* (Frozen Product...` | ✅ Clear Match |
+| **preparationAndStorage** | `clear` | `clear` | Storage: KEEP FROZEN AT -18°C OR BELOW. METHOD OF PREPARATIO... | `Storage: KEEP FROZEN AT -18°C OR BELOW M...` | ✅ Clear Match |
+
+### SKU-PROD-017: Nestle Maggi — Maggi 2-Minute Masala Noodles (70g Pack Back & Recipe Panel)
+- **Image**: `s-l400.jpg` | **Model**: `gemini-3.6-flash`
+
+| Field | Stated Status | Normalized Status | Normalized Text | Evidence Snippet | Defense Audit |
+|---|---|---|---|---|---|
+| **productName** | `clear` | `clear` | MAGGI EASY PEA-SY Masala mattar Recipe | `MAGGI EASY PEA-SY Masala mattar Recipe` | ✅ Clear Match |
+| **ageMarking** | `not_visible` | `not_visible` | *(empty)* | `none` | ℹ️ not_visible |
+| **ingredients** | `clear` | `uncertain` | INGREDIENTS: Noodles: Refined wheat flour (Maida), Palm oil,... | `INGREDIENTS: Noodles: Refined wheat flou...` | ⚠️ Downgraded by Normalizer |
+| **allergenDeclaration** | `clear` | `clear` | MAY CONTAIN MILK SOLIDS, MUSTARD AND SOYA. | `MAY CONTAIN MILK SOLIDS, MUSTARD AND SOY...` | ✅ Clear Match |
+| **nutritionPanel** | `clear` | `uncertain` | NUTRITION INFORMATION If a serve is 70g: Per 100g: Energy (k... | `NUTRITION INFORMATION` | ⚠️ Downgraded by Normalizer |
+| **preparationAndStorage** | `clear` | `uncertain` | 1. START QUICK Sauté green peas, beans, onions and tomatoes ... | `STORE IN A COOL, DRY & HYGIENIC PLACE TO...` | ⚠️ Downgraded by Normalizer |
