@@ -57,17 +57,28 @@ class DualTranscriptionRecord:
     adjudication_notes: str = ""
 
     @property
+    def is_pending(self) -> bool:
+        """True if independent transcription dates have not been entered yet."""
+        return not bool(self.swastik_date and self.saumya_date)
+
+    @property
     def is_concurrence(self) -> bool:
-        """True if both independent transcriptions match after whitespace normalization."""
+        """True if both independent transcriptions match after whitespace normalization and are dated."""
+        if self.is_pending:
+            return False
         return normalize_text(self.swastik_transcription) == normalize_text(self.saumya_transcription)
 
     @property
     def has_discrepancy(self) -> bool:
+        if self.is_pending:
+            return False
         return not self.is_concurrence
 
     @property
     def is_adjudicated(self) -> bool:
         """True if either both concur or physical adjudication has been recorded."""
+        if self.is_pending:
+            return False
         if self.is_concurrence:
             return True
         return bool(normalize_text(self.adjudicated_ground_truth))
@@ -75,8 +86,13 @@ class DualTranscriptionRecord:
     def get_ground_truth(self) -> str:
         """
         Returns verified ground truth text.
-        Raises ValueError if a discrepancy has not been resolved against the physical package.
+        Raises ValueError if pending or an unadjudicated discrepancy exists.
         """
+        if self.is_pending:
+            raise ValueError(
+                f"Pending transcription for SKU '{self.sku_id}', field '{self.field}'. "
+                f"Both reviewers must date and record their physical package reads."
+            )
         if self.is_concurrence:
             return normalize_text(self.swastik_transcription)
         adjudicated = normalize_text(self.adjudicated_ground_truth)
@@ -126,6 +142,8 @@ class AdjudicationEngine:
         if total == 0:
             return {
                 "total_records": 0,
+                "completed_count": 0,
+                "pending_count": 0,
                 "concurrence_count": 0,
                 "concurrence_rate": 0.0,
                 "discrepancy_count": 0,
@@ -134,34 +152,47 @@ class AdjudicationEngine:
                 "all_adjudicated": False,
             }
 
-        concur_count = sum(1 for r in self.records if r.is_concurrence)
-        discrepancy_count = total - concur_count
-        unresolved = [r for r in self.records if r.has_discrepancy and not r.is_adjudicated]
+        completed = [r for r in self.records if not r.is_pending]
+        pending = [r for r in self.records if r.is_pending]
+        concur_count = sum(1 for r in completed if r.is_concurrence)
+        discrepancy_count = len(completed) - concur_count
+        unresolved = [r for r in completed if r.has_discrepancy and not r.is_adjudicated]
 
         by_field: Dict[str, Dict[str, Any]] = {}
         for f in FIELD_NAMES:
             field_records = [r for r in self.records if r.field == f]
             f_total = len(field_records)
-            f_concur = sum(1 for r in field_records if r.is_concurrence)
-            f_discrep = f_total - f_concur
-            f_unresolved = sum(1 for r in field_records if r.has_discrepancy and not r.is_adjudicated)
+            f_completed = [r for r in field_records if not r.is_pending]
+            f_concur = sum(1 for r in f_completed if r.is_concurrence)
+            f_discrep = len(f_completed) - f_concur
+            f_unresolved = sum(1 for r in f_completed if r.has_discrepancy and not r.is_adjudicated)
+            f_pending = sum(1 for r in field_records if r.is_pending)
             by_field[f] = {
                 "total": f_total,
+                "completed": len(f_completed),
+                "pending": f_pending,
                 "concurrence_count": f_concur,
-                "concurrence_rate": round(f_concur / f_total * 100, 1) if f_total else 0.0,
+                "concurrence_rate": round(f_concur / len(f_completed) * 100, 1) if f_completed else 0.0,
                 "discrepancy_count": f_discrep,
                 "unresolved_count": f_unresolved,
             }
 
+        all_adjudicated = len(completed) > 0 and len(pending) == 0 and len(unresolved) == 0
+
         return {
             "total_records": total,
+            "completed_count": len(completed),
+            "pending_count": len(pending),
             "concurrence_count": concur_count,
-            "concurrence_rate": round(concur_count / total * 100, 1),
+            "concurrence_rate": round(concur_count / len(completed) * 100, 1) if completed else 0.0,
             "discrepancy_count": discrepancy_count,
             "unresolved_count": len(unresolved),
-            "all_adjudicated": len(unresolved) == 0,
+            "all_adjudicated": all_adjudicated,
             "unresolved_records": [
                 {"sku_id": r.sku_id, "field": r.field} for r in unresolved
+            ],
+            "pending_records": [
+                {"sku_id": r.sku_id, "field": r.field} for r in pending
             ],
             "by_field": by_field,
         }
@@ -171,36 +202,48 @@ class AdjudicationEngine:
         if results["total_records"] == 0:
             return "# LabelFit India: Dual Transcription & Adjudication Report\n\nNo records entered yet."
 
-        status_badge = "✅ ALL DISCREPANCIES ADJUDICATED" if results["all_adjudicated"] else "⚠️ UNRESOLVED DISCREPANCIES PENDING RECHECK"
+        if results["pending_count"] > 0:
+            status_badge = f"⚠️ PENDING INTAKE ({results['pending_count']} fields awaiting founder entry)"
+        elif not results["all_adjudicated"]:
+            status_badge = f"⚠️ UNRESOLVED DISCREPANCIES ({results['unresolved_count']} fields pending recheck)"
+        else:
+            status_badge = "✅ ALL TARGET TRANSCRIPTIONS ADJUDICATED"
+
         lines = [
             "# LabelFit India: Dual Transcription & Adjudication Report",
             "",
             f"**Status**: {status_badge}  ",
-            f"**Total Fields Transcribed**: {results['total_records']}  ",
-            f"**Inter-Rater Concurrence**: {results['concurrence_rate']}% ({results['concurrence_count']}/{results['total_records']} fields matched exactly)  ",
+            f"**Total Records**: {results['total_records']} (Completed: {results['completed_count']}, Pending: {results['pending_count']})  ",
+            f"**Inter-Rater Concurrence**: {results['concurrence_rate']}% ({results['concurrence_count']}/{results['completed_count']} completed fields matched exactly)  ",
             f"**Physical Discrepancies**: {results['discrepancy_count']} flagged  ",
             f"**Unresolved Items**: {results['unresolved_count']} requiring physical package inspection  ",
             "",
-            "## 1. Field-by-Field Inter-Rater Agreement",
+            "## 1. Field-by-Field Status",
             "",
-            "| Field | Total Records | Exact Concurrence | Agreement Rate | Discrepancies | Unresolved |",
-            "|---|---|---|---|---|---|",
+            "| Field | Total | Completed | Pending | Exact Concurrence | Discrepancies | Unresolved |",
+            "|---|---|---|---|---|---|---|",
         ]
         for f, data in results["by_field"].items():
             lines.append(
-                f"| `{f}` | {data['total']} | {data['concurrence_count']} | {data['concurrence_rate']}% | {data['discrepancy_count']} | {data['unresolved_count']} |"
+                f"| `{f}` | {data['total']} | {data['completed']} | {data['pending']} | {data['concurrence_count']} ({data['concurrence_rate']}%) | {data['discrepancy_count']} | {data['unresolved_count']} |"
             )
 
         if results["unresolved_count"] > 0:
             lines.extend([
                 "",
-                "## 2. Unresolved Discrepancies (Action Required)",
-                "",
-                "The following fields differ between independent transcriptions and must be verified against the physical pack:",
+                "## 2. Unresolved Discrepancies (Recheck Physical Package)",
                 "",
             ])
             for item in results["unresolved_records"]:
                 lines.append(f"- **{item['sku_id']}** (`{item['field']}`): recheck physical package.")
+
+        if results["pending_count"] > 0:
+            lines.extend([
+                "",
+                "## 3. Pending Founder Entry",
+                "",
+                f"{results['pending_count']} fields are awaiting independent physical transcriptions in `docs/founder-independent-transcriptions.csv`.",
+            ])
 
         lines.extend([
             "",

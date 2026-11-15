@@ -68,6 +68,25 @@ def test_dual_transcription_discrepancy_and_adjudication():
     assert rec.get_ground_truth() == "Wheat flour (55%), Milk solids (15%)"
 
 
+def test_dual_transcription_pending():
+    rec = DualTranscriptionRecord(
+        sku_id="SKU-PENDING-01",
+        brand="BrandX",
+        product_name="Cereal",
+        field="ingredients",
+        swastik_transcription="",
+        swastik_date="",
+        saumya_transcription="",
+        saumya_date="",
+    )
+    assert rec.is_pending
+    assert not rec.is_concurrence
+    assert not rec.has_discrepancy
+    assert not rec.is_adjudicated
+    with pytest.raises(ValueError, match="Pending transcription"):
+        rec.get_ground_truth()
+
+
 def test_adjudication_engine_metrics():
     with tempfile.NamedTemporaryFile("w", delete=False, suffix=".csv", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
