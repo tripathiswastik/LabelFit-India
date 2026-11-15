@@ -37,9 +37,9 @@ def test_dual_transcription_concurrence():
         saumya_transcription="From 6 Months",
         saumya_date="2026-11-15",
     )
-    assert rec.is_concurrence is True
-    assert rec.has_discrepancy is False
-    assert rec.is_adjudicated is True
+    assert rec.is_concurrence
+    assert not rec.has_discrepancy
+    assert rec.is_adjudicated
     assert rec.get_ground_truth() == "From 6 Months"
 
 
@@ -55,16 +55,16 @@ def test_dual_transcription_discrepancy_and_adjudication():
         saumya_transcription="Wheat flour (55%), Milk solids",
         saumya_date="2026-11-15",
     )
-    assert rec.is_concurrence is False
-    assert rec.has_discrepancy is True
-    assert rec.is_adjudicated is False
+    assert not rec.is_concurrence
+    assert rec.has_discrepancy
+    assert not rec.is_adjudicated
     with pytest.raises(ValueError, match="Unresolved transcription discrepancy"):
         rec.get_ground_truth()
 
     # Once adjudicated against physical package, returns verified ground truth
     rec.adjudicated_ground_truth = "Wheat flour (55%), Milk solids (15%)"
     rec.adjudication_notes = "Physical packaging inspected: (15%) is printed on package."
-    assert rec.is_adjudicated is True
+    assert rec.is_adjudicated
     assert rec.get_ground_truth() == "Wheat flour (55%), Milk solids (15%)"
 
 

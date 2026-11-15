@@ -40,7 +40,7 @@ def normalize_text(text: Optional[str]) -> str:
     """Collapses whitespace and strips leading/trailing spaces for exact comparison."""
     if not text:
         return ""
-    return re.sub(r'\s+', ' ', str(text)).strip()
+    return re.sub(r'\s+', ' ', text).strip()
 
 
 @dataclass
