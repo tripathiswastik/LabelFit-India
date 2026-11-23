@@ -130,15 +130,16 @@ test('trusted proxy hops default to 1 on Cloud Run, 0 locally, and reject junk',
 });
 
 test('access token is enforced when configured and unused otherwise', async () => {
+  const mockToken = 'mock-auth-token-hardening-test';
   assert.equal(checkAccessToken({ headers: {} }, ''), true);
-  assert.equal(checkAccessToken({ headers: { 'x-labelfit-token': 'nope' } }, 'secret-token-value-123456'), false);
-  assert.equal(checkAccessToken({ headers: { 'x-labelfit-token': 'secret-token-value-123456' } }, 'secret-token-value-123456'), true);
+  assert.equal(checkAccessToken({ headers: { 'x-labelfit-token': 'nope' } }, mockToken), false);
+  assert.equal(checkAccessToken({ headers: { 'x-labelfit-token': mockToken } }, mockToken), true);
 
-  const { server, port } = await start({ accessToken: 'secret-token-value-123456' });
+  const { server, port } = await start({ accessToken: mockToken });
   try {
     assert.equal((await post(port)).status, 401);
     assert.equal((await post(port, { 'X-LabelFit-Token': 'wrong' })).status, 401);
-    assert.equal((await post(port, { 'X-LabelFit-Token': 'secret-token-value-123456' })).status, 200);
+    assert.equal((await post(port, { 'X-LabelFit-Token': mockToken })).status, 200);
   } finally {
     server.close();
   }
