@@ -133,3 +133,23 @@ python scripts/evaluate_usability.py --csv docs/usability-evaluation-sheet.csv
 - [Audit checklist](docs/AUDIT_CHECKLIST.md): open and closed issues from the full repository review.
 - [Benchmark runbook](docs/BENCHMARK_RUNBOOK.md): how to scan packages, record runs, and score them with confidence intervals. Tooling only; it contains no results.
 - [Exploratory Validation Plan](docs/VALIDATION_PLAN.md) & [Research & Gaps Review](docs/RESEARCH_AND_GAPS.md): Documented boundaries, non-prescriptive invariants, and uncalibrated read statuses.
+
+
+---
+
+## 👤 Authors
+
+- **Swastik Tripathi** — [GitHub (@tripathiswastik)](https://github.com/tripathiswastik) • [LinkedIn](https://www.linkedin.com/in/swastik-tripathi-52333511a/)
+- **Saumya Tripathi**
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🏷️ Repository Metadata & Topic Tags
+- **About Description**: Package text transcription prototype for complementary food packaging using Gemini multimodal vision.
+- **Core Topics**: `gemini-api` `multimodal` `nodejs` `cloud-run` `ocr` `food-packaging` `streamlit` `python`
